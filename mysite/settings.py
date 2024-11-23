@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authenticate',
+    'weatherapi',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'authenticate.middleware.SaveLocationMiddleware',
+    'weatherapi.middleware.ForecastMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'

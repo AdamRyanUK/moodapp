@@ -1,7 +1,7 @@
 
 import xml.etree.ElementTree as ET
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import Nominatim # type: ignore
+from geopy.exc import GeocoderTimedOut # type: ignore
 import requests
 from .models import LocationHistory
 from django.utils.timezone import now

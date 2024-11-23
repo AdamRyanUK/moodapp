@@ -24,6 +24,18 @@
         <p>Your location is not available yet. Please sign up here.</p>
     {% endif %}
 
+    {% for data in weather_data %}
+    <p>Summary: {{ data.summary }}</p>
+    <p>Day: {{ data.day }}</p>
+    <p>Temperature: {{ data.temperature }}</p>
+    <p>Temperature_min: {{ data.temperature_min }}</p>
+    <p>Temperature_max: {{ data.temperature_max }}</p>
+    <hr>
+{% endfor %}
+
+  
+
+
 {% endif %}
 
 

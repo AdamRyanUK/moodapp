@@ -10,35 +10,58 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import UserProfile, LocationHistory
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile
+from weatherapi.models import DailyForecast
 from .utils import get_nearest_town  # Import the reverse geocoding function
 
 @login_required
 def home(request):
-    # Initialize city as None
+    # Initialize city and weather data as None
     city = None
+    weather_data = None
 
     # Get the latitude and longitude from the user's profile
     user_profile = request.user.userprofile
     latitude = user_profile.latitude if user_profile.latitude else None
     longitude = user_profile.longitude if user_profile.longitude else None
-    
+
     # Check if latitude and longitude are available
     if latitude and longitude:
         city = get_nearest_town(latitude, longitude)  # Call the geocoding function
 
-	# Check if location saved
-    print(request.session.get('location_saved'))
-    # Pass the latitude, longitude, and city to the template
+        # Fetch the latest weather forecast for the user
+        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('-date')
+        latest_forecast = latest_forecast[:7]
+
+        if latest_forecast:
+            weather_data = []
+            for forecast in latest_forecast:
+                weather_data.append({
+                    'day': forecast.date,
+                    'summary': forecast.summary,
+                    'temperature': forecast.temperature,
+                    'temperature_min': forecast.temperature_min,
+                    'temperature_max': forecast.temperature_max,
+                    'precipitation_amt': forecast.precipitation_total,
+                    'precipitation_type': forecast.precipitation_type,
+                    'wind_speed': forecast.wind_speed,
+                })
+
+    # Check if location saved
+    location_saved = request.session.get('location_saved', False)  # Default to False if not set
+
+	# Log the weather_data to verify it's being passed correctly
+    print(weather_data)
+    # Pass the latitude, longitude, city, and weather data to the template
     return render(request, 'authenticate/home.html', {
         'latitude': latitude,
         'longitude': longitude,
         'city': city,
+        'weather_data': weather_data,
+        'location_saved': location_saved,
     })
-
 
 def login_user(request):
 	if request.method == 'POST':
