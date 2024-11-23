@@ -1,0 +1,30 @@
+{% extends 'authenticate/base.html' %}
+
+{% block content %}
+
+<h1 style="text-align: center;">Your Personalised Weather Forecast</h1>
+
+{% if user.is_authenticated %}
+	
+	<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+	<p>Username: {{ user.username}}</p>
+	<p>Email: {{ user.email }}</p>
+	
+
+    {% if user.userprofile.latitude and user.userprofile.longitude %}
+        <p>Your current location is:</p>
+        <p>Latitude: {{ user.userprofile.latitude }}</p>
+        <p>Longitude: {{ user.userprofile.longitude }}</p>
+		{% if city %}
+            <p>Your nearest city: {{ city }}</p>
+        {% else %}
+            <p>Unable to determine your city.</p>
+        {% endif %}
+    {% else %}
+        <p>Your location is not available yet. Please sign up here.</p>
+    {% endif %}
+
+{% endif %}
+
+
+{% endblock %}

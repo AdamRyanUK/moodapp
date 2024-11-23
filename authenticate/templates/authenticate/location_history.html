@@ -1,0 +1,32 @@
+<!-- location_history.html -->
+
+{% extends 'authenticate/base.html' %}
+
+{% block content %}
+<h1>Your Location History</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">City</th>
+            <th scope="col">Latitude</th>
+            <th scope="col">Longitude</th>
+            <th scope="col">Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in history %}
+        <tr>
+            <th scope="row">{{ record.city }}</td>
+            <td>{{ record.latitude }}</td>
+            <td>{{ record.longitude }}</td>
+            <td>{{ record.timestamp }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No location history available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
