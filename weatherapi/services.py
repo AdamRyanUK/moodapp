@@ -1,5 +1,8 @@
 import requests
 from .models import DailyForecast
+import logging
+
+logger = logging.getLogger(__name__)
 
 def fetch_and_save_forecast(user):
     # Get user's saved geolocation
@@ -18,13 +21,17 @@ def fetch_and_save_forecast(user):
         'key': api_key
     }
 
-    response = requests.get(url, params=params)
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raise an exception for HTTP errors
 
-    if response.status_code == 200:
         data = response.json()
+        
+        logger.debug(f"Received data: {data}")
 
         # Loop through the daily forecast data (e.g., the next 7 days)
         for forecast_data in data['daily']['data']:
+            logger.debug(f"Processing forecast for date: {forecast_data['day']}")
             # Update or create DailyForecast entry for the user
             DailyForecast.objects.update_or_create(
                 user=user,
@@ -62,8 +69,14 @@ def fetch_and_save_forecast(user):
                     'raw_data': forecast_data  # Save raw data for debugging/future
                 }
             )
+            logger.debug(f"Saved forecast for date: {forecast_data['day']}")
 
         return data['daily']['data']  # Return the entire forecast data
 
-    else:
-        raise Exception(f"Failed to fetch weather data: {response.status_code}")
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch weather data: {e}")
+        raise
+
+    except KeyError as e:
+        logger.error(f"Missing expected data in weather response: {e}")
+        raise

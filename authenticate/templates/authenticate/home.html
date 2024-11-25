@@ -20,20 +20,43 @@
         {% else %}
             <p>Unable to determine your city.</p>
         {% endif %}
+        {% if weather_data %}
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Day</th>
+                    <th>Summary</th>
+                    <th>Temperature</th>
+                    <th>Temperature Min</th>
+                    <th>Temperature Max</th>
+                    <th>Precipitation Amount</th>
+                    <th>Precipitation Type</th>
+                    <th>Wind Speed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in weather_data %}
+                <tr>
+                    <td>{{ data.day }}</td>
+                    <td>{{ data.summary }}</td>
+                    <td>{{ data.temperature }}</td>
+                    <td>{{ data.temperature_min }}</td>
+                    <td>{{ data.temperature_max }}</td>
+                    <td>{{ data.precipitation_amt }}</td>
+                    <td>{{ data.precipitation_type }}</td>
+                    <td>{{ data.wind_speed }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    {% else %}
+        <p>No weather forecast available for the upcoming days.</p>
+    {% endif %}
+
     {% else %}
         <p>Your location is not available yet. Please sign up here.</p>
     {% endif %}
-
-    {% for data in weather_data %}
-    <p>Summary: {{ data.summary }}</p>
-    <p>Day: {{ data.day }}</p>
-    <p>Temperature: {{ data.temperature }}</p>
-    <p>Temperature_min: {{ data.temperature_min }}</p>
-    <p>Temperature_max: {{ data.temperature_max }}</p>
-    <hr>
-{% endfor %}
-
-  
 
 
 {% endif %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Forecast</title>
+</head>
+<body>
+    <h1>Weather Forecast for Coming Days</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>Weather</th>
+                <th>Temp (°C)</th>
+                <th>Min Temp (°C)</th>
+                <th>Max Temp (°C)</th>
+                <th>Wind Speed (km/h)</th>
+                <th>Precipitation (mm)</th>
+                <th>Precipitation Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for forecast in forecasts %}
+                <tr>
+                    <td>{{ forecast.date }}</td>
+                    <td>{{ forecast.summary }}</td>
+                    <td>{{ forecast.weather }}</td>
+                    <td>{{ forecast.temperature }}</td>
+                    <td>{{ forecast.temperature_min }}</td>
+                    <td>{{ forecast.temperature_max }}</td>
+                    <td>{{ forecast.wind_speed }}</td>
+                    <td>{{ forecast.precipitation_total }}</td>
+                    <td>{{ forecast.precipitation_type }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

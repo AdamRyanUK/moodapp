@@ -32,11 +32,10 @@ def home(request):
         city = get_nearest_town(latitude, longitude)  # Call the geocoding function
 
         # Fetch the latest weather forecast for the user
-        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('-date')
-        latest_forecast = latest_forecast[:7]
+        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('-date')[:7]
 
-        if latest_forecast:
-            weather_data = []
+        weather_data = []
+        if latest_forecast.exists():
             for forecast in latest_forecast:
                 weather_data.append({
                     'day': forecast.date,
@@ -48,12 +47,15 @@ def home(request):
                     'precipitation_type': forecast.precipitation_type,
                     'wind_speed': forecast.wind_speed,
                 })
+        else:
+            weather_data = []
 
     # Check if location saved
     location_saved = request.session.get('location_saved', False)  # Default to False if not set
 
-	# Log the weather_data to verify it's being passed correctly
+    # Log the weather_data to verify it's being passed correctly
     print(weather_data)
+    
     # Pass the latitude, longitude, city, and weather data to the template
     return render(request, 'authenticate/home.html', {
         'latitude': latitude,
@@ -62,6 +64,7 @@ def home(request):
         'weather_data': weather_data,
         'location_saved': location_saved,
     })
+
 
 def login_user(request):
 	if request.method == 'POST':
