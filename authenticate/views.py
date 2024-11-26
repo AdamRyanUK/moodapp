@@ -32,7 +32,7 @@ def home(request):
         city = get_nearest_town(latitude, longitude)  # Call the geocoding function
 
         # Fetch the latest weather forecast for the user
-        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('-date')[:7]
+        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
 
         weather_data = []
         if latest_forecast.exists():

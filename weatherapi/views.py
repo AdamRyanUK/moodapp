@@ -1,40 +1,32 @@
 from django.shortcuts import render
 import requests
-
-def display_forecast(request):
-    # Sample coordinates for demonstration
-    latitude = 38.5281022
-    longitude = 0.1653208
-
-    api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
-    url = f"https://www.meteosource.com/api/v1/startup/point"
-    params = {
-        'lat': latitude,
-        'lon': longitude,
-        'sections': 'daily',
-        'language': 'en',
-        'units': 'auto',
-        'key': api_key
-    }
-
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-
-        data = response.json()
-        
-    except requests.RequestException as e:
-        data = {"error": str(e)}
-
-    return render(request, 'weatherapi/display_forecast.html', {'data': data})
-
-from django.shortcuts import render
-from .models import DailyForecast
+from .models import DailyForecast, WeatherFeedback
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from datetime import date
 
-@login_required
-def forecast_table(request):
-    # Fetch the latest forecast data for the logged-in user
-    forecasts = DailyForecast.objects.filter(user=request.user).order_by('date')
+@method_decorator(csrf_exempt, name='dispatch')
+class SubmitFeedbackView(View):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'User not authenticated'}, status=401)
 
-    return render(request, 'weatherapi/forecast_table.html', {'forecasts': forecasts})
+        try:
+            rating = int(request.POST.get('rating'))
+            if rating not in range(1, 6):
+                return JsonResponse({'error': 'Invalid rating'}, status=400)
+
+            today = date.today()
+
+            feedback, created = WeatherFeedback.objects.update_or_create(
+                user=request.user,
+                date=today,
+                defaults={'rating': rating}
+            )
+            return JsonResponse({'success': True, 'created': created})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)

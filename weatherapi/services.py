@@ -1,6 +1,7 @@
 import requests
 from .models import DailyForecast
 import logging
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,9 @@ def fetch_and_save_forecast(user):
         data = response.json()
         
         logger.debug(f"Received data: {data}")
+
+        #remove old forecast data. 
+        DailyForecast.objects.filter(user=user, date__lt=date.today()).delete()
 
         # Loop through the daily forecast data (e.g., the next 7 days)
         for forecast_data in data['daily']['data']:
