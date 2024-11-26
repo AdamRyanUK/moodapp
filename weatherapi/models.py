@@ -38,6 +38,14 @@ class DailyForecast(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.date}"
+    
+class HistoricalForecast(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_generated = models.DateField(auto_now_add=True)  # Both initialization and base date
+    forecasts = models.ManyToManyField(DailyForecast)  # Links to multiple daily forecasts
+
+    def __str__(self):
+        return f"Forecast for {self.user} on {self.date_generated}"
 
 class WeatherFeedback(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -16,6 +16,12 @@ from .models import UserProfile
 from weatherapi.models import DailyForecast
 from .utils import get_nearest_town  # Import the reverse geocoding function
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from datetime import date
+from weatherapi.models import DailyForecast
+from weatherapi.services import fetch_and_save_forecast
+
 @login_required
 def home(request):
     # Initialize city and weather data as None
@@ -31,6 +37,9 @@ def home(request):
     if latitude and longitude:
         city = get_nearest_town(latitude, longitude)  # Call the geocoding function
 
+        # Fetch and save the latest weather forecast for the user
+        fetch_and_save_forecast(request.user)
+
         # Fetch the latest weather forecast for the user
         latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
 
@@ -40,15 +49,13 @@ def home(request):
                 weather_data.append({
                     'day': forecast.date,
                     'summary': forecast.summary,
-                    'temperature': forecast.temperature,
+                    'icon': forecast.icon,
                     'temperature_min': forecast.temperature_min,
                     'temperature_max': forecast.temperature_max,
                     'precipitation_amt': forecast.precipitation_total,
                     'precipitation_type': forecast.precipitation_type,
                     'wind_speed': forecast.wind_speed,
                 })
-        else:
-            weather_data = []
 
     # Check if location saved
     location_saved = request.session.get('location_saved', False)  # Default to False if not set

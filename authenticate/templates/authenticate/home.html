@@ -1,65 +1,64 @@
 {% extends 'authenticate/base.html' %}
+{% load static %}
 
 {% block content %}
 
-<h1 style="text-align: center;">Your Personalised Weather Forecast</h1>
+<h1 style="text-align: center;">{{ user.first_name }}'s Personalised Weather Forecast</h1>
 
-{% if user.is_authenticated %}
-	
-	<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-	<p>Username: {{ user.username}}</p>
-	<p>Email: {{ user.email }}</p>
-	
-
-    {% if user.userprofile.latitude and user.userprofile.longitude %}
-        <p>Your current location is:</p>
-        <p>Latitude: {{ user.userprofile.latitude }}</p>
-        <p>Longitude: {{ user.userprofile.longitude }}</p>
-		{% if city %}
-            <p>Your nearest city: {{ city }}</p>
-        {% else %}
-            <p>Unable to determine your city.</p>
+<div class="row">
+    <div class="col-md-4">
+        <!-- City Card -->
+        {% if city %}
+        <div class="card city-card">
+            <div class="card-body">
+                <h5 class="card-title">Current Location</h5>
+                <p class="card-text">{{ city }}</p>
+            </div>
+        </div>
         {% endif %}
-        {% if weather_data %}
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Day</th>
-                    <th>Summary</th>
-                    <th>Temperature</th>
-                    <th>Temperature Min</th>
-                    <th>Temperature Max</th>
-                    <th>Precipitation Amount</th>
-                    <th>Precipitation Type</th>
-                    <th>Wind Speed</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in weather_data %}
-                <tr>
-                    <td>{{ data.day }}</td>
-                    <td>{{ data.summary }}</td>
-                    <td>{{ data.temperature }}</td>
-                    <td>{{ data.temperature_min }}</td>
-                    <td>{{ data.temperature_max }}</td>
-                    <td>{{ data.precipitation_amt }}</td>
-                    <td>{{ data.precipitation_type }}</td>
-                    <td>{{ data.wind_speed }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-    {% else %}
-        <p>No weather forecast available for the upcoming days.</p>
-    {% endif %}
+    </div>
+    <div class="col-md-8">
+        <!-- Search Form -->
+        <form method="GET" action="{% url 'home' %}" class="search-form" style="float: right;">
+            <input class="form-control" type="text" name="location" placeholder="Get forecast for somewhere else">
+            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+        </form>
+    </div>
+</div>
 
-    {% else %}
-        <p>Your location is not available yet. Please sign up here.</p>
-    {% endif %}
-
-
+<!-- Forecast Table -->
+{% if weather_data %}
+<h2>Forecast for {{ city }}</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Day</th>
+            <th scope="col">Summary</th>
+            <th scope="col">Icon</th>
+            <th scope="col">Temperature Min</th>
+            <th scope="col">Temperature Max</th>
+            <th scope="col">Precipitation Amount</th>
+            <th scope="col">Precipitation Type</th>
+            <th scope="col">Wind Speed</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in weather_data %}
+        <tr>
+            <td>{{ data.day }}</td>
+            <td>{{ data.summary }}</td>
+            <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
+            <td>{{ data.temperature_min }}</td>
+            <td>{{ data.temperature_max }}</td>
+            <td>{{ data.precipitation_amt }}</td>
+            <td>{{ data.precipitation_type }}</td>
+            <td>{{ data.wind_speed }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
-
 
 {% endblock %}

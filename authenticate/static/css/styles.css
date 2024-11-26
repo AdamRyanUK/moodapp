@@ -1,0 +1,15 @@
+.city-card {
+    width: 18rem;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.form-control {
+    width: auto;
+    margin-right: 10px;
+}

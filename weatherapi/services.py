@@ -1,8 +1,10 @@
-import requests
-from .models import DailyForecast
-import logging
 from datetime import date
+from django.conf import settings
+from .models import DailyForecast, HistoricalForecast
+import requests
+import logging
 
+# Set up logging
 logger = logging.getLogger(__name__)
 
 def fetch_and_save_forecast(user):
@@ -30,7 +32,16 @@ def fetch_and_save_forecast(user):
         
         logger.debug(f"Received data: {data}")
 
-        #remove old forecast data. 
+        # Fetch current forecasts for the user
+        current_forecasts = DailyForecast.objects.filter(user=user)
+        
+        # Create a historical forecast record with current forecasts
+        if current_forecasts.exists():
+            historical_forecast = HistoricalForecast.objects.create(user=user)
+            historical_forecast.forecasts.set(current_forecasts)
+            historical_forecast.save()
+
+        # Remove old forecasts
         DailyForecast.objects.filter(user=user, date__lt=date.today()).delete()
 
         # Loop through the daily forecast data (e.g., the next 7 days)
@@ -50,9 +61,9 @@ def fetch_and_save_forecast(user):
                     'wind_speed': forecast_data['all_day']['wind'].get('speed'),
                     'wind_dir': forecast_data['all_day']['wind'].get('dir'),
                     'wind_angle': forecast_data['all_day']['wind'].get('angle'),
-                    'cloud_cover': forecast_data['all_day']['cloud_cover'].get('total'),
-                    'precipitation_total': forecast_data['all_day']['precipitation'].get('total'),
-                    'precipitation_type': forecast_data['all_day']['precipitation'].get('type'),
+                    'cloud_cover': forecast_data['all_day'].get('cloud_cover', {}).get('total', 0),
+                    'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                    'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
                     'sunrise': forecast_data['astro']['sun'].get('rise'),
                     'sunset': forecast_data['astro']['sun'].get('set'),
                     'moon_phase': forecast_data['astro']['moon'].get('phase'),
