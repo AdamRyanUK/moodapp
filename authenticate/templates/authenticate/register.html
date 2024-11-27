@@ -28,10 +28,12 @@
 		
        
 			{{ form.as_p }}
-
+              <!-- Hidden fields to store geolocation -->
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
 		<input type="submit" value="Register" class="btn btn-secondary">
 	</form>
+    <script src="{% static 'js/geolocation.js' %}"></script>
 </div>
 <br/><br/>
 {% endblock %}
-

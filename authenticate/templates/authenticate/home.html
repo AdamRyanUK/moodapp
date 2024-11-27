@@ -5,7 +5,7 @@
 
 <h1 style="text-align: center;">{{ user.first_name }}'s Personalised Weather Forecast</h1>
 
-<div class="row">
+<div class="row align-items-center">
     <div class="col-md-4">
         <!-- City Card -->
         {% if city %}
@@ -17,12 +17,16 @@
         </div>
         {% endif %}
     </div>
-    <div class="col-md-8">
+    <div class="col-md-4 d-flex justify-content-center">
         <!-- Search Form -->
-        <form method="GET" action="{% url 'home' %}" class="search-form" style="float: right;">
-            <input class="form-control" type="text" name="location" placeholder="Get forecast for somewhere else">
+        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center">
+            <input class="form-control mr-2" type="text" name="location" placeholder="Get forecast for somewhere else">
             <button type="submit" class="btn btn-primary btn-lg">Submit</button>
         </form>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end">
+        <!-- Insights Button -->
+        <a href="{% url 'insights' %}" class="btn btn-secondary btn-lg">Insights</a>
     </div>
 </div>
 
