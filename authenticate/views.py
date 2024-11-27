@@ -15,61 +15,49 @@ from django.contrib.auth.decorators import login_required
 from .models import UserProfile
 from weatherapi.models import DailyForecast
 from .utils import get_nearest_town  # Import the reverse geocoding function
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from datetime import date
-from weatherapi.models import DailyForecast
-from weatherapi.services import fetch_and_save_forecast
+from weatherapi.models import DailyForecast, WeatherFeedback
+from weatherapi.services import fetch_and_save_forecast, get_forecast_for_location
 
 @login_required
 def home(request):
-    # Initialize city and weather data as None
     city = None
     weather_data = None
+    location = request.GET.get('location')
 
-    # Get the latitude and longitude from the user's profile
-    user_profile = request.user.userprofile
-    latitude = user_profile.latitude if user_profile.latitude else None
-    longitude = user_profile.longitude if user_profile.longitude else None
+    if location:
+        # Fetch forecast for the entered location
+        weather_data, city = get_forecast_for_location(location)
+    else:
+        # Get the latitude and longitude from the user's profile
+        user_profile = request.user.userprofile
+        latitude = user_profile.latitude if user_profile.latitude else None
+        longitude = user_profile.longitude if user_profile.longitude else None
 
-    # Check if latitude and longitude are available
-    if latitude and longitude:
-        city = get_nearest_town(latitude, longitude)  # Call the geocoding function
+        if latitude and longitude:
+            city = get_nearest_town(latitude, longitude)  # Call the geocoding function
 
-        # Fetch and save the latest weather forecast for the user
-        fetch_and_save_forecast(request.user)
+            fetch_and_save_forecast(request.user)
 
-        # Fetch the latest weather forecast for the user
-        latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
+            latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
 
-        weather_data = []
-        if latest_forecast.exists():
-            for forecast in latest_forecast:
-                weather_data.append({
-                    'day': forecast.date,
-                    'summary': forecast.summary,
-                    'icon': forecast.icon,
-                    'temperature_min': forecast.temperature_min,
-                    'temperature_max': forecast.temperature_max,
-                    'precipitation_amt': forecast.precipitation_total,
-                    'precipitation_type': forecast.precipitation_type,
-                    'wind_speed': forecast.wind_speed,
-                })
+            weather_data = []
+            if latest_forecast.exists():
+                for forecast in latest_forecast:
+                    weather_data.append({
+                        'day': forecast.date,
+                        'summary': forecast.summary,
+                        'icon': forecast.icon,
+                        'temperature_min': forecast.temperature_min,
+                        'temperature_max': forecast.temperature_max,
+                        'precipitation_amt': forecast.precipitation_total,
+                        'precipitation_type': forecast.precipitation_type,
+                        'wind_speed': forecast.wind_speed,
+                    })
 
-    # Check if location saved
-    location_saved = request.session.get('location_saved', False)  # Default to False if not set
-
-    # Log the weather_data to verify it's being passed correctly
-    print(weather_data)
-    
-    # Pass the latitude, longitude, city, and weather data to the template
     return render(request, 'authenticate/home.html', {
-        'latitude': latitude,
-        'longitude': longitude,
         'city': city,
         'weather_data': weather_data,
-        'location_saved': location_saved,
     })
 
 
@@ -169,3 +157,8 @@ def location_history(request):
     return render(request, 'authenticate/location_history.html', {
         'history': history,
     })
+
+@login_required
+def feedback_calendar_view(request):
+    feedbacks = WeatherFeedback.objects.filter(user=request.user).order_by('date')
+    return render(request, 'authenticate/my_history.html', {'feedbacks': feedbacks})

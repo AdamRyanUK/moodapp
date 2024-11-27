@@ -10,4 +10,5 @@ urlpatterns = [
     path('change_password', views.change_password, name='change_password'),
     path('update-location/', views.update_location, name='update_location'),
     path('location-history/', views.location_history, name='location_history'),
+    path('my-history/', views.feedback_calendar_view, name='my_history'),
 ]

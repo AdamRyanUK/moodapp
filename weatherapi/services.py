@@ -95,3 +95,44 @@ def fetch_and_save_forecast(user):
     except KeyError as e:
         logger.error(f"Missing expected data in weather response: {e}")
         raise
+
+def get_forecast_for_location(location):
+    api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
+    url = f"https://www.meteosource.com/api/v1/free/point"
+    params = {
+        'place_id': location,
+        'sections': 'daily',
+        'timezone': 'UTC',
+        'language': 'en',
+        'units': 'metric',
+        'key': api_key
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        weather_data = []
+        for forecast_data in data['daily']['data']:
+            weather_data.append({
+                'day': forecast_data['day'],
+                'summary': forecast_data.get('summary'),
+                'temperature': forecast_data['all_day'].get('temperature'),
+                'temperature_min': forecast_data['all_day'].get('temperature_min'),
+                'temperature_max': forecast_data['all_day'].get('temperature_max'),
+                'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total'),
+                'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type'),
+                'wind_speed': forecast_data['all_day'].get('wind', {}).get('speed'),
+                'icon': forecast_data['all_day'].get('icon'),
+            })
+
+        return weather_data, location  # Return weather data and the location (city name)
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch weather data: {e}")
+        return [], "Unknown"
+    except KeyError as e:
+        logger.error(f"Missing expected data in weather response: {e}")
+        return [], "Unknown"
+
+    return [], "Unknown"

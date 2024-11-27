@@ -1,0 +1,23 @@
+{% extends "authenticate/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>User Feedback</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedbacks %}
+                <tr>
+                    <td>{{ feedback.date }}</td>
+                    <td>{{ feedback.rating }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
