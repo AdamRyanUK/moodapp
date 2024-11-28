@@ -95,19 +95,22 @@ def register_user(request):
             user = form.save()  # Save the user
 
             # Now create or update the UserProfile with additional information (like preferred temperature)
+            home_town = form.cleaned_data.get('home_town')
             preferred_temperature_min = form.cleaned_data.get('preferred_temperature_min')
             preferred_temperature_max = form.cleaned_data.get('preferred_temperature_max')
+            likes_rain = form.cleaned_data.get('likes_rain')
+            sun_worshipper = form.cleaned_data.get('sun_worshipper')  
 
             # Get or update the UserProfile
             user_profile, created = UserProfile.objects.get_or_create(user=user)
 
             # If profile already exists, we update it
+            user_profile.home_town = home_town
             user_profile.preferred_temperature_min = preferred_temperature_min
             user_profile.preferred_temperature_max = preferred_temperature_max
+            user_profile.likes_rain = likes_rain
+            user_profile.sun_worshipper = sun_worshipper
             user_profile.save()
-
-            # Handle latitude and longitude if needed
-            # If you want to set the lat/lon from geolocation, you can do it here
 
             messages.success(request, 'Your account has been created! Please log in.')
             return redirect('login')  # Redirect to the login page
@@ -116,8 +119,6 @@ def register_user(request):
 
     context = {'form': form}
     return render(request, 'authenticate/register.html', context)
-
-
 
 def edit_profile(request):
 	if request.method == 'POST':

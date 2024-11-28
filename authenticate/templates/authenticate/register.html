@@ -1,39 +1,121 @@
 {% extends 'authenticate/base.html' %}
 
+{% block extra_head %}
+    <style>
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-group {
+            width: 100%;
+        }
+        .slider {
+            margin: 15px 0;
+            height: 10px;
+            width: 100%;
+        }
+        .noUi-connect {
+            background: linear-gradient(to right, blue, red);
+        }
+        .noUi-handle {
+            width: 20px;
+            height: 20px;
+            top: -5px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
+    <h2 class="text-center">Register</h2>
 
-<h2 class="text-center">Register</h2>
+    <div class="col-md-6 offset-md-3">
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
 
-<div class="col-md-6 offset-md-3">
-	<form method="POST" action="{% url 'register' %}">
-		{% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-warning alert-dismissable" role="alert">
+                    <button class="close" data-dismiss="alert">
+                        <small><sup>x</sup></small>
+                    </button>
+                    <p>Your Form Has Errors...</p>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {{ field.errors }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {{ form.as_p }}
 
-		{% if form.errors %}
-			<div class="alert alert-warning alert-dismissable" role="alert">
-            <button class="close" data-dismiss="alert">
-                    <small><sup>x</sup></small>
-                </button>
-            <p>Your Form Has Errors...</p>
-            {% for field in form %}
-            	{% if field.errors  %}
-            		{{ field.errors }}
-            	{% endif %}
+            <div class="form-group">
+                <label for="likes_rain">Do you like rainy days?</label>
+                <select id="likes_rain" name="likes_rain" class="form-control">
+                    <option value="5">I love it</option>
+                    <option value="4">I like it</option>
+                    <option value="3">It's okay</option>
+                    <option value="2">I don't like it</option>
+                    <option value="1">I hate it</option>
+                </select>
+            </div>
 
-            {% endfor %}
+            <div class="form-group">
+                <label for="sun_worshiper">Are you a sun worshiper?</label>
+                <select id="sun_worshiper" name="sun_worshiper" class="form-control">
+                    <option value="5">I worship the sun</option>
+                    <option value="4">I prefer sunny days</option>
+                    <option value="3">Neutral</option>
+                    <option value="2">I prefer cloudy days</option>
+                    <option value="1">I avoid the sun</option>
+                </select>
+            </div>
 
-          </div>
+            <input type="submit" value="Register" class="btn btn-secondary">
+        </form>
+    </div>
+    
+    <br/><br/>
 
+    <div class="col-md-6 offset-md-3">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="preferred_temperature">Preferred Temperature Range</label>
+                    <br><br>
+                    <div id="temperature-slider" class="slider"></div>
+                    <input type="hidden" id="preferred_temperature_min" name="preferred_temperature_min" value="15">
+                    <input type="hidden" id="preferred_temperature_max" name="preferred_temperature_max" value="25">
+                </div>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
-		{% endif %}
-		
-       
-			{{ form.as_p }}
-              <!-- Hidden fields to store geolocation -->
-        <input type="hidden" id="latitude" name="latitude">
-        <input type="hidden" id="longitude" name="longitude">
-		<input type="submit" value="Register" class="btn btn-secondary">
-	</form>
-    <script src="{% static 'js/geolocation.js' %}"></script>
-</div>
-<br/><br/>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider/distribute/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wnumb/wNumb.js"></script>
+    <script>
+        var temperatureSlider = document.getElementById('temperature-slider');
+
+        noUiSlider.create(temperatureSlider, {
+            start: [15, 25],
+            connect: true,
+            tooltips: [wNumb({decimals: 0}), wNumb({decimals: 0})],
+            range: {
+                'min': -30,
+                'max': 50
+            }
+        });
+
+        var inputMin = document.getElementById('preferred_temperature_min');
+        var inputMax = document.getElementById('preferred_temperature_max');
+
+        temperatureSlider.noUiSlider.on('update', function (values, handle) {
+            if (handle === 0) {
+                inputMin.value = values[handle];
+            } else {
+                inputMax.value = values[handle];
+            }
+        });
+    </script>
 {% endblock %}

@@ -5,6 +5,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    home_town = models.CharField(max_length=255, null=True)
     preferred_temperature_min = models.FloatField(default=15.0) # Default min temperature 
     preferred_temperature_max = models.FloatField(default=25.0) # Default max temperature 
     likes_rain = models.BooleanField(default=False) # Default preference for rain

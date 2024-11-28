@@ -10,16 +10,6 @@ class EditProfileForm(UserChangeForm):
 		fields = ('username', 'first_name', 'last_name', 'email', 'password',)
 
 class SignUpForm(UserCreationForm):
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), )
-	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
-	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}))
-	
-	
-	class Meta:
-		model = User
-		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
-
-class SignUpForm(UserCreationForm):
     email = forms.EmailField(
         label="",
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}),
@@ -33,6 +23,11 @@ class SignUpForm(UserCreationForm):
         label="",
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+    )
+    home_town = forms.CharField(
+        label="",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Home Town'}),
     )
 
     # Add other UserProfile fields
@@ -64,6 +59,7 @@ class SignUpForm(UserCreationForm):
             'email',
             'password1',
             'password2',
+            'home_town',
             'preferred_temperature_min',
             'preferred_temperature_max',
             'likes_rain',
@@ -89,14 +85,20 @@ class SignUpForm(UserCreationForm):
         self.fields['password2'].label = ''
         self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
 
+        self.fields['home_town'].widget.attrs['class'] = 'form-control'
+        self.fields['home_town'].widget.attrs['placeholder'] = 'Enter Home Location'
+        self.fields['home_town'].label = ''
+        self.fields['home_town'].help_text = '<span class="form-text text-muted"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
+
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=commit)
 
         if commit:
             # Create a related UserProfile only if it doesn't already exist
             UserProfile.objects.get_or_create(
-                user=user,
+                user=user, 
                 defaults={
+                    'home_town': self.cleaned_data.get('home_town'),
                     'preferred_temperature_min': self.cleaned_data.get('preferred_temperature_min'),
                     'preferred_temperature_max': self.cleaned_data.get('preferred_temperature_max'),
                     'likes_rain': self.cleaned_data.get('likes_rain'),
