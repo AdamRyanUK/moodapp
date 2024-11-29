@@ -5,12 +5,9 @@ from .models import UserProfile
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         'user', 
+        'hometown',
         'latitude', 
         'longitude', 
-        'preferred_temperature_min',
-        'preferred_temperature_max',
-        'likes_rain',
-        'sun_worshipper',
         )  # Customize as needed
 
 

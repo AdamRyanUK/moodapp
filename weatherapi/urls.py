@@ -1,7 +1,9 @@
-# In yourapp/urls.py
 from django.urls import path
-from .views import SubmitFeedbackView
+from django.http import HttpResponse
+
+def placeholder_view(request):
+    return HttpResponse("Weather API is Under Construction.")
 
 urlpatterns = [
-    path('submit-feedback/', SubmitFeedbackView.as_view(), name='submit-feedback'),
+    path('', placeholder_view, name='placeholder'),  # Placeholder URL pattern
 ]

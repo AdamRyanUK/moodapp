@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 class DailyForecast(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dailyforecasts')
     date = models.DateField()
     summary = models.TextField(null=True, blank=True)
     weather = models.CharField(max_length=50, null=True, blank=True)
@@ -47,11 +47,6 @@ class HistoricalForecast(models.Model):
     def __str__(self):
         return f"Forecast for {self.user} on {self.date_generated}"
 
-class WeatherFeedback(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    date = models.DateField()
-    rating = models.IntegerField(choices=[(1, 'Very Bad'), (2, 'Bad'), (3, 'Neutral'), (4, 'Good'), (5, 'Very Good')])
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('user', 'date')  
+
+

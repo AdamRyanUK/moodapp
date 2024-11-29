@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from geopy.geocoders import Nominatim # type: ignore
 from geopy.exc import GeocoderTimedOut # type: ignore
 import requests
-from .models import LocationHistory
+from weatherpreferences.models import LocationHistory
 from django.utils.timezone import now
 
 def get_nearest_town(latitude, longitude):

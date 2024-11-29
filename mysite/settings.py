@@ -21,7 +21,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # setting the fallback login url 
 
-LOGIN_URL = '/login/'  # Change this to your custom login URL
+LOGIN_URL = '/authenticate/login/'  # Change this to your custom login URL
 
 # where users are redirected after a sucessful login i.e. homepage
 
@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authenticate',
+    'core',
     'weatherapi',
+    'weatherpreferences',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'authenticate.middleware.SaveLocationMiddleware',
+    'core.middleware.SaveLocationMiddleware',
     'weatherapi.middleware.ForecastMiddleware',
 ]
 
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'core/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

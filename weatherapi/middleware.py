@@ -11,7 +11,7 @@ class ForecastMiddleware:
         if request.user.is_authenticated:
             # Get the user's latest forecast
             user = request.user
-            latest_forecast = user.dailyforecast_set.order_by('-date').first()
+            latest_forecast = user.dailyforecasts.order_by('-date').first()
             
             # Check if there's no forecast or if the latest forecast is outdated
             today = date.today()
