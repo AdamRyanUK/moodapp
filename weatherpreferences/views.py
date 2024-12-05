@@ -8,9 +8,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from authenticate.models import UserProfile
-from .models import LocationHistory, WeatherFeedback, HealthConditions, WeatherPreferences
+from .models import WeatherFeedback, HealthConditions, WeatherPreferences
 from authenticate.models import UserProfile
 from .forms import WeatherPreferencesForm, HealthConditionsForm
+from weatherapi.services import fetch_forecast_by_lat_lon
 
 @csrf_exempt  # Add this to bypass CSRF for API calls (be mindful of CSRF security in production)
 @login_required
@@ -39,37 +40,20 @@ def location_history(request):
     # Get the user's location history
     history = LocationHistory.objects.filter(user=request.user).order_by('-timestamp')
     
-    return render(request, 'userpreferences/location_history.html', {
+    return render(request, 'weatherpreferences/location_history.html', {
         'history': history,
     })
 
 @login_required
 def feedback_calendar_view(request):
     feedbacks = WeatherFeedback.objects.filter(user=request.user).order_by('date')
-    return render(request, 'userpreferences/my_history.html', {'feedbacks': feedbacks})
+    return render(request, 'weatherpreferences/my_history.html', {'feedbacks': feedbacks})
 
-@method_decorator(csrf_exempt, name='dispatch')
-class SubmitFeedbackView(View):
-    def post(self, request):
-        if not request.user.is_authenticated:
-            return JsonResponse({'error': 'User not authenticated'}, status=401)
-
-        try:
-            rating = int(request.POST.get('rating'))
-            if rating not in range(1, 6):
-                return JsonResponse({'error': 'Invalid rating'}, status=400)
-
-            today = date.today()
-
-            feedback, created = WeatherFeedback.objects.update_or_create(
-                user=request.user,
-                date=today,
-                defaults={'rating': rating}
-            )
-            return JsonResponse({'success': True, 'created': created})
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+    def get(self, request):
+        context = {
+            'is_authenticated': request.user.is_authenticated,
+        }
+        return render(request, 'your_template.html', context)
 
 def register_weather_preferences(request):
     if request.method == 'POST':
@@ -105,3 +89,29 @@ def preference_summary(request):
         'user_profile': user_profile,
     }
     return render(request, 'weatherpreferences/preference_summary.html', context)
+
+from django.utils import timezone
+def submit_feedback(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        # Extract the data from the request
+        rating = data.get('rating')
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        city = data.get('city')
+
+        # Create or update the feedback record
+        feedback = WeatherFeedback.objects.create(
+            user=request.user,
+            date=timezone.now().date(),
+            rating=rating,
+            latitude=latitude,
+            longitude=longitude,
+            city=city
+        )
+
+        # Return success response
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)

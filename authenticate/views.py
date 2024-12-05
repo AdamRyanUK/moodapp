@@ -32,19 +32,33 @@ def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
+            # Save the user from the form
             user = form.save()
-            hometown = form.cleaned_data.get('hometown')
-            # Use get_or_create to avoid duplicate UserProfile creation
-            user_profile, created = UserProfile.objects.get_or_create(user=user, defaults={'hometown': hometown})
+
+            # Extract data from the POST request
+            hometown = request.POST.get('hometown', '')
+            latitude = request.POST.get('latitude', None)
+            longitude = request.POST.get('longitude', None)
+
+            # Create or update the UserProfile
+            user_profile, created = UserProfile.objects.get_or_create(
+                user=user,
+                defaults={'hometown': hometown, 'latitude': latitude, 'longitude': longitude}
+            )
             if not created:
                 user_profile.hometown = hometown
+                user_profile.latitude = latitude
+                user_profile.longitude = longitude
                 user_profile.save()
-            
+
+            # Authenticate and log the user in
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
-            messages.success(request, ('You Have Registered...'))
+
+            # Display a success message and redirect to the next step
+            messages.success(request, 'You have registered successfully!')
             return redirect('register_weather_preferences')
     else:
         form = SignUpForm()
@@ -78,5 +92,8 @@ def change_password(request):
 	
 	context = {'form': form}
 	return render(request, 'authenticate/change_password.html', context)
+
+def landing_page(request): 
+	return render(request, 'authenticate/landing_page.html')
 
 

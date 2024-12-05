@@ -27,17 +27,24 @@ class WeatherFeedback(models.Model):
     date = models.DateField()
     rating = models.IntegerField(choices=[(1, 'Very Bad'), (2, 'Bad'), (3, 'Neutral'), (4, 'Good'), (5, 'Very Good')])
     created_at = models.DateTimeField(auto_now_add=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    icon = models.IntegerField(null=True, blank=True)
+    temperature = models.FloatField(null=True, blank=True)
+    temperature_min = models.FloatField(null=True, blank=True)
+    temperature_max = models.FloatField(null=True, blank=True)
+    wind_speed = models.FloatField(null=True, blank=True)
+    wind_dir = models.CharField(max_length=10, null=True, blank=True)
+    wind_angle = models.IntegerField(null=True, blank=True)
+    cloud_cover = models.IntegerField(null=True, blank=True)
+    precipitation_total = models.FloatField(null=True, blank=True)
+    precipitation_type = models.CharField(max_length=50, null=True, blank=True)
 
     class Meta:
-        unique_together = ('user', 'date')  
+        unique_together = ('user', 'date')
 
-class LocationHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='location_history')
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    city = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)  # Automatically sets the timestamp when a new record is created
-    
     def __str__(self):
-        return f"{self.city} - {self.timestamp}"
+        return f"{self.user.username} - {self.date}"
+
 

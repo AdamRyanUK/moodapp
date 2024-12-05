@@ -5,6 +5,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('authenticate/', include('authenticate.urls')),
-    path('weather/', include('weatherapi.urls')),
+    path('weatherapi/', include('weatherapi.urls')),
     path('weatherpreferences/', include('weatherpreferences.urls')),
 ]

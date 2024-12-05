@@ -3,9 +3,14 @@ from django.conf import settings
 from .models import DailyForecast, HistoricalForecast
 import requests
 import logging
+import pycountry
+import requests
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+# my API key
+api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici" 
 
 def fetch_and_save_forecast(user):
     # Get user's saved geolocation
@@ -13,7 +18,6 @@ def fetch_and_save_forecast(user):
     latitude = user_profile.latitude
     longitude = user_profile.longitude
 
-    api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
     url = f"https://www.meteosource.com/api/v1/startup/point"
     params = {
         'lat': latitude,
@@ -97,7 +101,6 @@ def fetch_and_save_forecast(user):
         raise
 
 def get_forecast_for_location(location):
-    api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
     url = f"https://www.meteosource.com/api/v1/free/point"
     params = {
         'place_id': location,
@@ -136,3 +139,80 @@ def get_forecast_for_location(location):
         return [], "Unknown"
 
     return [], "Unknown"
+
+def get_country_code(country_name):
+    try:
+        country = pycountry.countries.lookup(country_name)
+        return country.alpha_2.lower()
+    except LookupError:
+        return None
+
+def get_city_suggestions(query):
+    url = f"https://www.meteosource.com/api/v1/startup/find_places_prefix?text={query}&language=en&key={api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        suggestions = []
+        unique_place_ids = set()
+        for city in data:  # Directly iterate through the list
+            if city['place_id'] not in unique_place_ids:
+                unique_place_ids.add(city['place_id'])
+                country_code = get_country_code(city['country'])
+                suggestions.append({
+                    'place_id': city['place_id'],
+                    'name': city['name'],
+                    'adm_area1': city.get('adm_area1', ''),
+                    'country': city['country'],
+                    'country_code': country_code,
+                    'lat': city.get('lat', ''),
+                    'lon': city.get('lon', '')
+                })
+        return suggestions
+    return []
+
+import requests
+import logging
+
+def parse_coordinate(coord):
+    value = float(coord[:-1])
+    if coord[-1] in ['S', 'W']:
+        return -value
+    return value
+
+def fetch_forecast_by_lat_lon(lat, lon):
+    api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
+    url = f"https://www.meteosource.com/api/v1/startup/point"
+    params = {
+        'lat': lat,
+        'lon': lon,
+        'sections': 'daily',
+        'language': 'en',
+        'units': 'auto',
+        'key': api_key
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        data = response.json()
+        
+        # Extract relevant weather data
+        weather_data = []
+        for forecast_data in data['daily']['data']:
+            weather_data.append({
+                'day': forecast_data['day'],
+                'summary': forecast_data.get('summary'),
+                'icon': forecast_data['all_day'].get('icon'),
+                'temperature_min': forecast_data['all_day'].get('temperature_min'),
+                'temperature_max': forecast_data['all_day'].get('temperature_max'),
+                'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
+                'wind_speed': forecast_data['all_day']['wind'].get('speed'),
+            })
+        return weather_data
+
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch weather data: {e}")
+        return []
+

@@ -21,7 +21,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # setting the fallback login url 
 
-LOGIN_URL = '/authenticate/login/'  # Change this to your custom login URL
+LOGIN_URL = '/authenticate/' # Change this to your custom login URL
 
 # where users are redirected after a sucessful login i.e. homepage
 
@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.SaveLocationMiddleware',
     'weatherapi.middleware.ForecastMiddleware',
 ]
 
@@ -67,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'mysite.context_processors.add_user_status',
             ],
         },
     },
@@ -123,3 +123,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'core', 'static'),
+]

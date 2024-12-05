@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Remove default padding and margin for html and body */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    /* Hero Section Style */
+    .hero-section {
+        background-image: url('{% static "images/backgrounds/website-background.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        height: 100vh; /* Ensures the section takes up the full viewport height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional: Add text shadow for readability */
+        margin: 0; /* Remove margin around the section */
+        padding: 0; /* Ensure no padding is applied */
+    }
+
+    /* Ensures no padding is applied to the container */
+    .container, .container-fluid {
+        padding: 0 !important;
+        margin: 0 auto; /* Centers the container */
+    }
+
+    /* Additional Style */
+    .form-container {
+        max-width: 400px;
+        margin: auto;
+    }
+
+    button {
+        margin: 10px;
+    }
+
+    .features-section, .testimonials-section {
+        margin: 20px 0;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <h1>Track How Weather Impacts Your Mood</h1>
+    <p>Join us for free today.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-3">Login</a>
+    <a href="{% url 'register' %}" class="btn btn-secondary btn-lg mt-3">Register</a>
+</div>
+
+{% endblock %}

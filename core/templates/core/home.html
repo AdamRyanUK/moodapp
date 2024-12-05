@@ -19,8 +19,11 @@
     </div>
     <div class="col-md-4 d-flex justify-content-center">
         <!-- Search Form -->
-        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center">
-            <input class="form-control mr-2" type="text" name="location" placeholder="Get forecast for somewhere else">
+        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center position-relative">
+            <input class="form-control mr-2" type="text" id="search-location" name="location" placeholder="Get forecast for somewhere else" autocomplete="off">
+            <ul id="suggestions" class="suggestion-box list-group mt-1"></ul>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
             <button type="submit" class="btn btn-primary btn-lg">Submit</button>
         </form>
     </div>
@@ -65,4 +68,34 @@
     <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .suggestion-box {
+        position: absolute;
+        z-index: 1000;
+        max-height: 200px; /* Limit the height */
+        overflow-y: auto; /* Enable scrolling */
+        width: calc(100% - 40px); /* Match the width of the input field */
+        background-color: white; /* Background color */
+        border: 1px solid #ccc; /* Border color */
+        border-top: none; /* Remove the top border */
+        top: calc(100% + 10px); /* Position below the input field */
+        left: 0; /* Align with the input field */
+    }
+
+    .suggestion-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+</style>
 {% endblock %}
