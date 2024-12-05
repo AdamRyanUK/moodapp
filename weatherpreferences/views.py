@@ -91,6 +91,13 @@ def preference_summary(request):
     return render(request, 'weatherpreferences/preference_summary.html', context)
 
 from django.utils import timezone
+import json
+from django.http import JsonResponse
+from weatherapi.services import fetch_forecast_by_lat_lon
+from .models import WeatherFeedback
+
+@csrf_exempt
+@login_required
 def submit_feedback(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -101,17 +108,35 @@ def submit_feedback(request):
         longitude = data.get('longitude')
         city = data.get('city')
 
-        # Create or update the feedback record
-        feedback = WeatherFeedback.objects.create(
-            user=request.user,
-            date=timezone.now().date(),
-            rating=rating,
-            latitude=latitude,
-            longitude=longitude,
-            city=city
-        )
+        # Fetch the weather data for the user's location
+        weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
 
-        # Return success response
-        return JsonResponse({'success': True})
+        # If weather data is available, save the forecast variables along with the feedback
+        if weather_data:
+            # Assuming the first entry in weather_data is today's forecast
+            today_weather = weather_data[0]
+            
+            # Create or update the feedback record with the forecast data
+            feedback, created = WeatherFeedback.objects.update_or_create(
+                user=request.user,
+                date=timezone.now().date(),
+                defaults={
+                    'rating': rating,
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'city': city,
+                    'icon': today_weather.get('icon'),
+                    'temperature': today_weather.get('temperature_min'),
+                    'temperature_min': today_weather.get('temperature_min'),
+                    'temperature_max': today_weather.get('temperature_max'),
+                    'wind_speed': today_weather.get('wind_speed'),
+                    'precipitation_total': today_weather.get('precipitation_amt'),
+                    'precipitation_type': today_weather.get('precipitation_type'),
+                }
+            )
+            
+            return JsonResponse({'success': True, 'message': 'Your feedback and weather data have been saved.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
