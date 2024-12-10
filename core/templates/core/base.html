@@ -84,15 +84,15 @@
                     </div>
                     
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Skip</button>
                         <button type="button" id="submitRating" 
                                 data-url="{% url 'submit_feedback' %}" 
                                 data-hometown="{{ user.userprofile.hometown }}" 
                                 data-latitude="{{ user.userprofile.latitude }}" 
                                 data-longitude="{{ user.userprofile.longitude }}" 
-                                class="btn btn-primary">
+                                class="btn btn-primary btn-lg">
                             Submit
                         </button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Skip</button>
                     </div>
                     
                 </div>

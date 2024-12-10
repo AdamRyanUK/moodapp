@@ -8,5 +8,6 @@ urlpatterns = [
     path('feedback-calendar/', views.feedback_calendar_view, name='feedback_calendar'),
     path('register-weather-preferences/', views.register_weather_preferences, name='register_weather_preferences'),
     path('preference-summary/', views.preference_summary, name='preference-summary'),
-    path('submit_feedback/', views.submit_feedback, name='submit_feedback'),    
+    path('submit_feedback/', views.submit_feedback, name='submit_feedback'),   
+    path('check-feedback-status/', views.check_feedback_status, name='check-feedback-status'), 
     ]

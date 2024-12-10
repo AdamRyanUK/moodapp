@@ -1,12 +1,20 @@
 $(document).ready(function () {
-    // Show the modal if the user is authenticated
-    if (isAuthenticated) {
-        $('#helloModal').modal('show');
-    }
+    // Fetch the feedback status first
+    fetch('/weatherpreferences/check-feedback-status/')
+        .then(response => response.json())
+        .then(data => {
+            // Check the response and show the modal if the user has not submitted feedback today
+            if (data.has_submitted === false && isAuthenticated) {
+                // Show the modal only if feedback hasn't been submitted today
+                $('#helloModal').modal('show');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking feedback status:', error);
+        });
 
     // Highlight the selected rating button
     const buttons = document.querySelectorAll('.rating-btn');
-
     buttons.forEach(button => {
         button.addEventListener('click', function () {
             // Remove 'active' class from all buttons
@@ -19,7 +27,6 @@ $(document).ready(function () {
 
     // Submit the rating when the user clicks submit
     document.getElementById('submitRating').addEventListener('click', function () {
-        // Check if the user is authenticated (can use a Django variable like isAuthenticated)
         if (!isAuthenticated) {
             alert('You must be logged in to submit a rating.');
             return;
@@ -68,3 +75,4 @@ $(document).ready(function () {
         }
     });
 });
+

@@ -2,14 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from weatherapi.models import DailyForecast
 from weatherapi.services import fetch_forecast_by_lat_lon, fetch_and_save_forecast
+from weatherapi.moodscore import calculate_mood_score
 from datetime import date
 
-from django.shortcuts import render
-
-# View for handling both logged-in and non-logged-in users
 def home(request):
     if request.user.is_authenticated:
-        # This is the view for logged-in users
         city = None
         weather_data = None
         location = request.GET.get('location')
@@ -40,6 +37,7 @@ def home(request):
                         'precipitation_amt': forecast.precipitation_total,
                         'precipitation_type': forecast.precipitation_type,
                         'wind_speed': forecast.wind_speed,
+                        'mood_score': calculate_mood_score(request.user, forecast),  # Calculate mood score
                     }
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None

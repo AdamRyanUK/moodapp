@@ -47,6 +47,7 @@
             <th scope="col">Precipitation Amount</th>
             <th scope="col">Precipitation Type</th>
             <th scope="col">Wind Speed</th>
+            <th scope="col">Mood Score</th> <!-- New column for Mood Score -->
         </tr>
     </thead>
     <tbody>
@@ -60,6 +61,7 @@
             <td>{{ data.precipitation_amt }}</td>
             <td>{{ data.precipitation_type }}</td>
             <td>{{ data.wind_speed }}</td>
+            <td>{{ data.mood_score }}</td> <!-- Display Mood Score -->
         </tr>
         {% endfor %}
     </tbody>

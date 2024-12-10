@@ -140,3 +140,14 @@ def submit_feedback(request):
             return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
+
+from django.utils.timezone import now
+
+@login_required
+def check_feedback_status(request):
+    """Check if the user has submitted feedback for today."""
+    if request.method == 'GET':
+        today = now().date()
+        feedback_exists = WeatherFeedback.objects.filter(user=request.user, date=today).exists()
+        return JsonResponse({'has_submitted': feedback_exists})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
