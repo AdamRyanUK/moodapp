@@ -13,7 +13,7 @@ SECRET_KEY = '=4kyj)60h7iy7)_3%djs%npl6*#*pc&-p(-)7pzr$4ae9c+-@z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [*]
 
 # Setting the default primary key field type
 
