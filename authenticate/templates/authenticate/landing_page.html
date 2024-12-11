@@ -1,32 +1,35 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% block container_class %}{% endblock %}
 {% block content %}
+
 <style>
     /* Remove default padding and margin for html and body */
     body, html {
         margin: 0;
         padding: 0;
         height: 100%;
+        font-family: 'Roboto', sans-serif;
     }
 
     /* Hero Section Style */
     .hero-section {
         background-position: center;
-        height: 100vh; /* Ensures the section takes up the full viewport height */
+        height: 40vh; /* Ensures the section takes up the full viewport height */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional: Add text shadow for readability */
-        margin: 0; /* Remove margin around the section */
-        padding: 0; /* Ensure no padding is applied */
+        background-color: #e6e6e6;
+        color: rgb(104, 104, 104);
+        margin: 0;
+        padding: 0;
     }
 
     /* Ensures no padding is applied to the container */
     .container, .container-fluid {
         padding: 0 !important;
-        margin: 0 auto; /* Centers the container */
+        margin: 0 auto;
     }
 
     /* Additional Style */
@@ -42,14 +45,162 @@
     .features-section, .testimonials-section {
         margin: 20px 0;
     }
+
+    /* New Sections Style */
+    .section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 50px 20px;
+        background-color: #f9f9f9;
+    }
+
+    .section-content {
+        width: 50%;
+        padding-left: 20px;
+        text-align: center;
+    }
+
+    .section-image {
+        width: 50%;
+        text-align: center;
+    }
+
+ /* Specific class for the larger image */
+    .section-image.double-size img {
+        max-width: 800px !important; /* Adjust this value to double the size */
+        width: 80% !important;
+        height: auto !important;
+    }
+
+    /* General image styling */
+    .section-image img {
+        max-width: 200px;
+        width: 50%;
+        height: auto;
+    }
+
+    .section-one {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 50px 20px;
+        background-color: #f9f9f9;
+    }
+
+    .section-one-content h2 {
+        margin-bottom: 20px;
+    }
+
+    .section-one-content p {
+        margin-bottom: 15px;
+    }
+
+    .bullet-points {
+        padding: 50px 20px;
+        background-color: #e6e6e6;
+    }
+
+    /* Remove bullet points */
+    .bullet-points ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .bullet-points li {
+        margin: 15px 0; /* Adds more space between each line */
+        font-size: 1.2rem; /* Makes the text slightly larger */
+    }
+
+    /* Style the bold parts of the list items */
+    .bullet-points li strong {
+        font-size: 1.4rem; /* Make bold text larger */
+        font-weight: 600; /* Slightly bolder weight */
+    }
+
+    /* Add gap between the top buttons */
+    .hero-section .row a {
+        margin-right: 10px; /* Adds a small gap between the buttons */
+    }
+
+    /* Style for Register Button at the bottom */
+    .register-btn {
+        margin-top: 30px; /* Adds space before the Register button */
+        padding: 15px 30px;
+        font-size: 18px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        width: 20%; /* Set the width to 20% */
+        text-align: center;
+        cursor: pointer;
+        display: block; /* Makes it a block-level element */
+        margin-left: auto; /* Centers the button */
+        margin-right: auto; /* Centers the button */
+    }
+
+    .register-btn:hover {
+        background-color: #0056b3;
+    }
+
 </style>
 
 <!-- Hero Section -->
 <div class="hero-section text-center">
-    <h1>Track How Weather Impacts Your Mood</h1>
+    <h1>Track How The Weather Impacts Your Mood</h1>
     <p>Join us for free today.</p>
-    <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-3">Login</a>
-    <a href="{% url 'register' %}" class="btn btn-secondary btn-lg mt-3">Register</a>
+    <div class="row">    
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-3">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-secondary btn-lg mt-3">Register</a>
+    </div>
+</div>
+
+<!-- Centralized Text Section -->
+<div class="section">
+    <div class="section-content">
+        <h2>Track Your Mood, Transform Your Life</h2>
+        <p>Understand How Weather Impacts Your Mood</p>
+        <p>We live in a world where we meticulously track everything: our heart rate, steps, weight, and even our sleep. But there's one crucial aspect we often overlook – our mood and how the weather makes us feel.</p>
+        <p>Take Charge of Your Mental Well-Being</p>
+        <p>With Clearsky, you can easily record how you feel with just one tap a day. By simply rating how the weather makes you feel, you'll start to see the big picture of how weather impacts your mental well-being.</p>
+    </div>
+    <div class="section-image">
+        <img src="{% static 'images/general_images/3d_rain.png' %}" alt="Track Your Mood">
+    </div>
+</div>
+
+<!-- Why Track Your Mood Section -->
+<div class="section">
+    <div class="section-image double-size">
+        <img src="{% static 'images/general_images/mock_mobile.png' %}" alt="Features" class="double-size-image">
+    </div>
+    <div class="section-content">
+        <h2>Why Track Your Mood?</h2>
+        <p><strong>Personalized Insights</strong><br>Your mood tracker offers personalized insights based on your ratings. See how different weather conditions affect your mood and get tailored tips.</p>
+        <p><strong>Benefits for Those with Low Mood</strong><br>For those with low mood or SAD, tracking your mood helps identify patterns and triggers, allowing proactive mental health management.</p>
+        <p><strong>Simple and Effective</strong><br>Our one-tap system makes it easy to record your feelings. Over time, build a mood diary that reveals valuable trends and correlations.</p>
+        <p><strong>See the Big Picture</strong><br>Visualize your mood over time. Understand patterns and take informed actions to improve your mental well-being.</p>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="section-one">
+    <div class="section-one-content">
+        <h2>Features</h2>
+        <div class="bullet-points">
+            <ul>
+                <li><strong>Daily Mood Tracking</strong>: Record your mood effortlessly every day.</li>
+                <li><strong>Weather Integration</strong>: See how different weather conditions correlate with your mood.</li>
+                <li><strong>Personalized Reports</strong>: Receive weekly summaries and insights tailored to you.</li>
+                <li><strong>Newsletter Opt-In</strong>: Stay updated with tips and articles on mental health and wellness.</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Large Register Button -->
+    <a href="{% url 'register' %}" class="register-btn">Register Now</a>
 </div>
 
 {% endblock %}
