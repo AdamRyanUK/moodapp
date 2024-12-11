@@ -16,7 +16,13 @@ def calculate_mood_score(user, forecast):
         # Temperature Max Calculation (quadratic adjustment)
         if preferences.ideal_temp_max:
             ideal_temp_max = float(preferences.ideal_temp_max)
-            actual_temp_max = forecast.temperature_max
+            
+            # Check if forecast is a dictionary or model instance
+            if isinstance(forecast, dict):  # Searchable forecast (dictionary)
+                actual_temp_max = forecast.get('temperature_max')
+            else:  # User-specific forecast (model instance)
+                actual_temp_max = forecast.temperature_max
+            
             if actual_temp_max is not None:
                 temp_diff = abs(ideal_temp_max - actual_temp_max)
                 # Apply a quadratic scale: squaring the temperature difference 
@@ -24,39 +30,49 @@ def calculate_mood_score(user, forecast):
                 mood_score -= (temp_diff ** 2) / 30  # Adjust the divisor to fine-tune the impact
 
         # Wind Speed Calculation
-        if preferences.wind_hater and forecast.wind_speed is not None:
-            wind_speed = forecast.wind_speed
-            if preferences.wind_hater == 'true' and wind_speed > 10:
-                mood_score -= 3  # Subtract if wind is too high for the user
-            elif preferences.wind_hater == 'false' and wind_speed < 5:
-                mood_score += 2  # Add if wind is low (preferred by the user)
+        if preferences.wind_hater:
+            if isinstance(forecast, dict):  # Searchable forecast (dictionary)
+                wind_speed = forecast.get('wind_speed')
+            else:  # User-specific forecast (model instance)
+                wind_speed = forecast.wind_speed
+
+            if wind_speed is not None:
+                if preferences.wind_hater == 'true' and wind_speed > 10:
+                    mood_score -= 3  # Subtract if wind is too high for the user
+                elif preferences.wind_hater == 'false' and wind_speed < 5:
+                    mood_score += 2  # Add if wind is low (preferred by the user)
 
         # Sun Lover Calculation (based on weather icon)
-        if preferences.sun_lover is not None and forecast.icon is not None:
-            icon = forecast.icon
-            sun_lover = preferences.sun_lover  # 'true' or 'false'
+        if preferences.sun_lover is not None:
+            if isinstance(forecast, dict):  # Searchable forecast (dictionary)
+                icon = forecast.get('icon')
+            else:  # User-specific forecast (model instance)
+                icon = forecast.icon
 
-            # Define impact based on the weather icon
-            if icon == 2:  # Sunny (maximum positive impact)
-                impact = 3
-            elif icon == 3:  # Partly sunny (moderate positive impact)
-                impact = 2
-            elif icon == 4:  # Cloudy (neutral impact)
-                impact = 0
-            elif icon == 5:  # Overcast (slightly negative impact)
-                impact = -1
-            elif 6 <= icon <= 36:  # Bad weather (negative impact)
-                impact = -2
-            else:
-                impact = 0  # Default if icon is unknown
+            if icon is not None:
+                sun_lover = preferences.sun_lover  # 'true' or 'false'
 
-            # Adjust mood score based on sun_lover preference
-            if sun_lover == 'true':
-                # Sun lovers react positively to sunny weather and negatively to bad weather
-                mood_score += impact
-            else:
-                # Non-sun lovers react negatively to sunny weather and positively to bad weather
-                mood_score -= impact
+                # Define impact based on the weather icon
+                if icon == 2:  # Sunny (maximum positive impact)
+                    impact = 3
+                elif icon == 3:  # Partly sunny (moderate positive impact)
+                    impact = 2
+                elif icon == 4:  # Cloudy (neutral impact)
+                    impact = 0
+                elif icon == 5:  # Overcast (slightly negative impact)
+                    impact = -1
+                elif 6 <= icon <= 36:  # Bad weather (negative impact)
+                    impact = -2
+                else:
+                    impact = 0  # Default if icon is unknown
 
-    # Final mood score, capped between 1 and 10
-    return max(min(mood_score, 10), 1)
+                # Adjust mood score based on sun_lover preference
+                if sun_lover == 'true':
+                    # Sun lovers react positively to sunny weather and negatively to bad weather
+                    mood_score += impact
+                else:
+                    # Non-sun lovers react negatively to sunny weather and positively to bad weather
+                    mood_score -= impact
+
+    # Final mood score, rounded to an integer and capped between 1 and 10
+    return max(min(round(mood_score), 10), 1)

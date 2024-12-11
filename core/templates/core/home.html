@@ -1,51 +1,46 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load custom_filters %}
+
+<td>
+    <button class="mood-score-btn" style="background-color: {{ data.mood_score|mood_score_color }}">
+        {{ data.mood_score }}
+    </button>
+</td>
+
 
 {% block content %}
 
 <h1 style="text-align: center;">{{ user.first_name }}'s Personalised Weather Forecast</h1>
-
-<div class="row align-items-center">
-    <div class="col-md-4">
-        <!-- City Card -->
-        {% if city %}
-        <div class="card city-card">
-            <div class="card-body">
-                <h5 class="card-title">Current Location</h5>
-                <p class="card-text">{{ city }}</p>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    <div class="col-md-4 d-flex justify-content-center">
+<br>
+<div class="row align-items-center"> 
+    <div class="col-md-9 d-flex justify-content-center">
         <!-- Search Form -->
-        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center position-relative">
-            <input class="form-control mr-2" type="text" id="search-location" name="location" placeholder="Get forecast for somewhere else" autocomplete="off">
+        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center justify-content-center position-relative w-100">
+            <input class="form-control mr-2 search-box" type="text" id="search-location" name="location" placeholder="Get forecast for somewhere else" autocomplete="off">
             <ul id="suggestions" class="suggestion-box list-group mt-1"></ul>
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
             <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-        </form>
+        </form>        
     </div>
-    <div class="col-md-4 d-flex justify-content-end">
+    <div class="col-md-3 d-flex justify-content-center">
         <!-- Insights Button -->
         <a href="" class="btn btn-secondary btn-lg">Insights</a>
     </div>
 </div>
-
+<br>
+<br>
 <!-- Forecast Table -->
 {% if weather_data %}
-<h2>Forecast for {{ city }}</h2>
+<h2 style="text-align: center;">Forecast for {{ city }}</h2>
 <table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">Day</th>
-            <th scope="col">Summary</th>
             <th scope="col">Icon</th>
-            <th scope="col">Temperature Min</th>
             <th scope="col">Temperature Max</th>
             <th scope="col">Precipitation Amount</th>
-            <th scope="col">Precipitation Type</th>
             <th scope="col">Wind Speed</th>
             <th scope="col">Mood Score</th> <!-- New column for Mood Score -->
         </tr>
@@ -54,14 +49,17 @@
         {% for data in weather_data %}
         <tr>
             <td>{{ data.day }}</td>
-            <td>{{ data.summary }}</td>
             <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
-            <td>{{ data.temperature_min }}</td>
             <td>{{ data.temperature_max }}</td>
             <td>{{ data.precipitation_amt }}</td>
-            <td>{{ data.precipitation_type }}</td>
             <td>{{ data.wind_speed }}</td>
-            <td>{{ data.mood_score }}</td> <!-- Display Mood Score -->
+            <td>
+                <!-- Dynamically setting button color based on mood score -->
+                <button class="mood-score-btn" 
+                        style="border-color: {{ data.mood_score|mood_score_color }}; color: {{ data.mood_score|mood_score_color }};">
+                        {{ data.mood_score }}
+                </button>
+            </td> <!-- Display Mood Score -->
         </tr>
         {% endfor %}
     </tbody>
@@ -74,6 +72,25 @@
 
 {% block extra_head %}
 <style>
+    
+    .search-form {
+    width: 80%; /* Ensures the form stretches to the full column width */
+    }
+    
+    .search-box {
+    border: 3px solid #007bff; /* Make the border bolder */
+    border-radius: 15px; /* Apply rounded edges */
+    padding: 10px 15px; /* Adjust padding for better appearance */
+    font-size: 16px; /* Optional: Adjust font size */
+    width: 80%;/* Ensure the input takes full width of its container */
+    transition: border-color 0.3s ease; /* Smooth transition on focus */
+    }
+
+    .search-box:focus {
+        border-color: #007bff; /* Darker border color when focused */
+        outline: none; /* Remove default focus outline */
+    }
+
     .suggestion-box {
         position: absolute;
         z-index: 1000;
@@ -99,5 +116,32 @@
     .position-relative {
         position: relative;
     }
+
+    /* Styling for the Mood Score Button */
+    .mood-score-btn {
+        background-color: transparent;  /* No background color */
+        border: 4px solid #007bff;      /* Default border color */
+        border-radius: 10px;            /* Rounded edges */
+        padding: 10px 20px;             /* Adjusted padding for better size */
+        font-weight: bold;
+        color: #007bff;                 /* Default text color */
+        cursor: pointer;
+        display: inline-flex;           /* Use flexbox for centering */
+        justify-content: center;        /* Center horizontally */
+        align-items: center;            /* Center vertically */
+        width: 50px;                    /* Fixed width */
+        height: 50px;                   /* Fixed height */
+        text-align: center;
+        font-size: 16px;                /* Adjust text size */
+    }
+
+    .mood-score-btn:hover {
+        background-color: #f0f0f0;      /* Slight background change on hover */
+    }
+
+    .mood-score-btn:focus {
+        outline: none;                  /* Remove focus outline */
+    }
+
 </style>
 {% endblock %}

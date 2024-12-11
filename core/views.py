@@ -16,6 +16,11 @@ def home(request):
         if location and latitude and longitude:
             # Fetch forecast for the entered location using lat/lon
             weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
+
+            # Add mood score to the weather data for searchable forecasts
+            for forecast in weather_data:
+                forecast['mood_score'] = calculate_mood_score(request.user, forecast)
+
             city = location
         else:
             # Fetch weather data based on user's lat/lon
@@ -53,3 +58,6 @@ def home(request):
     else:
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
+
+def solutions(request):
+    return render(request, 'core/solutions.html')
