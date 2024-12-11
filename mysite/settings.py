@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '=4kyj)60h7iy7)_3%djs%npl6*#*pc&-p(-)7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['your-domain.com', 'your-app-name.herokuapp.com']
+ALLOWED_HOSTS = ['your-domain.com', 'clearskyapp.herokuapp.com']
 
 # Setting the default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default='postgres://user:password@hostname:port/dbname'
     )
 }
 
