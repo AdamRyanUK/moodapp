@@ -68,3 +68,19 @@ body {
     color: white;              /* Change emoji color */
 }
 
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .navbar-custom .navbar-brand,
+    .navbar-custom .navbar-nav .nav-link {
+        font-size: 10.5rem !important; /* Significantly increase font size for better readability */
+        padding: 10px 0;  /* Increase padding for touch targets */
+    }
+
+    .navbar-custom {
+        padding: 0 15px; /* Add padding to the navbar */
+    }
+
+    .navbar-custom .navbar-toggler {
+        margin-right: 15px; /* Adjust the position of the toggler */
+    }
+}
