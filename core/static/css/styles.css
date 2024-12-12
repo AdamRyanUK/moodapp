@@ -72,7 +72,7 @@ body {
 @media (max-width: 768px) {
     .navbar-custom .navbar-brand,
     .navbar-custom .navbar-nav .nav-link {
-        font-size: 2.5rem !important; /* Significantly increase font size for better readability */
+        font-size: 1.5rem !important; /* Significantly increase font size for better readability */
         padding: 10px 0;  /* Increase padding for touch targets */
     }
 
