@@ -82,10 +82,20 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-if os.getenv('HEROKU'):
+ENV = os.getenv('ENV')
+
+if ENV == 'production':
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
+    DEBUG = False
+    # Add other production-specific settings here
+elif ENV == 'staging':
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    }
+    DEBUG = True
+    # Add other staging-specific settings here
 else:
     DATABASES = {
         'default': {
@@ -93,6 +103,8 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+    DEBUG = True
+    # Add other development-specific settings here
 
 
 
