@@ -4,30 +4,54 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <h1>Preference Summary</h1>
-            <br>
-            <h2>User Profile</h2>
-            <ul>
-                <li>Hometown: {{ user_profile.hometown }}</li>
-            </ul>
-            <br>
-            <h2>Weather Preferences</h2>
-            <ul>
-                <li>Ideal Max Temperature: {{ weather_preferences.ideal_temp_max }}°C</li>
-                <li>Ideal Min Temperature: {{ weather_preferences.ideal_temp_min }}°C</li>
-                <li>Love Rainy Days: {{ weather_preferences.rain_lover }}</li>
-                <li>Love Snowy Days: {{ weather_preferences.snow_lover }}</li>
-                <li>Sun Worshipper: {{ weather_preferences.sun_lover }}</li>
-                <li>Hate Wind: {{ weather_preferences.wind_hater }}</li>
-            </ul>
-            <br>
-            <h2>Health Conditions</h2>
-            <ul>
-                <li>Seasonal Affective Disorder (SAD): {{ health_conditions.sad }}</li>
-                <li>Joint Pain &/or Arthritis: {{ health_conditions.joint_pain_arthritis }}</li>
-            </ul>
-            <br>
-            <a href="{% url 'home' %}" class="btn btn-primary">Go to Homepage</a>
+            <h1 class="mb-4">Preference Summary</h1>
+            
+            <!-- User Profile Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>User Profile</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><strong>Hometown:</strong> {{ user_profile.hometown }}</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Weather Preferences Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>Weather Preferences</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><strong>Ideal Max Temperature:</strong> {{ weather_preferences.ideal_temp_max }}°C</li>
+                        <li><strong>Ideal Min Temperature:</strong> {{ weather_preferences.ideal_temp_min }}°C</li>
+                        <li><strong>Love Rainy Days:</strong> {{ weather_preferences.rain_lover }}</li>
+                        <li><strong>Love Snowy Days:</strong> {{ weather_preferences.snow_lover }}</li>
+                        <li><strong>Sun Worshipper:</strong> {{ weather_preferences.sun_lover }}</li>
+                        <li><strong>Hate Wind:</strong> {{ weather_preferences.wind_hater }}</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Health Conditions Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>Health Conditions</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><strong>Seasonal Affective Disorder (SAD):</strong> {{ health_conditions.sad }}</li>
+                        <li><strong>Joint Pain &/or Arthritis:</strong> {{ health_conditions.joint_pain_arthritis }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Go to Homepage Button -->
+            <div class="text-center">
+                <a href="{% url 'home' %}" class="btn btn-primary">Go to Homepage</a>
+            </div>
         </div>
     </div>
 </div>
