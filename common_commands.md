@@ -16,7 +16,16 @@ login : heroku login
 git add .
 git commit -m "Message"
 git push origin main # github
-git push heroku main # heroku
+
+*normally push to git - will update staging. 
+when happy use following code to push to prod*
+heroku pipelines:promote --app clearsky-staging-app
+
+*deploy to staging* # not normally needed as done by git#
+git push staging main
+
+*deploy directly to production*
+git push heroku main
 
 *run database migrations*
 heroku run python manage.py migrate
