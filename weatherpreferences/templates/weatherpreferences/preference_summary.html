@@ -24,9 +24,25 @@
                     <h2>Weather Preferences</h2>
                 </div>
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-body">
+                                    <h4 class="card-title">Min Temperature</h4>
+                                    <p class="card-text">{{ weather_preferences.ideal_temp_min }}°C</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-white bg-danger mb-3">
+                                <div class="card-body">
+                                    <h4 class="card-title">Max Temperature</h4>
+                                    <p class="card-text">{{ weather_preferences.ideal_temp_max }}°C</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <ul class="list-unstyled">
-                        <li><strong>Ideal Max Temperature:</strong> {{ weather_preferences.ideal_temp_max }}°C</li>
-                        <li><strong>Ideal Min Temperature:</strong> {{ weather_preferences.ideal_temp_min }}°C</li>
                         <li><strong>Love Rainy Days:</strong> {{ weather_preferences.rain_lover }}</li>
                         <li><strong>Love Snowy Days:</strong> {{ weather_preferences.snow_lover }}</li>
                         <li><strong>Sun Worshipper:</strong> {{ weather_preferences.sun_lover }}</li>
