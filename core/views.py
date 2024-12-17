@@ -59,5 +59,10 @@ def home(request):
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
 
-def solutions(request):
-    return render(request, 'core/solutions.html')
+
+
+def insights(request):
+    return render(request, 'core/insights.html')
+
+def mood_journal(request):
+    return render(request, 'core/mood_journal.html')
