@@ -10,27 +10,6 @@
 
 
 {% block content %}
-<br>
-<h1 style="text-align: center;">{{ user.first_name }}'s Personalised Weather Forecast</h1>
-<br>
-<div class="row align-items-center"> 
-    <div class="col-md-9 d-flex justify-content-center">
-        <!-- Search Form -->
-        <form method="GET" action="{% url 'home' %}" class="search-form d-flex align-items-center justify-content-center position-relative w-100">
-            <input class="form-control mr-2 search-box" type="text" id="search-location" name="location" placeholder="Get forecast for somewhere else" autocomplete="off">
-            <ul id="suggestions" class="suggestion-box list-group mt-1"></ul>
-            <input type="hidden" id="latitude" name="latitude">
-            <input type="hidden" id="longitude" name="longitude">
-            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-        </form>        
-    </div>
-    <div class="col-md-3 d-flex justify-content-center">
-        <!-- Insights Button -->
-        <a href="" class="btn btn-secondary btn-lg">Insights</a>
-    </div>
-</div>
-<br>
-<br>
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
@@ -73,46 +52,6 @@
 {% block extra_head %}
 <style>
     
-    .search-form {
-    width: 80%; /* Ensures the form stretches to the full column width */
-    }
-    
-    .search-box {
-    border: 3px solid #007bff; /* Make the border bolder */
-    border-radius: 15px; /* Apply rounded edges */
-    padding: 10px 15px; /* Adjust padding for better appearance */
-    font-size: 16px; /* Optional: Adjust font size */
-    width: 80%;/* Ensure the input takes full width of its container */
-    transition: border-color 0.3s ease; /* Smooth transition on focus */
-    }
-
-    .search-box:focus {
-        border-color: #007bff; /* Darker border color when focused */
-        outline: none; /* Remove default focus outline */
-    }
-
-    .suggestion-box {
-        position: absolute;
-        z-index: 1000;
-        max-height: 200px; /* Limit the height */
-        overflow-y: auto; /* Enable scrolling */
-        width: calc(100% - 40px); /* Match the width of the input field */
-        background-color: white; /* Background color */
-        border: 1px solid #ccc; /* Border color */
-        border-top: none; /* Remove the top border */
-        top: calc(100% + 10px); /* Position below the input field */
-        left: 0; /* Align with the input field */
-    }
-
-    .suggestion-item {
-        padding: 10px;
-        cursor: pointer;
-    }
-
-    .suggestion-item:hover {
-        background-color: #f0f0f0;
-    }
-
     .position-relative {
         position: relative;
     }
