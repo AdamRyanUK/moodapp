@@ -37,5 +37,3 @@ document.addEventListener("DOMContentLoaded", function() {
 
     toggleButton.addEventListener('click', toggleSidebar);
 });
-
-  

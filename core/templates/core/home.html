@@ -13,36 +13,37 @@
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Day</th>
-            <th scope="col">Icon</th>
-            <th scope="col">Temperature Max</th>
-            <th scope="col">Precipitation Amount</th>
-            <th scope="col">Wind Speed</th>
-            <th scope="col">Mood Score</th> <!-- New column for Mood Score -->
-        </tr>
-    </thead>
-    <tbody>
-        {% for data in weather_data %}
-        <tr>
-            <td>{{ data.day }}</td>
-            <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
-            <td>{{ data.temperature_max }}</td>
-            <td>{{ data.precipitation_amt }}</td>
-            <td>{{ data.wind_speed }}</td>
-            <td>
-                <!-- Dynamically setting button color based on mood score -->
-                <button class="mood-score-btn" 
-                        style="border-color: {{ data.mood_score|mood_score_color }}; color: {{ data.mood_score|mood_score_color }};">
-                        {{ data.mood_score }}
-                </button>
-            </td> <!-- Display Mood Score -->
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Day</th>
+                <th scope="col">Icon</th>
+                <th scope="col">Temperature Max</th>
+                <th scope="col">Precipitation Amount</th>
+                <th scope="col">Wind Speed</th>
+                <th scope="col">Mood Score</th> <!-- New column for Mood Score -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in weather_data %}
+            <tr>
+                <td>{{ data.day }}</td>
+                <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
+                <td>{{ data.temperature_max }}</td>
+                <td>{{ data.precipitation_amt }}</td>
+                <td>{{ data.wind_speed }}</td>
+                <td>
+                    <!-- Dynamically setting button color based on mood score -->
+                    <button class="mood-score-btn" 
+                            style="border-color: {{ data.mood_score|mood_score_color }}; color: {{ data.mood_score|mood_score_color }};">
+                            {{ data.mood_score }}
+                    </button>
+                </td> <!-- Display Mood Score -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% else %}
     <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
@@ -51,7 +52,7 @@
 
 {% block extra_head %}
 <style>
-    
+     
     .position-relative {
         position: relative;
     }
