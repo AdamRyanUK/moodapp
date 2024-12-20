@@ -2,32 +2,26 @@
 {% load static %}
 {% load custom_filters %}
 
-<td>
-    <button class="mood-score-btn" style="background-color: {{ data.mood_score|mood_score_color }}">
-        {{ data.mood_score }}
-    </button>
-</td>
-
-
 {% block content %}
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
+<div class="table-responsive">    
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">Day</th>
+                <th class="freeze-col" scope="col">Day</th>
                 <th scope="col">Icon</th>
                 <th scope="col">Temperature Max</th>
                 <th scope="col">Precipitation Amount</th>
                 <th scope="col">Wind Speed</th>
-                <th scope="col">Mood Score</th> <!-- New column for Mood Score -->
+                <th scope="col">Mood Score</th>
             </tr>
         </thead>
         <tbody>
             {% for data in weather_data %}
             <tr>
-                <td>{{ data.day }}</td>
+                <td class="freeze-col">{{ data.day }}</td>
                 <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
                 <td>{{ data.temperature_max }}</td>
                 <td>{{ data.precipitation_amt }}</td>
@@ -38,50 +32,34 @@
                             style="border-color: {{ data.mood_score|mood_score_color }}; color: {{ data.mood_score|mood_score_color }};">
                             {{ data.mood_score }}
                     </button>
-                </td> <!-- Display Mood Score -->
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
+</div>
 {% else %}
     <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
-
 {% endblock %}
 
 {% block extra_head %}
 <style>
-     
-    .position-relative {
-        position: relative;
-    }
+.mood-score-btn {
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 5px 10px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    /* Styling for the Mood Score Button */
-    .mood-score-btn {
-        background-color: transparent;  /* No background color */
-        border: 4px solid #007bff;      /* Default border color */
-        border-radius: 10px;            /* Rounded edges */
-        padding: 10px 20px;             /* Adjusted padding for better size */
-        font-weight: bold;
-        color: #007bff;                 /* Default text color */
-        cursor: pointer;
-        display: inline-flex;           /* Use flexbox for centering */
-        justify-content: center;        /* Center horizontally */
-        align-items: center;            /* Center vertically */
-        width: 50px;                    /* Fixed width */
-        height: 50px;                   /* Fixed height */
-        text-align: center;
-        font-size: 16px;                /* Adjust text size */
-    }
+.mood-score-btn:hover {
+  background-color: #f0f0f0;
+}
 
-    .mood-score-btn:hover {
-        background-color: #f0f0f0;      /* Slight background change on hover */
-    }
-
-    .mood-score-btn:focus {
-        outline: none;                  /* Remove focus outline */
-    }
-
+.mood-score-btn:focus {
+  outline: none;
+}
 </style>
 {% endblock %}

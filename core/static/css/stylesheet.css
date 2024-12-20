@@ -59,7 +59,9 @@ body{
   margin-left: auto;          /* Push the last item to the right */
 }
 
-
+.magnifying-glass{
+  display: none;
+}
 #navbar svg{
   flex-shrink: 0;
   fill: var(--text-clr);
@@ -348,11 +350,24 @@ body{
 main{
     grid-area: main;
   padding: min(3px, 7%);
+  overflow-x: auto; /* Enable horizontal scrolling */
+  min-width: 0; /*prevent overflow from cutting off text*/
 }
 main p{
   color: var(--secondary-text-clr);
   margin-top: 5px;
   margin-bottom: 15px;
+}
+.table-responsive {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;  
+}
+.table th, .table td {
+  position: relative;
+  white-space: nowrap;
 }
 .container{
   border: 1px solid var(--line-clr);
@@ -362,14 +377,30 @@ main p{
 
   h2, p { margin-top: 1em }
 }
+.table {
+  display: block !important;
+  overflow-x: auto !important;
+  width: 100% !important;
+}
+
 
 
 @media(max-width: 800px){
   body{
     grid-template-columns: 1fr;
   }
+  #navbar ul {
+    justify-content: flex-end;  /* Spread items out but maintain the row layout */
+  }
+  .magnifying-glass{
+    display: block;
+    padding-right: 25px;
+    background-color: #007bff; /* Background color for the rounded rectangle */
+    border-radius: 6px 12px; /* This makes the corners rounded */
+    padding: 2px; /* Add some padding around the icon */
+  }
   main{
-    padding: 2em 1em 60px 1em;
+    padding: 0.5em 1em 1em 1em;
   }
   .container{
     border: none;
@@ -378,6 +409,15 @@ main p{
   .hideOnMobile{
     display: none;
   }
+  .freeze-col {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 1;
+    min-width: 100px; /* Ensure a minimum width for the column */
+    box-shadow: 1px 0 0 #dee2e6;
+  }
+  
   #sidebar{
     height: 60px;
     width: 100%;
