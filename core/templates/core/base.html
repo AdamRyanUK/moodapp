@@ -51,7 +51,7 @@
             <li class="magnifying-glass">
                 <a href="#"></a><svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg></a>
             </li>
-
+             
             {% endif %}     
 
             <li>
@@ -77,22 +77,48 @@
         </ul>
     </nav>
     
-    <!-- Account Sidebar -->
-<div class="account-sidebar">
+    <!-- Forecast Sidebar -->
+<div class="forecast-sidebar">
     <ul>
-        <li onclick="hideAccountSidebar()">
+        <li class="close-forecast-sidebar">
             <a href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#5f6368">
                     <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
                 </svg>
             </a>
         </li>
-        <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
-        <li><a href="{% url 'change_password' %}">Change Password</a></li>
-        <li><a href="{% url 'logout' %}">Logout</a></li>
+        <li>
+            <form method="GET" action="{% url 'home' %}" class="search-form ">
+                <input class="form-control mr-2 search-box " type="text" id="search-location" name="location" placeholder="Get forecast for somewhere else" autocomplete="off">
+                <ul id="suggestions" class="suggestion-box list-group mt-1"></ul>
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
+                        <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+                    </svg>
+                </button>
+            </form>
+        </li>
     </ul>
 </div>
 
+    <!-- Account Sidebar -->
+    <div class="account-sidebar">
+        <ul>
+            <li onclick="hideAccountSidebar()">
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#5f6368">
+                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
+                </a>
+            </li>
+            <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
+            <li><a href="{% url 'change_password' %}">Change Password</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+    
     
 
     <aside id="sidebar">
@@ -146,5 +172,7 @@
 <script src="{% static 'js/feedback.js' %}"></script>
 <script src="{% static 'js/findcity.js' %}"></script>
 <script src="{% static 'js/accountsidebartoggle.js' %}"></script>
+<script src="{% static 'js/forecastsidebartoggle.js' %}"></script>
+
 </div>
 </html>
