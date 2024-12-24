@@ -3,6 +3,15 @@
 {% load custom_filters %}
 
 {% block content %}
+<style>
+/* Mobile styles */
+@media (max-width: 600px) {
+    h2 {
+        font-size: 1.2rem; /* Smaller font size for mobile devices */
+    }
+}
+
+</style>
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
@@ -69,5 +78,6 @@
     .mood-score-btn:focus {
         outline: none;                  /* Remove focus outline */
     }
+
 </style>
 {% endblock %}
