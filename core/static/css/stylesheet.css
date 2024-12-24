@@ -59,9 +59,6 @@ body{
   margin-left: auto;          /* Push the last item to the right */
 }
 
-.magnifying-glass{
-  display: none;
-}
 #navbar svg{
   flex-shrink: 0;
   fill: var(--text-clr);
@@ -218,14 +215,13 @@ body{
 }
 .suggestion-box {
     position: absolute;
-    z-index: 1000;
     max-height: 200px; /* Limit the height */
     overflow-y: auto; /* Enable scrolling */
     width: calc(100% - 40px); /* Match the width of the input field */
     background-color: white; /* Background color */
-    border-top: none; /* Remove the top border */
     top: calc(100% + 10px); /* Position below the input field */
     left: 0; /* Align with the input field */
+    border: #42434a;
 }
 .suggestion-item {
     padding: 10px;
@@ -339,11 +335,12 @@ body{
   border-radius: .5em;
   background: none;
   cursor: pointer;
+}
 
   svg{
     transition: rotate 150ms ease;
   }
-}
+
 #toggle-btn:hover{
   background-color: var(--hover-clr);
 }
@@ -361,6 +358,7 @@ main p{
 }
 .table-responsive {
   overflow-x: auto;
+ 
 }
 .table {
   width: 100%;
@@ -368,6 +366,7 @@ main p{
 }
 .table th, .table td {
   white-space: nowrap;
+ 
 }
 .container{
   border: 1px solid var(--line-clr);
@@ -383,45 +382,112 @@ main p{
   width: 100% !important;
 }
 
+.search-btn-mobile, .search-overlay {
+  display: none;
+}
 
+/* for rating modal.  */
+.rating-btn {
+  border: 2px solid #00bcd4; /* Rounded border */
+  border-radius: 50%;        /* Circular shape */
+  width: 60px;               /* Larger size */
+  height: 60px;
+  background-color: transparent; /* Transparent background */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Smooth hover and click effects */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-@media(max-width: 800px){
-  body{
-    grid-template-columns: 1fr;
+.rating-btn span {
+  font-size: 30px;           /* Larger emoji size */
+  display: block;
+}
+
+.rating-btn:hover {
+  background-color: #e0f7fa; /* Light cyan hover effect */
+}
+
+.rating-btn.active {
+  background-color: #00bcd4; /* Active state color */
+  transform: scale(1.1);     /* Slightly larger */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.rating-btn.active span {
+  color: white;              /* Change emoji color */
+}
+
+@media (max-width: 800px) {
+  #navbar {
+    height: auto; /* Ensure navbar adjusts to content */
   }
+
   #navbar ul {
-    justify-content: flex-end;  /* Spread items out but maintain the row layout */
-    gap: 10px;
+    display: flex; /* Make ul a flex container */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: space-between; /* Distribute items horizontally */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
   }
-  .magnifying-glass{
-    display: block;
-    padding-right: 25px;
-    background-color: #007bff; /* Background color for the rounded rectangle */
-    border-radius: 6px 12px; /* This makes the corners rounded */
-    padding: 2px; /* Add some padding around the icon */
+
+  #navbar li {
+    flex: 1 1 100%; /* Default to full width for all items */
+    display: flex; /* Ensure content inside li is flexed */
+    justify-content: center; /* Center align content */
+    align-items: center; /* Vertically align content */
+    margin: 5px 0; /* Add spacing between items */
   }
-  .forecast-sidebar {
-    position: fixed;
+
+  #navbar li:first-child,
+  #navbar li:last-child {
+    flex: 1 1 48%; /* Share the top row with equal widths */
+    margin: 0; /* Remove extra spacing */
+  }
+
+  #navbar li:nth-child(2) {
+    order: 3; /* Move the second item to the bottom */
+  }
+
+  #navbar li:nth-child(3) {
+    order: 2; /* Move the third item above the second */
+    justify-content: flex-end;
+  }
+
+  .search-form {
+    padding: 0;
+    width: 100%;
+    z-index: 12;
+  }
+
+  .suggestion-box {
+    z-index: 1050;
+    background-color: white;
+    opacity: 1;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%; /* Ensure it takes full width of the parent container */
+    margin-top: 5px; /* Optional, add space from the input field */
+    flex-direction:initial;
     top: 0;
     right: 0;
-    height: 100vh;
-    width: 100%;
-    border-radius: 15px;
-    z-index: 30;
-    background-color: var(--base-clr);
-    box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
-    display: none;
-    flex-direction: column;
   }
-  .forecast-sidebar ul {
-    padding: 0;        /* Remove default padding */
-    margin: 0;         /* Remove default margin */
-    display: flex;     /* Flexbox for layout */
-    flex-direction: column; /* Stack list items vertically */
-    width: 100%;
-    list-style: none;       /* Ensure the ul takes full width */
+
+  .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
   }
-  
+
+  .freeze-col {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 0;
+    min-width: 100px; /* Ensure a minimum width for the column */
+    box-shadow: 1px 0 0 #dee2e6;
+  }
+
   main{
     padding: 0.5em 1em 1em 1em;
     padding-bottom: 60px;
@@ -432,14 +498,6 @@ main p{
   }
   .hideOnMobile{
     display: none;
-  }
-  .freeze-col {
-    position: sticky;
-    left: 0;
-    background: white;
-    z-index: 1;
-    min-width: 100px; /* Ensure a minimum width for the column */
-    box-shadow: 1px 0 0 #dee2e6;
   }
   
   #sidebar{
@@ -502,6 +560,9 @@ main p{
       }
     }
   }
+  .modal-body h1 {
+    font-size: 1.2rem; /* Smaller font size for mobile devices */
+}
   
 }
 
