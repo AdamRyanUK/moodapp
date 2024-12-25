@@ -46,5 +46,24 @@ class WeatherFeedback(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"
+    
+class JournalEntry(models.Model):
+    user = models.ForeignKey(User, related_name='journal_entry', on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    journal_entry = models.TextField()
 
+    def __str__(self):
+        return f"{self.user.username} - {self.date}"
+
+class UserActions(models.Model):
+    user = models.ForeignKey(User, related_name='user_actions', on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    exercised = models.BooleanField(default=False)
+    meditated = models.BooleanField(default=False)
+    socialized = models.BooleanField(default=False)
+    ate_healthily = models.BooleanField(default=False)
+    slept_well = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date}"
 

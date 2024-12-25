@@ -1,6 +1,5 @@
 import json
 from django.http import JsonResponse
-from datetime import date
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
@@ -10,7 +9,7 @@ from django.contrib import messages
 from authenticate.models import UserProfile
 from .models import WeatherFeedback, HealthConditions, WeatherPreferences
 from authenticate.models import UserProfile
-from .forms import WeatherPreferencesForm, HealthConditionsForm
+from .forms import UserActionsForm, JournalEntryForm, WeatherPreferencesForm, HealthConditionsForm
 from weatherapi.services import fetch_forecast_by_lat_lon
 
 @csrf_exempt  # Add this to bypass CSRF for API calls (be mindful of CSRF security in production)
@@ -43,17 +42,6 @@ def location_history(request):
     return render(request, 'weatherpreferences/location_history.html', {
         'history': history,
     })
-
-@login_required
-def feedback_calendar_view(request):
-    feedbacks = WeatherFeedback.objects.filter(user=request.user).order_by('date')
-    return render(request, 'weatherpreferences/my_history.html', {'feedbacks': feedbacks})
-
-    def get(self, request):
-        context = {
-            'is_authenticated': request.user.is_authenticated,
-        }
-        return render(request, 'your_template.html', context)
 
 def register_weather_preferences(request):
     if request.method == 'POST':
@@ -151,3 +139,44 @@ def check_feedback_status(request):
         feedback_exists = WeatherFeedback.objects.filter(user=request.user, date=today).exists()
         return JsonResponse({'has_submitted': feedback_exists})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def mood_journal(request):
+    today = timezone.now().date()
+
+    if request.method == 'POST':
+        form = JournalEntryForm(request.POST)
+        if form.is_valid():
+            journal_entry = form.save(commit=False)
+            journal_entry.user = request.user
+            journal_entry.save()
+        if 'action_questions' in request.POST:
+            return redirect('home')
+        return redirect('action_questions')
+    else:
+        form = JournalEntryForm()
+
+
+    context = {
+        'form': form,
+        'today': today,
+    }
+    return render(request, 'weatherpreferences/mood_journal.html', context)
+
+def action_questions(request):
+    today = timezone.now().date()
+
+    if request.method == 'POST':
+        form = UserActionsForm(request.POST)
+        if form.is_valid():
+            user_actions = form.save(commit=False)
+            user_actions.user = request.user
+            user_actions.save()
+            return redirect('home')
+    else:
+        form = UserActionsForm()
+
+    context = {
+        'form': form,
+        'today': today,
+    }
+    return render(request, 'weatherpreferences/action_questions.html', context)

@@ -1,7 +1,5 @@
 from django import forms
-from .models import WeatherPreferences
-from .models import HealthConditions
-from .models import WeatherFeedback
+from .models import JournalEntry, UserActions, WeatherFeedback, HealthConditions, WeatherPreferences
 
 class HealthConditionsForm(forms.ModelForm):
     class Meta:
@@ -38,6 +36,20 @@ class WeatherFeedbackForm(forms.ModelForm):
             'latitude': forms.HiddenInput(attrs={'id': 'latitude'}),
             'longitude': forms.HiddenInput(attrs={'id': 'longitude'}),
         }
+
+class JournalEntryForm(forms.ModelForm):
+    class Meta:
+        model = JournalEntry
+        fields = ['journal_entry']
+        
+class UserActionsForm(forms.ModelForm):
+    class Meta:
+        model = UserActions
+        fields = ['exercised', 'meditated', 'socialized', 'ate_healthily', 'slept_well']
+        
+
+
+
 
 
 

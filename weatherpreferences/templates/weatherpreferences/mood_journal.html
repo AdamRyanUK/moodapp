@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container" id="mood-journal-container">
+    <div class="card" id="mood-journal-date-card">
+        <div class="card-body">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M360-300q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+            {{ today }}
+        </div>
+    </div>
+    <form id="journal-form" method="post">
+        {% csrf_token %}
+        <textarea name="journal_entry" class="mood-input" placeholder="How are you feeling today?" rows="10" cols="50"></textarea>
+        <div class="buttons">
+            <button type="submit" class="btn btn-primary button" name="submit_type" value="done">Done</button>
+            <button type="submit" class="btn btn-primary button" name="submit_type" value="action_questions">Actions</button>
+        </div>
+    </form>
+</div>
+<style>
+     #mood-journal-container {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        width: 100%; /* Full width */
+        align-items: center;
+        padding-bottom: 30px;
+    }
+    #mood-journal-date-card {
+        border: 3px solid #007bff;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+    .mood-input {
+        border: 3px solid #007bff;
+        border-radius: 15px;
+        padding: 10px;
+        margin-bottom: 20px;
+        width: 100%; /* Full width */
+        box-sizing: border-box; /* Include padding in width */
+    }
+    .buttons {
+        display: flex;
+        justify-content: center; /* Center the buttons */
+        width: 100%;
+    }
+    .button {
+        margin: 0 5px;
+    }
+    .button:last-child {
+        margin-right: 0;
+    }
+
+    @media (max-width: 600px) {
+        .mood-input {
+            align-self: center;
+            width: 90%; /* Shrink width in mobile view */
+        }
+    }
+</style>
+{% endblock %}
