@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from weatherapi.models import DailyForecast
 from weatherapi.services import fetch_forecast_by_lat_lon, fetch_and_save_forecast
 from weatherapi.moodscore import calculate_mood_score
+from datetime import date as datetime_date
 from datetime import date
+from weatherpreferences.models import WeatherFeedback
+import json
 
 def home(request):
     if request.user.is_authenticated:
@@ -59,10 +62,21 @@ def home(request):
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
 
-
-
 def insights(request):
     return render(request, 'core/insights.html')
 
-def mood_journal(request):
-    return render(request, 'core/mood_journal.html')
+@login_required
+def calendar_view(request):
+    today_date = datetime_date.today()
+     # Fetch the feedback data for the logged-in user
+    feedback = WeatherFeedback.objects.filter(user=request.user).order_by('date')
+    
+    # Format feedback as { 'YYYY-MM-DD': rating }
+    feedback_dict = {f.date.strftime('%Y-%m-%d'): f.rating for f in feedback}
+    # Serialize the feedback dictionary to JSON
+    feedback_json = json.dumps(feedback_dict)
+    context = {
+        'date': today_date,
+        'feedback_json': feedback_json,
+    }
+    return render(request, 'core/calendar.html', context)

@@ -368,14 +368,7 @@ main p{
   white-space: nowrap;
  
 }
-.container{
-  border: 1px solid var(--line-clr);
-  border-radius: 1em;
-  margin-bottom: 20px;
-  padding: min(3em, 15%);
 
-  h2, p { margin-top: 1em }
-}
 .table {
   /* display: block !important; */
   overflow-x: auto !important;

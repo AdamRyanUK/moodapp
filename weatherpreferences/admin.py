@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HealthConditions, WeatherPreferences
+from .models import HealthConditions, WeatherPreferences, JournalEntry, UserActions
 
 class HealthConditionsAdmin(admin.ModelAdmin):
     list_display = ('user', 'sad', 'joint_pain_arthritis')

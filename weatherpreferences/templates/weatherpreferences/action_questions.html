@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<style>
+    .noUi-connect { background: linear-gradient(to right, blue, red); }
+
+    .option {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .option:hover {
+        background-color: #f0f0f0;
+    }
+
+    .option.selected {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .centered-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        text-align: center;
+        padding-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container centered-container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Action Questions</h2>
+            <br>
+            <form method="post">
+                {% csrf_token %}
+                <div>
+                    <p>Did you exercise today?</p>
+                    <span class="option" data-value="true" data-target="exercised">Yes</span>
+                    <span class="option" data-value="false" data-target="exercised">No</span>
+                    <input type="hidden" name="exercised" id="exercised">
+                </div>
+
+                <div>
+                    <p>Did you meditate today?</p>
+                    <span class="option" data-value="true" data-target="meditated">Yes</span>
+                    <span class="option" data-value="false" data-target="meditated">No</span>
+                    <input type="hidden" name="meditated" id="meditated">
+                </div>
+
+                <div>
+                    <p>Did you socialize today?</p>
+                    <span class="option" data-value="true" data-target="socialized">Yes</span>
+                    <span class="option" data-value="false" data-target="socialized">No</span>
+                    <input type="hidden" name="socialized" id="socialized">
+                </div>
+
+                <div>
+                    <p>Did you eat healthily today?</p>
+                    <span class="option" data-value="true" data-target="ate_healthily">Yes</span>
+                    <span class="option" data-value="false" data-target="ate_healthily">No</span>
+                    <input type="hidden" name="ate_healthily" id="ate_healthily">
+                </div>
+
+                <div>
+                    <p>Did you sleep well last night?</p>
+                    <span class="option" data-value="true" data-target="slept_well">Yes</span>
+                    <span class="option" data-value="false" data-target="slept_well">No</span>
+                    <input type="hidden" name="slept_well" id="slept_well">
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-secondary btn-lg">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle questions
+        var options = document.querySelectorAll('.option');
+        options.forEach(function(option) {
+            option.addEventListener('click', function() {
+                var target = option.getAttribute('data-target');
+                var inputs = document.querySelectorAll('[data-target="' + target + '"]');
+                inputs.forEach(function(input) { input.classList.remove('selected'); });
+                option.classList.add('selected');
+                document.getElementById(target).value = option.getAttribute('data-value');
+            });
+        });
+    });
+</script>
+{% endblock %}
