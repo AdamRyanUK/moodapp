@@ -48,5 +48,3 @@ class HistoricalForecast(models.Model):
         return f"Forecast for {self.user} on {self.date_generated}"
 
 
-
-

@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('search-location');
     const latitudeInput = document.getElementById('latitude');
     const longitudeInput = document.getElementById('longitude');
+    const countryInput = document.getElementById('country');
     const suggestionBox = document.getElementById('suggestions');
+    const form = document.querySelector('form');
 
     function parseCoordinate(coord) {
         const value = parseFloat(coord);
@@ -39,19 +41,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     li.className = 'list-group-item list-group-item-action';
                     li.innerHTML = `
                         <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
-                        <strong>${city.name}</strong>, ${city.adm_area1}, ${city.country}
+                        <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}
                     `;
                     li.onclick = () => {
                         if (hometownInput) {
-                            hometownInput.value = `${city.name}, ${city.adm_area1}, ${city.country}`;
+                            hometownInput.value = `${city.name}, ${city.adm_area1 || ''}, ${city.country || ''}`;
                             latitudeInput.value = parseCoordinate(city.lat);
                             longitudeInput.value = parseCoordinate(city.lon);
-                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}`); // Debug log
+                            countryInput.value = `${city.country}`;
+                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}, Country: ${countryInput.value}`); // Debug log
                         } else if (searchInput) {
-                            searchInput.value = `${city.name}, ${city.adm_area1}, ${city.country}`;
+                            searchInput.value = `${city.name}, ${city.adm_area1 || ''}, ${city.country || ''}`;
                             latitudeInput.value = parseCoordinate(city.lat);
                             longitudeInput.value = parseCoordinate(city.lon);
-                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}`); // Debug log
+                            countryInput.value = `${city.country}`;
+                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}, Country: ${countryInput.value}`); // Debug log
                         }
                         suggestionBox.innerHTML = '';
                     };
@@ -79,7 +83,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    form.addEventListener('submit', function(event) {
+        console.log('Before form submit:');
+        console.log('Latitude:', latitudeInput.value);
+        console.log('Longitude:', longitudeInput.value);
+        console.log('Country:', countryInput.value);
+    });
+
     // Log the hidden input fields to ensure they are properly referenced
     console.log('Latitude Input:', latitudeInput);
     console.log('Longitude Input:', longitudeInput);
+    console.log('Country Input:', countryInput);
 });

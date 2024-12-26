@@ -8,6 +8,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         'hometown',
         'latitude', 
         'longitude', 
+        'units',
         )  # Customize as needed
 
 

@@ -84,50 +84,73 @@ from django.http import JsonResponse
 from weatherapi.services import fetch_forecast_by_lat_lon
 from .models import WeatherFeedback
 
+from django.http import JsonResponse
+from django.utils.timezone import now
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+import json
+
+
 @csrf_exempt
 @login_required
 def submit_feedback(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
+        try:
+            # Parse the JSON data from the request
+            data = json.loads(request.body)
 
-        # Extract the data from the request
-        rating = data.get('rating')
-        latitude = data.get('latitude')
-        longitude = data.get('longitude')
-        city = data.get('city')
+            # Extract the rating and optional feedback date from the request
+            rating = data.get('rating')
+            feedback_date = data.get('date')
 
-        # Fetch the weather data for the user's location
-        weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
+            # Ensure the user is logged in
+            user = request.user
 
-        # If weather data is available, save the forecast variables along with the feedback
-        if weather_data:
-            # Assuming the first entry in weather_data is today's forecast
+            # Validate the feedback date (default to today if not provided)
+            today = timezone.now().date()
+            feedback_date = today if not feedback_date else timezone.datetime.strptime(feedback_date, '%Y-%m-%d').date()
+            if feedback_date != today:
+                return JsonResponse({'success': False, 'message': 'You can only submit feedback for today.'}, status=400)
+
+            # Fetch user location details from the UserProfile
+            user_profile = user.userprofile  # Assuming a OneToOne relationship between User and UserProfile
+            latitude = user_profile.latitude
+            longitude = user_profile.longitude
+            city = user_profile.hometown  # Adjust the field name to match your UserProfile model
+
+            # Fetch the weather data for the user's location
+            weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
+            if not weather_data:
+                return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'}, status=400)
+
+            # Assuming the first entry in weather_data corresponds to today's forecast
             today_weather = weather_data[0]
-            
-            # Create or update the feedback record with the forecast data
+
+            # Save or update feedback with weather details
             feedback, created = WeatherFeedback.objects.update_or_create(
-                user=request.user,
-                date=timezone.now().date(),
+                user=user,
+                date=feedback_date,
                 defaults={
                     'rating': rating,
                     'latitude': latitude,
                     'longitude': longitude,
                     'city': city,
                     'icon': today_weather.get('icon'),
-                    'temperature': today_weather.get('temperature_min'),
+                    'temperature': today_weather.get('temperature'),
                     'temperature_min': today_weather.get('temperature_min'),
                     'temperature_max': today_weather.get('temperature_max'),
                     'wind_speed': today_weather.get('wind_speed'),
-                    'precipitation_total': today_weather.get('precipitation_amt'),
+                    'precipitation_total': today_weather.get('precipitation_total'),
                     'precipitation_type': today_weather.get('precipitation_type'),
                 }
             )
-            
-            return JsonResponse({'success': True, 'message': 'Your feedback and weather data have been saved.'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'})
 
-    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
+            return JsonResponse({'success': True, 'message': 'Feedback and weather data saved successfully.'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'An error occurred: {e}'}, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
 
 from django.utils.timezone import now
 
