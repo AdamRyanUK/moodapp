@@ -39,16 +39,28 @@ def register_user(request):
             hometown = request.POST.get('hometown', '')
             latitude = request.POST.get('latitude', None)
             longitude = request.POST.get('longitude', None)
+            country = request.POST.get('country', None)
 
+            # Determine the units based on the country
+            if country == 'United States of America':
+                units = 'us'
+            elif country == 'United Kingdom':
+                units = 'uk'
+            elif country == 'Canada':
+                units = 'ca'
+            else:
+                units = 'metric'  # Default for all other countries
+            
             # Create or update the UserProfile
             user_profile, created = UserProfile.objects.get_or_create(
                 user=user,
-                defaults={'hometown': hometown, 'latitude': latitude, 'longitude': longitude}
+                defaults={'hometown': hometown, 'latitude': latitude, 'longitude': longitude, 'units': units}
             )
             if not created:
                 user_profile.hometown = hometown
                 user_profile.latitude = latitude
                 user_profile.longitude = longitude
+                user_profile.units = units
                 user_profile.save()
 
             # Authenticate and log the user in

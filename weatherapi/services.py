@@ -24,7 +24,7 @@ def fetch_and_save_forecast(user):
         'lon': longitude,
         'sections': 'daily',
         'language': 'en',
-        'units': 'auto',
+        'units': 'auto',  
         'key': api_key
     }
 
@@ -100,14 +100,15 @@ def fetch_and_save_forecast(user):
         logger.error(f"Missing expected data in weather response: {e}")
         raise
 
-def get_forecast_for_location(location):
+def get_forecast_for_location(user, location):
+
     url = f"https://www.meteosource.com/api/v1/free/point"
     params = {
         'place_id': location,
         'sections': 'daily',
         'timezone': 'UTC',
         'language': 'en',
-        'units': 'metric',
+        'units': 'auto',
         'key': api_key
     }
     
@@ -179,15 +180,20 @@ def parse_coordinate(coord):
         return -value
     return value
 
-def fetch_forecast_by_lat_lon(lat, lon):
+def fetch_forecast_by_lat_lon(lat, lon, user):
     api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
     url = f"https://www.meteosource.com/api/v1/startup/point"
+
+    user_profile = user.userprofile
+    unit_system = user_profile.units
+    
+    # Set the unit system to the user's preference
     params = {
         'lat': lat,
         'lon': lon,
         'sections': 'daily',
         'language': 'en',
-        'units': 'auto',
+        'units': unit_system,  # Use the unit system from user's profile
         'key': api_key
     }
 
@@ -195,24 +201,33 @@ def fetch_forecast_by_lat_lon(lat, lon):
         response = requests.get(url, params=params)
         response.raise_for_status()  # Raise an exception for HTTP errors
 
-        data = response.json()
-        
-        # Extract relevant weather data
-        weather_data = []
-        for forecast_data in data['daily']['data']:
-            weather_data.append({
-                'day': forecast_data['day'],
-                'summary': forecast_data.get('summary'),
-                'icon': forecast_data['all_day'].get('icon'),
-                'temperature_min': forecast_data['all_day'].get('temperature_min'),
-                'temperature_max': forecast_data['all_day'].get('temperature_max'),
-                'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
-                'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
-                'wind_speed': forecast_data['all_day']['wind'].get('speed'),
-            })
-        return weather_data
+        data = response.json()  # Parse the JSON response
+
+        # Check if the expected data structure exists
+        if 'daily' in data and 'data' in data['daily']:
+            weather_data = []
+            for forecast_data in data['daily']['data']:
+                # Extract relevant weather data
+                weather_data.append({
+                    'day': forecast_data.get('day'),
+                    'summary': forecast_data.get('summary'),
+                    'icon': forecast_data['all_day'].get('icon'),
+                    'temperature': forecast_data['all_day'].get('temperature'),
+                    'temperature_min': forecast_data['all_day'].get('temperature_min'),
+                    'temperature_max': forecast_data['all_day'].get('temperature_max'),
+                    'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                    'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
+                    'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                    'wind_speed': forecast_data['all_day']['wind'].get('speed'),
+                })
+            return weather_data
+        else:
+            logger.error("API response does not contain expected 'daily' or 'data' fields.")
+            return []
 
     except requests.RequestException as e:
         logger.error(f"Failed to fetch weather data: {e}")
         return []
-
+    except KeyError as e:
+        logger.error(f"Missing expected data in response: {e}")
+        return []

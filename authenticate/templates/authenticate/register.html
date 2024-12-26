@@ -68,12 +68,13 @@
                     onkeyup="fetchCitySuggestions(this.value)" 
                     autocomplete="off"
                 />
-                <ul id="suggestions" class="list-group mt-1" style="position: absolute; z-index: 1000;"></ul>
+                <ul id="suggestions" class="list-group mt-1"></ul>
             </div>
 
             <!-- Hidden input fields for latitude and longitude -->
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
+            <input type="hidden" id="country"   name="country">
 
             <input type="submit" value="Register" class="btn btn-secondary btn-block form-item">
         </form>

@@ -16,9 +16,12 @@ def home(request):
         latitude = request.GET.get('latitude')
         longitude = request.GET.get('longitude')
 
+        # Fetch the user profile once
+        user_profile = request.user.userprofile
+
         if location and latitude and longitude:
             # Fetch forecast for the entered location using lat/lon
-            weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
+            weather_data = fetch_forecast_by_lat_lon(latitude, longitude, request.user)
 
             # Add mood score to the weather data for searchable forecasts
             for forecast in weather_data:
@@ -26,8 +29,7 @@ def home(request):
 
             city = location
         else:
-            # Fetch weather data based on user's lat/lon
-            user_profile = request.user.userprofile
+            # Fetch weather data based on user's lat/lon if no location is provided
             latitude = user_profile.latitude
             longitude = user_profile.longitude
 
@@ -50,7 +52,7 @@ def home(request):
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
 
-                # Use user's hometown as the city name
+                # Use user's hometown as the city name if latitude/longitude are not provided
                 city = user_profile.hometown
 
         return render(request, 'core/home.html', {
