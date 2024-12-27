@@ -37,11 +37,13 @@ $(document).ready(function () {
 
         if (selectedButton) {
             const rating = selectedButton.getAttribute('data-value');
-            const userHometown = this.getAttribute('data-hometown'); // Get from data attributes
-            const latitude = this.getAttribute('data-latitude'); // Get from data attributes
-            const longitude = this.getAttribute('data-longitude'); // Get from data attributes
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // Fetch CSRF token from hidden input
-
+            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
+            
+            console.log('Payload:', {
+                rating: rating,
+                date: today,
+            });
             // Send data via AJAX
             fetch(this.getAttribute('data-url'), {
                 method: 'POST',
@@ -51,9 +53,7 @@ $(document).ready(function () {
                 },
                 body: JSON.stringify({
                     rating: rating,
-                    latitude: latitude,
-                    longitude: longitude,
-                    city: userHometown,
+                    date: today,
                 })
             })
             .then(response => response.json())

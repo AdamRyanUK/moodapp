@@ -90,36 +90,38 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import json
 
+import json
+from django.http import JsonResponse
+from django.utils import timezone
 
-@csrf_exempt
+
 @login_required
+@csrf_exempt
 def submit_feedback(request):
     if request.method == 'POST':
         try:
             # Parse the JSON data from the request
+            print("Raw body:", request.body)  # Log raw request body
             data = json.loads(request.body)
+            print("Parsed data:", data)  # Log parsed JSON data
 
+            user = request.user
             # Extract the rating and optional feedback date from the request
             rating = data.get('rating')
             feedback_date = data.get('date')
-
-            # Ensure the user is logged in
-            user = request.user
-
-            # Validate the feedback date (default to today if not provided)
-            today = timezone.now().date()
-            feedback_date = today if not feedback_date else timezone.datetime.strptime(feedback_date, '%Y-%m-%d').date()
-            if feedback_date != today:
-                return JsonResponse({'success': False, 'message': 'You can only submit feedback for today.'}, status=400)
-
-            # Fetch user location details from the UserProfile
-            user_profile = user.userprofile  # Assuming a OneToOne relationship between User and UserProfile
+            user_profile = user.userprofile
             latitude = user_profile.latitude
             longitude = user_profile.longitude
-            city = user_profile.hometown  # Adjust the field name to match your UserProfile model
+            city = user_profile.hometown
+
+            # Debug log for received fields
+            print(f"Rating: {rating}, Feedback Date: {feedback_date}")
+
+            if not rating or not feedback_date:
+                return JsonResponse({'success': False, 'message': 'Rating or date missing in request.'}, status=400)
 
             # Fetch the weather data for the user's location
-            weather_data = fetch_forecast_by_lat_lon(latitude, longitude)
+            weather_data = fetch_forecast_by_lat_lon(latitude, longitude, user)
             if not weather_data:
                 return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'}, status=400)
 
@@ -146,8 +148,9 @@ def submit_feedback(request):
             )
 
             return JsonResponse({'success': True, 'message': 'Feedback and weather data saved successfully.'})
-
+        
         except Exception as e:
+            print("Exception occurred:", e)
             return JsonResponse({'success': False, 'message': f'An error occurred: {e}'}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)

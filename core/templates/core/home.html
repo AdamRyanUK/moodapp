@@ -11,7 +11,72 @@
     }
 }
 
+/* Horizontal list of clickable cities */
+.city-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    justify-content: center;
+}
+
+.city-item {
+    position: relative;
+    padding: 8px 16px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #007bff;
+    background-color: #f0f8ff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.city-item:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.city-item .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.city-item .remove-btn:hover {
+    background: #cc0000;
+}
 </style>
+
+<div class="city-list" id="city-list">
+    <div class="city-item" 
+         data-city="{{ request.user.userprofile.hometown }}" 
+         data-latitude="{{ request.user.userprofile.latitude }}" 
+         data-longitude="{{ request.user.userprofile.longitude }}">
+        Home
+        <button class="remove-btn" style="display: none;">&times;</button>
+    </div>
+    {% for city_search in most_selected_cities %}
+        <div class="city-item" 
+             data-city="{{ city_search.city }}" 
+             data-latitude="{{ city_search.latitude }}" 
+             data-longitude="{{ city_search.longitude }}"
+             data-id="{{ city_search.id }}">
+            {{ city_search.city }}
+            <button class="remove-btn">&times;</button>
+        </div>
+    {% endfor %}
+</div>
+
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
@@ -78,6 +143,53 @@
     .mood-score-btn:focus {
         outline: none;                  /* Remove focus outline */
     }
-
 </style>
+<script type="module" src="{% static 'node_modules/@polymer/polymer/polymer-element.js' %}"></script>
+<script type="module" src="{% static 'node_modules/@polymer/iron-selector/iron-selector.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cityList = document.getElementById('city-list');
+
+    // Handle city clicks to update the forecast
+    cityList.addEventListener('click', function(event) {
+        if (event.target.classList.contains('city-item')) {
+            const city = event.target.dataset.city;
+            const latitude = event.target.dataset.latitude;
+            const longitude = event.target.dataset.longitude;
+            
+            // Redirect to homepage with selected city's coordinates
+            window.location.href = `?location=${city}&latitude=${latitude}&longitude=${longitude}`;
+        }
+    });
+
+    // Handle city removal
+    cityList.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-btn')) {
+            event.stopPropagation();  // Prevent triggering the city click event
+            const cityItem = event.target.parentElement;
+            const cityId = cityItem.dataset.id;
+
+            // Remove the city item from the DOM
+            cityItem.remove();
+
+            // Send AJAX request to remove the city from the model
+            fetch(`/remove_city/${cityId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token for security
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Failed to remove the city. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error removing city:', error));
+        }
+    });
+});
+</script>
 {% endblock %}

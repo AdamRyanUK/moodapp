@@ -329,7 +329,8 @@ circles.forEach(circle => {
     const date = circle.parentElement.dataset.date;
     if (feedbackData && feedbackData[date]) {
         const moodRating = feedbackData[date];
-        circle.style.backgroundColor = colors[moodRating - 1];
+        const moodId = 6 - moodRating;
+        circle.style.backgroundColor = colors[moodId - 1];
     }
 });
 
@@ -338,9 +339,6 @@ function submitFeedback(rating) {
     const feedbackData = {
         rating: rating,
         date: todayDate,  // Ensure only today's date is submitted
-        latitude: '{{ user_location.latitude }}',  // You need to dynamically pass the user's location
-        longitude: '{{ user_location.longitude }}',
-        city: '{{ user_location.city }}'
     };
 
     fetch(submitFeedbackURL, {
