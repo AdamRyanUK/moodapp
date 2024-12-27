@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from .models import CitySearch 
 from weatherapi.models import DailyForecast
 from weatherapi.services import fetch_forecast_by_lat_lon, fetch_and_save_forecast
 from weatherapi.moodscore import calculate_mood_score
@@ -7,6 +8,7 @@ from datetime import date as datetime_date
 from datetime import date
 from weatherpreferences.models import WeatherFeedback
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     if request.user.is_authenticated:
@@ -28,6 +30,17 @@ def home(request):
                 forecast['mood_score'] = calculate_mood_score(request.user, forecast)
 
             city = location
+
+                        # Track the city search for the user
+            if location != user_profile.hometown or (latitude != str(user_profile.latitude) and longitude != str(user_profile.longitude)):
+                city_search, created = CitySearch.objects.get_or_create(
+                    city=location,
+                    latitude=latitude,
+                    longitude=longitude,
+                    user=request.user  # Associating with the user
+                )
+                city_search.search_count += 1
+                city_search.save()
         else:
             # Fetch weather data based on user's lat/lon if no location is provided
             latitude = user_profile.latitude
@@ -55,14 +68,28 @@ def home(request):
                 # Use user's hometown as the city name if latitude/longitude are not provided
                 city = user_profile.hometown
 
+        # Query the most selected cities by the current user
+        most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
+
         return render(request, 'core/home.html', {
             'city': city,
             'weather_data': weather_data,
+            'most_selected_cities': most_selected_cities,
         })
 
     else:
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
+
+@csrf_exempt
+def remove_city(request, city_id):
+    try:
+        city = CitySearch.objects.get(id=city_id)
+        city.delete()
+        return JsonResponse({'success': True})
+    except CitySearch.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'City not found.'})
+
 
 def insights(request):
     return render(request, 'core/insights.html')
