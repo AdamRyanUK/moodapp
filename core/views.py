@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import CitySearch 
@@ -13,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 def home(request):
     if request.user.is_authenticated:
         city = None
+        city_first_part = None
         weather_data = None
         location = request.GET.get('location')
         latitude = request.GET.get('latitude')
@@ -29,20 +31,25 @@ def home(request):
             for forecast in weather_data:
                 forecast['mood_score'] = calculate_mood_score(request.user, forecast)
 
+            # Extract the first part of the city name (before any comma)
             city = location
+            city_first_part = location.split(',')[0] if ',' in location else location
 
-                        # Track the city search for the user
-            if location != user_profile.hometown or (latitude != str(user_profile.latitude) and longitude != str(user_profile.longitude)):
+            # Track the city search for the user
+            if location != user_profile.hometown or (
+                latitude != str(user_profile.latitude)
+                and longitude != str(user_profile.longitude)
+            ):
                 city_search, created = CitySearch.objects.get_or_create(
                     city=location,
                     latitude=latitude,
                     longitude=longitude,
-                    user=request.user  # Associating with the user
+                    user=request.user  # Associate with the user
                 )
                 city_search.search_count += 1
                 city_search.save()
         else:
-            # Fetch weather data based on user's lat/lon if no location is provided
+            # Use user's profile latitude and longitude if no location is provided
             latitude = user_profile.latitude
             longitude = user_profile.longitude
 
@@ -60,26 +67,41 @@ def home(request):
                         'precipitation_amt': forecast.precipitation_total,
                         'precipitation_type': forecast.precipitation_type,
                         'wind_speed': forecast.wind_speed,
+                        'sunrise': forecast.sunrise,
+                        'sunset': forecast.sunset,
                         'mood_score': calculate_mood_score(request.user, forecast),  # Calculate mood score
                     }
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
 
-                # Use user's hometown as the city name if latitude/longitude are not provided
+                # Extract sunrise and sunset for the first day
+                first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
+                first_day_sunset = weather_data[0]['sunset'] if weather_data else None
+
+                # Use user's hometown as the city name
                 city = user_profile.hometown
+                city_first_part = city.split(',')[0] if ',' in city else city
 
         # Query the most selected cities by the current user
         most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
 
+        # Add city_first_part to most_selected_cities for easy template rendering
+        for city_search in most_selected_cities:
+            city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
+
         return render(request, 'core/home.html', {
+            'city_first_part': city_first_part,
             'city': city,
             'weather_data': weather_data,
+            'first_day_sunrise': first_day_sunrise,
+            'first_day_sunset': first_day_sunset,
             'most_selected_cities': most_selected_cities,
         })
 
     else:
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
+
 
 @csrf_exempt
 def remove_city(request, city_id):

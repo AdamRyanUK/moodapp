@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<h1>{{ topic.name }}</h1>
+<p>{{ topic.description }}</p>
+<ul>
+    {% for thread in threads %}
+        <li><a href="{% url 'thread_detail' thread.id %}">{{ thread.title }}</a></li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

@@ -10,4 +10,5 @@ urlpatterns = [
     path('check-feedback-status/', views.check_feedback_status, name='check-feedback-status'), 
     path('journal', views.mood_journal, name="journal"),
     path('action-questions', views.action_questions, name="action_questions"),
+    path('feedback-chart-data', views.feedback_chart_data, name='feedback_chart_data'),
     ]

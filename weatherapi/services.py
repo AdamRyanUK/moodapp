@@ -52,6 +52,7 @@ def fetch_and_save_forecast(user):
         for forecast_data in data['daily']['data']:
             logger.debug(f"Processing forecast for date: {forecast_data['day']}")
             # Update or create DailyForecast entry for the user
+            
             DailyForecast.objects.update_or_create(
                 user=user,
                 date=forecast_data['day'],

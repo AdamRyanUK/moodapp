@@ -206,3 +206,30 @@ def action_questions(request):
         'today': today,
     }
     return render(request, 'weatherpreferences/action_questions.html', context)
+
+
+from django.utils.timezone import now
+from datetime import timedelta
+
+@login_required
+def feedback_chart_data(request):
+    date_range = request.GET.get('range', '7d')
+    end_date = now().date()
+    
+    if date_range == '7d':
+        start_date = end_date - timedelta(days=7)
+    elif date_range == '1m':
+        start_date = end_date - timedelta(days=30)
+    elif date_range == '6m':
+        start_date = end_date - timedelta(days=182)
+    elif date_range == '1y':
+        start_date = end_date - timedelta(days=365)
+    else:
+        return JsonResponse({'error': 'Invalid range'}, status=400)
+
+    feedbacks = WeatherFeedback.objects.filter(user=request.user, date__range=[start_date, end_date]).order_by('date')
+    data = {
+        'dates': [feedback.date.strftime('%Y-%m-%d') for feedback in feedbacks],
+        'ratings': [feedback.rating for feedback in feedbacks],
+    }
+    return JsonResponse(data)
