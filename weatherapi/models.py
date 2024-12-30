@@ -19,6 +19,7 @@ class DailyForecast(models.Model):
     precipitation_type = models.CharField(max_length=50, null=True, blank=True)
     sunrise = models.DateTimeField(null=True, blank=True)
     sunset = models.DateTimeField(null=True, blank=True)
+    day_length = models.DurationField(null=True, blank=True)
     moon_phase = models.CharField(max_length=50, null=True, blank=True)
     moonrise = models.DateTimeField(null=True, blank=True)
     moonset = models.DateTimeField(null=True, blank=True)
