@@ -5,6 +5,8 @@ import requests
 import logging
 import pycountry
 import requests
+from datetime import datetime
+from django.utils.dateparse import parse_datetime
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -53,6 +55,15 @@ def fetch_and_save_forecast(user):
             logger.debug(f"Processing forecast for date: {forecast_data['day']}")
             # Update or create DailyForecast entry for the user
             
+            sunrise_str = forecast_data['astro']['sun'].get('rise')
+            sunset_str = forecast_data['astro']['sun'].get('set')
+
+            sunrise = datetime.fromisoformat(sunrise_str)
+            sunset = datetime.fromisoformat(sunset_str)
+
+                # Calculate day length
+            day_length = sunset - sunrise
+
             DailyForecast.objects.update_or_create(
                 user=user,
                 date=forecast_data['day'],
@@ -69,8 +80,9 @@ def fetch_and_save_forecast(user):
                     'cloud_cover': forecast_data['all_day'].get('cloud_cover', {}).get('total', 0),
                     'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
                     'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
-                    'sunrise': forecast_data['astro']['sun'].get('rise'),
-                    'sunset': forecast_data['astro']['sun'].get('set'),
+                    'sunrise': sunrise,
+                    'sunset': sunset,
+                    'day_length': day_length,
                     'moon_phase': forecast_data['astro']['moon'].get('phase'),
                     'moonrise': forecast_data['astro']['moon'].get('rise'),
                     'moonset': forecast_data['astro']['moon'].get('set'),
@@ -210,6 +222,16 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
         if 'daily' in data and 'data' in data['daily']:
             weather_data = []
             for forecast_data in data['daily']['data']:
+                # Parse sunrise and sunset times
+                sunrise_str = forecast_data['astro']['sun'].get('rise')
+                sunset_str = forecast_data['astro']['sun'].get('set')
+
+                sunrise = datetime.fromisoformat(sunrise_str)
+                sunset = datetime.fromisoformat(sunset_str)
+
+                # Calculate day length
+                day_length = sunset - sunrise
+
                 # Extract relevant weather data
                 weather_data.append({
                     'day': forecast_data.get('day'),
@@ -221,8 +243,9 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
                     'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
                     'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
                     'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
-                    'sunrise': forecast_data['astro']['sun'].get('rise'),
-                    'sunset': forecast_data['astro']['sun'].get('set'),
+                    'sunrise': sunrise,
+                    'sunset': sunset,
+                    'day_length': day_length,
                     'wind_speed': forecast_data['all_day']['wind'].get('speed'),
                 })
             return weather_data
