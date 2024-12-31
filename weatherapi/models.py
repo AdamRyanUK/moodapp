@@ -37,6 +37,14 @@ class DailyForecast(models.Model):
     stats_wind_max_gust = models.FloatField(null=True, blank=True)
     raw_data = models.JSONField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.sunrise and self.sunset:
+            self.day_length = self.sunset - self.sunrise
+        else:
+            self.day_length = None
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return f"{self.user} - {self.date}"
     
