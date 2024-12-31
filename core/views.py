@@ -74,13 +74,13 @@ def home(request):
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
 
-                # Extract sunrise and sunset for the first day
-                first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
-                first_day_sunset = weather_data[0]['sunset'] if weather_data else None
+        # Extract sunrise and sunset for the first day
+        first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
+        first_day_sunset = weather_data[0]['sunset'] if weather_data else None
 
-                # Use user's hometown as the city name
-                city = user_profile.hometown
-                city_first_part = city.split(',')[0] if ',' in city else city
+        # Use user's hometown as the city name
+        city = user_profile.hometown
+        city_first_part = city.split(',')[0] if ',' in city else city
 
         # Query the most selected cities by the current user
         most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]

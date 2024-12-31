@@ -129,6 +129,8 @@ def get_forecast_for_location(user, location):
                 'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total'),
                 'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type'),
                 'wind_speed': forecast_data['all_day'].get('wind', {}).get('speed'),
+                'sunrise': forecast_data['astro']['sun'].get('rise'),
+                'sunset': forecast_data['astro']['sun'].get('set'),
                 'icon': forecast_data['all_day'].get('icon'),
             })
 
@@ -219,6 +221,8 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
                     'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
                     'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
                     'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                    'sunrise': forecast_data['astro']['sun'].get('rise'),
+                    'sunset': forecast_data['astro']['sun'].get('set'),
                     'wind_speed': forecast_data['all_day']['wind'].get('speed'),
                 })
             return weather_data
