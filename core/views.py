@@ -69,18 +69,20 @@ def home(request):
                         'wind_speed': forecast.wind_speed,
                         'sunrise': forecast.sunrise,
                         'sunset': forecast.sunset,
+                        'day_length': forecast.day_length,
                         'mood_score': calculate_mood_score(request.user, forecast),  # Calculate mood score
                     }
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
 
+                # Use user's hometown as the city name if no location is provided
+                city = user_profile.hometown
+                city_first_part = city.split(',')[0] if ',' in city else city
+
         # Extract sunrise and sunset for the first day
         first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
         first_day_sunset = weather_data[0]['sunset'] if weather_data else None
-
-        # Use user's hometown as the city name
-        city = user_profile.hometown
-        city_first_part = city.split(',')[0] if ',' in city else city
+        first_day_length = weather_data[0]['day_length'] if weather_data else None
 
         # Query the most selected cities by the current user
         most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
@@ -95,6 +97,7 @@ def home(request):
             'weather_data': weather_data,
             'first_day_sunrise': first_day_sunrise,
             'first_day_sunset': first_day_sunset,
+            'first_day_length': first_day_length,
             'most_selected_cities': most_selected_cities,
         })
 

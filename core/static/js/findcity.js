@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             searchInput.value = `${city.name}, ${city.adm_area1 || ''}, ${city.country || ''}`;
                             latitudeInput.value = parseCoordinate(city.lat);
                             longitudeInput.value = parseCoordinate(city.lon);
-                            countryInput.value = `${city.country}`;
-                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}, Country: ${countryInput.value}`); // Debug log
+                            console.log(`Latitude: ${latitudeInput.value}, Longitude: ${longitudeInput.value}`); // Debug log
                         }
                         suggestionBox.innerHTML = '';
+                        form.submit();
                     };
                     suggestionBox.appendChild(li);
                 }
