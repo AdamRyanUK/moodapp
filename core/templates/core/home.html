@@ -10,25 +10,49 @@
         font-size: 1.2rem; /* Smaller font size for mobile devices */
     }
 }
+.city-list-wrapper {
+    display: flex;
+    align-items: center;
+    overflow: hidden;  /* Hide overflow to ensure no scrollbars */
+    height: 40px;  /* Ensure the whole bar takes up no more than 40px */
+}
 
-/* Horizontal list of clickable cities */
+.scroll-left, .scroll-right {
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+}
+
 .city-list {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-    justify-content: center;
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    flex: 1;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+    height: 40px;  /* Ensure the whole bar takes up no more than 40px */
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.city-list::-webkit-scrollbar {
+    display: none;
 }
 
 .city-item {
-    position: relative;
-    padding: 8px 16px;
-    border: 1px solid #007bff;
-    border-radius: 25px;
-    cursor: pointer;
-    color: #007bff;
-    background-color: #f0f8ff;
-    transition: background-color 0.3s, color 0.3s;
+    display: flex;  /* Use flexbox to align items within the city-item */
+    align-items: center;
+    justify-content: space-between;  /* Ensure space between text and button */
+    flex: 0 0 auto;
+    margin: 5px;  /* Adjust margin to fit within the height limit */
+    padding: 5px 10px;  /* Adjust padding to fit within the height limit */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    min-width: 100px;  /* Adjust minimum width if necessary */
+    font-size: 0.9rem;  /* Adjust font size to fit within the height limit */
+    line-height: 1;  /* Ensure line-height does not exceed the height limit */
+    position: relative;  /* Required for absolutely positioning the remove button */
 }
 
 .city-item:hover {
@@ -37,10 +61,6 @@
 }
 
 .city-item .remove-btn {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
     background: #ff0000;
     color: #fff;
     border: none;
@@ -52,11 +72,14 @@
     text-align: center;
     line-height: 20px;
     padding: 0;
+    margin-left: 5px;
 }
 
 .city-item .remove-btn:hover {
     background: white;
 }
+
+
 .sunrise-sunset-container {
     display: flex;
     justify-content: space-between;
@@ -111,25 +134,30 @@ svg {
 
 </style>
 
-<div class="city-list" id="city-list">
-    <div class="city-item" 
-         data-city="{{ request.user.userprofile.hometown }}" 
-         data-latitude="{{ request.user.userprofile.latitude }}" 
-         data-longitude="{{ request.user.userprofile.longitude }}">
-        Home
-        <button class="remove-btn" style="display: none;">&times;</button>
-    </div>
-    {% for city_search in most_selected_cities %}
+<div class="city-list-wrapper">
+    <svg class="scroll-left" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+    <div class="city-list" id="city-list">
         <div class="city-item" 
-             data-city="{{ city_search.city }}" 
-             data-latitude="{{ city_search.latitude }}" 
-             data-longitude="{{ city_search.longitude }}"
-             data-id="{{ city_search.id }}">
-             {{ city_search.city_first_part }}
+             data-city="{{ request.user.userprofile.hometown }}" 
+             data-latitude="{{ request.user.userprofile.latitude }}" 
+             data-longitude="{{ request.user.userprofile.longitude }}">
+            Home
             <button class="remove-btn">&times;</button>
         </div>
-    {% endfor %}
+        {% for city_search in most_selected_cities %}
+            <div class="city-item" 
+                 data-city="{{ city_search.city }}" 
+                 data-latitude="{{ city_search.latitude }}" 
+                 data-longitude="{{ city_search.longitude }}"
+                 data-id="{{ city_search.id }}">
+                 {{ city_search.city_first_part }}
+                <button class="remove-btn">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+    <svg class="scroll-right" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
 </div>
+
 
 <div class="sunrise-sunset-container">
     <div class="card sunrise-card">
@@ -230,11 +258,19 @@ svg {
 <script type="module" src="{% static 'node_modules/@polymer/iron-selector/iron-selector.js' %}"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cityList = document.getElementById('city-list');
+    document.addEventListener('DOMContentLoaded', function () {
+    const scrollContainer = document.getElementById('city-list');
+
+    document.querySelector('.scroll-left').addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: -150, behavior: 'smooth' });
+    });
+
+    document.querySelector('.scroll-right').addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: 150, behavior: 'smooth' });
+    });
 
     // Handle city clicks to update the forecast
-    cityList.addEventListener('click', function(event) {
+    scrollContainer.addEventListener('click', function(event) {
         if (event.target.classList.contains('city-item')) {
             const city = event.target.dataset.city;
             const latitude = event.target.dataset.latitude;
@@ -246,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle city removal
-    cityList.addEventListener('click', function(event) {
+    scrollContainer.addEventListener('click', function(event) {
         if (event.target.classList.contains('remove-btn')) {
             event.stopPropagation();  // Prevent triggering the city click event
             const cityItem = event.target.parentElement;
@@ -273,5 +309,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 </script>
 {% endblock %}
