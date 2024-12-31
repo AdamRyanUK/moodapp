@@ -83,6 +83,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Detect clicks outside the suggestion box to close it
+    document.addEventListener('click', function(event) {
+        if (suggestionBox && !suggestionBox.contains(event.target) && 
+            ((searchInput && !searchInput.contains(event.target)) || 
+            (hometownInput && !hometownInput.contains(event.target)))) {
+            suggestionBox.innerHTML = ''; // Clear suggestion box
+        }
+    });
+
+
     form.addEventListener('submit', function(event) {
         console.log('Before form submit:');
         console.log('Latitude:', latitudeInput.value);
