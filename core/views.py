@@ -10,6 +10,9 @@ from datetime import date
 from weatherpreferences.models import WeatherFeedback
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from datetime import timedelta
+from core.feedbackanomaly.anomaly_calculations import fetch_anomaly_data
 
 def home(request):
     if request.user.is_authenticated:
@@ -134,3 +137,57 @@ def calendar_view(request):
         'feedback_json': feedback_json,
     }
     return render(request, 'core/calendar.html', context)
+
+@login_required
+def feedback_anomaly_data(request):
+    range = request.GET.get('range', '7d')
+    user = request.user
+
+    # Determine the date range for the query
+    if range == '7d':
+        start_date = timezone.now() - timedelta(days=7)
+    elif range == '1m':
+        start_date = timezone.now() - timedelta(days=30)
+    elif range == '6m':
+        start_date = timezone.now() - timedelta(days=182)
+    elif range == '1y':
+        start_date = timezone.now() - timedelta(days=365)
+    else:
+        start_date = timezone.now() - timedelta(days=7)  # Default to 7 days
+
+    end_date = timezone.now()
+
+    data = fetch_anomaly_data(user, start_date, end_date)
+
+    return JsonResponse(data)
+
+@login_required
+def feedback_chart_data(request):
+    range = request.GET.get('range', '7d')
+    user = request.user
+
+    # Determine the date range for the query
+    if range == '7d':
+        start_date = timezone.now() - timedelta(days=7)
+    elif range == '1m':
+        start_date = timezone.now() - timedelta(days=30)
+    elif range == '6m':
+        start_date = timezone.now() - timedelta(days=182)
+    elif range == '1y':
+        start_date = timezone.now() - timedelta(days=365)
+    else:
+        start_date = timezone.now() - timedelta(days=7)  # Default to 7 days
+
+    end_date = timezone.now()
+    feedbacks = WeatherFeedback.objects.filter(user=user, date__range=(start_date, end_date)).order_by('date')
+
+    dates = [feedback.date for feedback in feedbacks]
+    ratings = [feedback.rating for feedback in feedbacks]
+
+    data = {
+        'dates': dates,
+        'ratings': ratings,
+    }
+
+    return JsonResponse(data)
+

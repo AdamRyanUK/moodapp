@@ -240,14 +240,28 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
                     'temperature': forecast_data['all_day'].get('temperature'),
                     'temperature_min': forecast_data['all_day'].get('temperature_min'),
                     'temperature_max': forecast_data['all_day'].get('temperature_max'),
-                    'precipitation_amt': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
-                    'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
+                    'wind_speed': forecast_data['all_day']['wind'].get('speed'),
+                    'wind_dir': forecast_data['all_day']['wind'].get('dir'),
+                    'wind_angle': forecast_data['all_day']['wind'].get('angle'),
+                    'cloud_cover': forecast_data['all_day']['cloud_cover'].get('total'),
                     'precipitation_total': forecast_data['all_day'].get('precipitation', {}).get('total', 0),
+                    'precipitation_type': forecast_data['all_day'].get('precipitation', {}).get('type', ''),
+                    'stats_temperature_avg': forecast_data['statistics']['temperature'].get('avg'),
+                    'stats_temperature_avg_min': forecast_data['statistics']['temperature'].get('avg_min'),
+                    'stats_temperature_avg_max': forecast_data['statistics']['temperature'].get('avg_max'),
+                    'stats_temperature_record_min': forecast_data['statistics']['temperature'].get('record_min'),
+                    'stats_temperature_record_max': forecast_data['statistics']['temperature'].get('record_max'),
+                    'stats_precipitation_avg': forecast_data['statistics']['precipitation'].get('avg'),
+                    'stats_precipitation_probability': forecast_data['statistics']['precipitation'].get('probability'),
+                    'stats_wind_avg_speed': forecast_data['statistics']['wind'].get('avg_speed'),
+                    'stats_wind_avg_angle': forecast_data['statistics']['wind'].get('avg_angle'),
+                    'stats_wind_avg_dir': forecast_data['statistics']['wind'].get('avg_dir'),
+                    'stats_wind_max_speed': forecast_data['statistics']['wind'].get('max_speed'),
+                    'stats_wind_max_gust': forecast_data['statistics']['wind'].get('max_gust'),
                     'sunrise': sunrise,
                     'sunset': sunset,
-                    'day_length': day_length,
-                    'wind_speed': forecast_data['all_day']['wind'].get('speed'),
-                })
+                    'day_length': day_length
+                })                   
             return weather_data
         else:
             logger.error("API response does not contain expected 'daily' or 'data' fields.")
