@@ -26,6 +26,7 @@ body{
     "sidebar main";   /* Sidebar on the left, main content on the right */
   height: 100vh;      /* Full viewport height */
   margin: 0;
+  position: relative;
 }
 
 #navbar {
@@ -38,6 +39,7 @@ body{
   top: 0;
   height: 80px;
   grid-area: nav;
+  z-index: 2;
 }
 
 #navbar ul{
@@ -198,6 +200,7 @@ body{
     position: relative; /* Position relative for absolute positioning */
     width: 100%; /* Full width */
     padding: 1em;
+    z-index: 10;
   }
 
 .search-box {
@@ -222,6 +225,7 @@ body{
     top: calc(100% + 10px); /* Position below the input field */
     left: 0; /* Align with the input field */
     border: #42434a;
+    z-index: 20;
 }
 .suggestion-item {
     padding: 10px;
@@ -347,9 +351,11 @@ body{
 
 main{
     grid-area: main;
-  padding: min(3px, 7%);
+  padding: min(3px, 7%);  
   overflow-x: auto; /* Enable horizontal scrolling */
   min-width: 0; /*prevent overflow from cutting off text*/
+  z-index: 1;
+  position: relative;
 }
 main p{
   color: var(--secondary-text-clr);
@@ -412,6 +418,8 @@ main p{
   color: white;              /* Change emoji color */
 }
 
+
+
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
@@ -426,45 +434,53 @@ main p{
   }
 
   #navbar li {
-    flex: 1 1 100%; /* Default to full width for all items */
+    flex: 1 1 auto; /* Allow items to adjust their width as necessary */
     display: flex; /* Ensure content inside li is flexed */
     justify-content: center; /* Center align content */
     align-items: center; /* Vertically align content */
-    margin: 5px 0; /* Add spacing between items */
+    margin: 0; /* Remove margins to fit them in the same row */
+    padding: 0 5px; /* Adjust padding to ensure they fit within the container */
   }
 
-  #navbar li:first-child,
-  #navbar li:last-child {
-    flex: 1 1 48%; /* Share the top row with equal widths */
-    margin: 0; /* Remove extra spacing */
+  #navbar li:first-child {
+    flex: 1 1 30%; /* Adjust width as needed */
+    order: 1;
   }
 
   #navbar li:nth-child(2) {
     order: 3; /* Move the second item to the bottom */
+    flex: 1 1 100%; /* Ensure it takes up the full width of its row */
   }
 
   #navbar li:nth-child(3) {
     order: 2; /* Move the third item above the second */
+    flex: 1 1 30%; /* Adjust width as needed */
     justify-content: flex-end;
+  }
+
+  #navbar li:last-child {
+    flex: 1 1 30%; /* Adjust width as needed */
+    margin-left: auto;
   }
 
   .search-form {
     padding: 0;
     width: 100%;
-    z-index: 12;
+    position: relative;
   }
 
+
   .suggestion-box {
-    z-index: 1050;
+    position: absolute;
     background-color: white;
     opacity: 1;
     max-height: 200px;
     overflow-y: auto;
     width: 100%; /* Ensure it takes full width of the parent container */
     margin-top: 5px; /* Optional, add space from the input field */
+    top: calc(100% + 10px); /* Position below the input field */
     flex-direction:initial;
-    top: 0;
-    right: 0;
+    left:0;
   }
 
   .suggestion-item {
@@ -564,5 +580,5 @@ main p{
     width: 100%;
   }
   
-  
+
 }
