@@ -419,13 +419,12 @@ main p{
 }
 
 
-
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
   }
 
-  #navbar ul {
+  #navbar ul.navbar-list {
     display: flex; /* Make ul a flex container */
     flex-wrap: wrap; /* Allow items to wrap to the next line */
     justify-content: space-between; /* Distribute items horizontally */
@@ -433,7 +432,7 @@ main p{
     margin: 0; /* Remove default margin */
   }
 
-  #navbar li {
+  #navbar ul.navbar-list > li {
     flex: 1 1 auto; /* Allow items to adjust their width as necessary */
     display: flex; /* Ensure content inside li is flexed */
     justify-content: center; /* Center align content */
@@ -442,23 +441,23 @@ main p{
     padding: 0 5px; /* Adjust padding to ensure they fit within the container */
   }
 
-  #navbar li:first-child {
+  #navbar ul.navbar-list > li:first-child {
     flex: 1 1 30%; /* Adjust width as needed */
     order: 1;
   }
 
-  #navbar li:nth-child(2) {
+  #navbar ul.navbar-list > li:nth-child(2) {
     order: 3; /* Move the second item to the bottom */
     flex: 1 1 100%; /* Ensure it takes up the full width of its row */
   }
 
-  #navbar li:nth-child(3) {
+  #navbar ul.navbar-list > li:nth-child(3) {
     order: 2; /* Move the third item above the second */
     flex: 1 1 30%; /* Adjust width as needed */
     justify-content: flex-end;
   }
 
-  #navbar li:last-child {
+  #navbar ul.navbar-list > li:last-child {
     flex: 1 1 30%; /* Adjust width as needed */
     margin-left: auto;
   }
@@ -469,7 +468,6 @@ main p{
     position: relative;
   }
 
-
   .suggestion-box {
     position: absolute;
     background-color: white;
@@ -479,13 +477,19 @@ main p{
     width: 100%; /* Ensure it takes full width of the parent container */
     margin-top: 5px; /* Optional, add space from the input field */
     top: calc(100% + 10px); /* Position below the input field */
-    flex-direction:initial;
-    left:0;
+    left: 0;
+    z-index: 20; /* Ensure suggestion box is above other elements */
   }
 
   .suggestion-item {
     padding: 10px;
     cursor: pointer;
+    display: block; /* Ensure items take full width */
+  }
+
+  .suggestion-box .list-group-item {
+    flex: none; /* Reset flex properties */
+    order: 0; /* Reset order */
   }
 
   .freeze-col {
