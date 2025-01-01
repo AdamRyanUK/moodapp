@@ -23,7 +23,8 @@
     display: flex;
     align-items: center;
     overflow: hidden;  /* Hide overflow to ensure no scrollbars */
-    height: 40px;  /* Ensure the whole bar takes up no more than 40px */
+    height: 50px;  /* Ensure the whole bar takes up no more than 40px */
+    padding-bottom: 10px;
 }
 
 .scroll-left, .scroll-right {
@@ -40,7 +41,7 @@
     flex: 1;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
-    height: 40px;  /* Ensure the whole bar takes up no more than 40px */
+    height: 50px;  /* Ensure the whole bar takes up no more than 40px */
 }
 
 /* Hide scrollbar for Chrome, Safari, and Opera */
@@ -70,7 +71,7 @@
 }
 
 .city-item .remove-btn {
-    background: #ff0000;
+    background: rgba(255, 0, 0, 0.5);
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -89,14 +90,14 @@
 }
 
 .sunrise-sunset-card {
-    border: 1px solid black;  /* Black outline for the card */
-    border-radius: 8px;
+    /* border: 1px solid black;  /* Black outline for the card */
+    /*border-radius: 8px; */
     padding: 10px;
     display: flex;
     align-items: center;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;  /* Add some space below the card */
+    margin-bottom: 10px;  /* Add some space below the card */
     height: 40px;
 }
 
@@ -112,6 +113,7 @@
     justify-content: center;
     /* margin: 0 10px;  Add some margin to separate the items */
     text-align: center;
+    
 }
 
 p {
