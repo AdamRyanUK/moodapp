@@ -40,6 +40,18 @@ class WeatherFeedback(models.Model):
     cloud_cover = models.IntegerField(null=True, blank=True)
     precipitation_total = models.FloatField(null=True, blank=True)
     precipitation_type = models.CharField(max_length=50, null=True, blank=True)
+    stats_temperature_avg = models.FloatField(null=True, blank=True)
+    stats_temperature_avg_min = models.FloatField(null=True, blank=True)
+    stats_temperature_avg_max = models.FloatField(null=True, blank=True)
+    stats_temperature_record_min = models.FloatField(null=True, blank=True)
+    stats_temperature_record_max = models.FloatField(null=True, blank=True)
+    stats_precipitation_avg = models.FloatField(null=True, blank=True)
+    stats_precipitation_probability = models.FloatField(null=True, blank=True)
+    stats_wind_avg_speed = models.FloatField(null=True, blank=True)
+    stats_wind_avg_angle = models.IntegerField(null=True, blank=True)
+    stats_wind_avg_dir = models.CharField(max_length=10, null=True, blank=True)
+    stats_wind_max_speed = models.FloatField(null=True, blank=True)
+    stats_wind_max_gust = models.FloatField(null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'date')

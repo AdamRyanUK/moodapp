@@ -142,17 +142,30 @@ def submit_feedback(request):
                     'temperature_min': today_weather.get('temperature_min'),
                     'temperature_max': today_weather.get('temperature_max'),
                     'wind_speed': today_weather.get('wind_speed'),
+                    'wind_dir': today_weather.get('wind_dir'),
+                    'wind_angle': today_weather.get('wind_angle'),
+                    'cloud_cover': today_weather.get('cloud_cover'),
                     'precipitation_total': today_weather.get('precipitation_total'),
                     'precipitation_type': today_weather.get('precipitation_type'),
+                    'stats_temperature_avg': today_weather.get('stats_temperature_avg'),
+                    'stats_temperature_avg_min': today_weather.get('stats_temperature_avg_min'),
+                    'stats_temperature_avg_max': today_weather.get('stats_temperature_avg_max'),
+                    'stats_temperature_record_min': today_weather.get('stats_temperature_record_min'),
+                    'stats_temperature_record_max': today_weather.get('stats_temperature_record_max'),
+                    'stats_precipitation_avg': today_weather.get('stats_precipitation_avg'),
+                    'stats_precipitation_probability': today_weather.get('stats_precipitation_probability'),
+                    'stats_wind_avg_speed': today_weather.get('stats_wind_avg_speed'),
+                    'stats_wind_avg_angle': today_weather.get('stats_wind_avg_angle'),
+                    'stats_wind_avg_dir': today_weather.get('stats_wind_avg_dir'),
+                    'stats_wind_max_speed': today_weather.get('stats_wind_max_speed'),
+                    'stats_wind_max_gust': today_weather.get('stats_wind_max_gust'),
                 }
             )
 
-            return JsonResponse({'success': True, 'message': 'Feedback and weather data saved successfully.'})
-        
+            return JsonResponse({'success': True, 'message': 'Feedback submitted successfully.'})
         except Exception as e:
-            print("Exception occurred:", e)
-            return JsonResponse({'success': False, 'message': f'An error occurred: {e}'}, status=500)
-
+            print(f"Error: {e}")  # Log the error
+            return JsonResponse({'success': False, 'message': 'An error occurred while processing your request.'}, status=500)
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
 
 from django.utils.timezone import now
