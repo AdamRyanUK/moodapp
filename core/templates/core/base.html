@@ -19,9 +19,9 @@
         <script src="{% static 'js/togglebutton.js' %}"></script>
     </head>
     
-<body class="{% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}">
+<body>
 
-    <nav id="navbar">
+    <nav class="{% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}" id="navbar">
         <ul class="navbar-list">
             <li style="display: flex; align-items: center; justify-content: center;">
                 {% if user.is_authenticated %}

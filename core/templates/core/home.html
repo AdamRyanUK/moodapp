@@ -183,21 +183,17 @@ p {
         <thead>
             <tr>
                 <th class="freeze-col" scope="col">Day</th>
+                <th scope="col">Mood Score</th>
                 <th scope="col">Icon</th>
                 <th scope="col">Temperature Max</th>
                 <th scope="col">Precipitation Amount</th>
                 <th scope="col">Wind Speed</th>
-                <th scope="col">Mood Score</th>
             </tr>
         </thead>
         <tbody>
             {% for data in weather_data %}
             <tr>
                 <td class="freeze-col">{{ data.day }}</td>
-                <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
-                <td>{{ data.temperature_max }}</td>
-                <td>{{ data.precipitation_amt }}</td>
-                <td>{{ data.wind_speed }}</td>
                 <td>
                     <!-- Dynamically setting button color based on mood score -->
                     <button class="mood-score-btn" 
@@ -205,6 +201,10 @@ p {
                             {{ data.mood_score }}
                     </button>
                 </td>
+                <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
+                <td>{{ data.temperature_max }}</td>
+                <td>{{ data.precipitation_amt }} mm </td>
+                <td>{{ data.wind_speed }}</td>
             </tr>
             {% endfor %}
         </tbody>
