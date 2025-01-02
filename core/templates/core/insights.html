@@ -59,7 +59,13 @@
                         min: 1,
                         max: 5,
                         ticks: {
-                            stepSize: 1
+                            stepSize: 1,
+                            callback: function(value) {
+                                if (value === 0 || value === 5.5) {
+                                    return '';
+                                }
+                                return value;
+                            }
                         }
                     },
                     x: {
@@ -81,20 +87,20 @@
         return data.map(value => jitter(value, factor));
     }
 
-    function renderAnomalyChart(labels, data, anomalyType) {
-        console.log('Labels:', labels);
-        console.log('Data:', data);
+    function renderAnomalyChart(ratings, anomalies, anomalyType) {
+        console.log('Ratings:', ratings);
+        console.log('Anomalies:', anomalies);
         const ctx = document.getElementById('anomalyChart').getContext('2d');
         if (anomalyChart) {
             anomalyChart.destroy();
         }
 
-        let displayData = data;
-        if (data.length > 1) {
-            displayData = applyJitter(data, 0.1); // Only apply jitter if there is more than one data point
+        let displayData = anomalies;
+        if (anomalies.length > 1) {
+            displayData = applyJitter(anomalies, 0.1); // Only apply jitter if there is more than one data point
         }
 
-        const scatterData = displayData.map((value, index) => ({ x: value, y: labels[index] }));
+        const scatterData = ratings.map((rating, index) => ({ x: displayData[index], y: rating }));
         console.log('Scatter Data:', scatterData);
         anomalyChart = new Chart(ctx, {
             type: 'scatter',
@@ -106,8 +112,7 @@
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderWidth: 2,
                     fill: true,
-                    tension: 0.3,
-                    radius: 40
+                    radius: 5
                 }]
             },
             options: {
@@ -117,10 +122,16 @@
                             display: true,
                             text: 'Rating'
                         },
-                        min: 1,
-                        max: 5,
+                        min: 0,
+                        max: 5.5,
                         ticks: {
-                            stepSize: 1
+                            stepSize: 1,
+                            callback: function(value) {
+                                if (value === 0 || value === 5.5) {
+                                    return '';
+                                }
+                                return value;
+                            }
                         }
                     },
                     x: {
@@ -128,7 +139,6 @@
                             display: true,
                             text: anomalyType + ' Anomaly'
                         },
-                        // Adjust the x-axis range
                         min: -10, // Adjust as needed
                         max: 10 // Adjust as needed
                     }
@@ -155,7 +165,7 @@
             .then(response => response.json())
             .then(data => {
                 const anomalies = data[anomalyType + '_anomalies'];
-                renderAnomalyChart(data.dates, anomalies, anomalyType);
+                renderAnomalyChart(data.ratings, anomalies, anomalyType); // Pass ratings as labels
             })
             .catch(error => console.error('Error fetching data:', error));
     }
