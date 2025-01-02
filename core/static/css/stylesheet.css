@@ -29,9 +29,10 @@ body{
   position: relative;
 }
 
-body.unauthenticated {
-  background-color: rgba(94, 99, 255, 0.05); /* Light gray background with reduced opacity */
+.unauthenticated#navbar {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
 }
+
 
 #navbar {
   display: flex; /* Flexbox for horizontal layout */
@@ -376,7 +377,8 @@ main p{
 }
 .table th, .table td {
   white-space: nowrap;
- 
+  text-align: center;
+  vertical-align: middle;
 }
 
 .table {
