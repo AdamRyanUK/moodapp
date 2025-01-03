@@ -1,16 +1,21 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Get static URL from the script tag
-    const staticUrl = JSON.parse(document.getElementById('static-url').textContent);
+    const staticUrl = JSON.parse(document.getElementById('static-url').textContent.replace(/&quot;/g, '"'));
 
-    window.showHourlyData = function(date) {
-        console.log(`Clicked on date: ${date}`);  // Confirming the function call
+    window.showHourlyData = function(date, latitude, longitude) {
+        console.log(`Clicked on date: ${date}, Lat: ${latitude}, Lon: ${longitude}`);  // Confirming the function call
         const today = new Date();
         const clickedDate = new Date(date);
         
         // Check if the clicked date is within the next 2 days
         if (clickedDate <= today.setDate(today.getDate() + 2)) {
-            fetch(`/weatherapi/hourly_forecast?date=${date}`)
-                .then(response => response.json())
+            fetch(`/weatherapi/hourly_forecast?date=${date}&latitude=${latitude}&longitude=${longitude}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log(`Received data: `, data);  // Confirming data reception
                     populateHourlyData(data, staticUrl);

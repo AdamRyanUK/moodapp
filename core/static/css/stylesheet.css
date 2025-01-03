@@ -81,6 +81,7 @@ body{
   box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
   display: none;
   flex-direction: column;
+  z-index: 100;
 }
 
 .account-sidebar ul {
@@ -441,10 +442,10 @@ main p{
   background-color: #0056b3; /* Darker shade on hover */
 }
 
-.modal {
+.hourly-modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1000; /* Sit on top */
+  z-index: 100; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -454,7 +455,7 @@ main p{
   padding: 5%;
 }
 
-.modal-content {
+.hourly-modal-content {
   position: relative;
   margin: auto;
   padding: 20px;

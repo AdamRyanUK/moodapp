@@ -115,11 +115,7 @@ def fetch_and_save_forecast(user):
 
 from datetime import datetime
 
-def fetch_hourly_forecast(user, date):
-    user_profile = user.userprofile
-    latitude = user_profile.latitude
-    longitude = user_profile.longitude
-
+def fetch_hourly_forecast(latitude, longitude, date):
     url = f"https://www.meteosource.com/api/v1/startup/point"
     params = {
         'lat': latitude,
@@ -151,6 +147,7 @@ def fetch_hourly_forecast(user, date):
     except KeyError as e:
         logger.error(f"Missing expected data in weather response: {e}")
         raise
+
 
 def get_forecast_for_location(user, location):
 
