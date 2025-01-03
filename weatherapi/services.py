@@ -113,6 +113,45 @@ def fetch_and_save_forecast(user):
         logger.error(f"Missing expected data in weather response: {e}")
         raise
 
+from datetime import datetime
+
+def fetch_hourly_forecast(user, date):
+    user_profile = user.userprofile
+    latitude = user_profile.latitude
+    longitude = user_profile.longitude
+
+    url = f"https://www.meteosource.com/api/v1/startup/point"
+    params = {
+        'lat': latitude,
+        'lon': longitude,
+        'sections': 'hourly',
+        'language': 'en',
+        'units': 'auto',
+        'key': api_key
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        date_str = datetime.strptime(date, '%Y-%m-%d').strftime('%Y-%m-%d')
+        
+        hourly_data = [hour for hour in data['hourly']['data'] if hour['date'].startswith(date_str)]
+        
+        logger.debug(f"Received hourly data: {hourly_data}")
+
+        return hourly_data
+
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch hourly weather data: {e}")
+        raise
+
+    except KeyError as e:
+        logger.error(f"Missing expected data in weather response: {e}")
+        raise
+
 def get_forecast_for_location(user, location):
 
     url = f"https://www.meteosource.com/api/v1/free/point"

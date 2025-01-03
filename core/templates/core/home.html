@@ -192,7 +192,7 @@ p {
         </thead>
         <tbody>
             {% for data in weather_data %}
-            <tr>
+            <tr onclick="showHourlyData('{{ data.day|date:"Y-m-d" }}')">
                 <td class="freeze-col">{{ data.day }}</td>
                 <td>
                     <!-- Dynamically setting button color based on mood score -->
@@ -203,7 +203,7 @@ p {
                 </td>
                 <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon"></td>
                 <td>{{ data.temperature_max }}</td>
-                <td>{{ data.precipitation_amt }} mm </td>
+                <td>{{ data.precipitation_amt }} mm</td>
                 <td>{{ data.wind_speed }}</td>
             </tr>
             {% endfor %}
@@ -213,7 +213,9 @@ p {
 {% else %}
     <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
+
 {% endblock %}
+
 
 {% block extra_head %}
 <style>
@@ -299,4 +301,5 @@ p {
 });
 
 </script>
+
 {% endblock %}
