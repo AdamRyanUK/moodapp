@@ -150,6 +150,22 @@
             </li>
         </ul>
     </aside>
+
+
+    
+    <!-- Pass the static URL to JavaScript for the icons  -->
+    <script type="application/json" id="static-url">
+        "{% get_static_prefix %}"
+    </script>
+    <!-- the hourly forecast modal  -->
+    <div id="hourlyModal" class="modal">
+        <div class="modal-content">
+            <span class="hourly-close">&times;</span>
+            <div id="hourlyDataContainer" class="table-responsive"></div>
+        </div>
+    </div>
+
+
     {% endif %}
 
     <main>
@@ -169,5 +185,7 @@
 <script src="{% static 'js/feedback.js' %}"></script>
 <script src="{% static 'js/findcity.js' %}"></script>
 <script src="{% static 'js/accountsidebartoggle.js' %}"></script>
+<script src="{% static 'js/hourly_forecast_modal.js' %}"></script>
+
 </div>
 </html>
