@@ -6,7 +6,7 @@ from weatherapi.models import DailyForecast
 from weatherapi.services import fetch_forecast_by_lat_lon, fetch_and_save_forecast
 from weatherapi.moodscore import calculate_mood_score
 from datetime import date as datetime_date
-from datetime import date
+from datetime import datetime
 from weatherpreferences.models import WeatherFeedback
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +34,12 @@ def home(request):
             for forecast in weather_data:
                 forecast['mood_score'] = calculate_mood_score(request.user, forecast)
 
+            # Ensure the 'day' attribute is a datetime object
+            for forecast in weather_data:
+                if isinstance(forecast['day'], str):
+                    forecast['day'] = datetime.strptime(forecast['day'], '%Y-%m-%d')
+
+                forecast['day'] = forecast['day'].strftime('%Y-%m-%d')
             # Extract the first part of the city name (before any comma)
             city = location
             city_first_part = location.split(',')[0] if ',' in location else location
@@ -51,6 +57,7 @@ def home(request):
                 )
                 city_search.search_count += 1
                 city_search.save()
+
         else:
             # Use user's profile latitude and longitude if no location is provided
             latitude = user_profile.latitude
@@ -62,7 +69,7 @@ def home(request):
 
                 weather_data = [
                     {
-                        'day': forecast.date,
+                        'day': forecast.date.strftime('%Y-%m-%d'),
                         'summary': forecast.summary,
                         'icon': forecast.icon,
                         'temperature_min': forecast.temperature_min,
@@ -102,6 +109,8 @@ def home(request):
             'first_day_sunset': first_day_sunset,
             'first_day_length': first_day_length,
             'most_selected_cities': most_selected_cities,
+            'latitude': latitude, 
+            'longitude': longitude
         })
 
     else:

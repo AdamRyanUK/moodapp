@@ -20,16 +20,24 @@ def mood_score_color(mood_score):
     green = 255 - ((10 - mood_score) * 25)
     return f'rgb({red},{green},0)'
 
+
 @login_required
 def get_hourly_forecast(request):
     user = request.user
     date = request.GET.get('date')
+    latitude = request.GET.get('latitude')
+    longitude = request.GET.get('longitude')
 
     if not date:
         return JsonResponse({'error': 'No date provided'}, status=400)
 
+    if not latitude or not longitude:
+        user_profile = user.userprofile
+        latitude = user_profile.latitude
+        longitude = user_profile.longitude
+
     try:
-        hourly_data = fetch_hourly_forecast(user, date)
+        hourly_data = fetch_hourly_forecast(latitude, longitude, date)
 
         # Add mood score and icon to each hourly forecast entry
         for hour in hourly_data:
@@ -40,4 +48,3 @@ def get_hourly_forecast(request):
         return JsonResponse(hourly_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
