@@ -78,7 +78,6 @@
             <li><a href="{% url 'logout' %}">Logout</a></li>
         </ul>
     </div>
-
     <!-- Rating Modal  -->
     <div class="modal fade" id="helloModal" tabindex="-1" role="dialog" aria-labelledby="helloModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -113,6 +112,10 @@
             </div>
         </div>
     </div>
+
+    <button id="feedbackButton" class="feedback-btn">Feedback</button>
+
+
    
     <aside id="sidebar">
         <ul>
@@ -169,8 +172,9 @@
     {% endif %}
 
     <main>
-      
+
         {% block content %}
+
         {% endblock %}
     </main>
 </body>
@@ -186,6 +190,5 @@
 <script src="{% static 'js/findcity.js' %}"></script>
 <script src="{% static 'js/accountsidebartoggle.js' %}"></script>
 <script src="{% static 'js/hourly_forecast_modal.js' %}"></script>
-
 </div>
 </html>

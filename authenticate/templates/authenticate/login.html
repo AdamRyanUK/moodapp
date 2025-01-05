@@ -6,7 +6,8 @@
     .centered-form {
         display: flex;
         justify-content: center;
-        align-items: center; /* Center vertically */
+        align-items: flex-start; /* Center vertically */
+        padding-top: 150px;
         min-height: 100vh; /* Ensure the container takes up the full height of the viewport */
     }
     .form-container {
@@ -37,6 +38,10 @@
 
     /* Media query for mobile devices */
     @media (max-width: 768px) {
+        .centered-form {
+            align-items: flex-start;
+            padding-top: 30px;
+        }
         .form-container {
             padding: 10px;
         }

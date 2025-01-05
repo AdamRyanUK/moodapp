@@ -3,15 +3,30 @@ $(document).ready(function () {
     fetch('/weatherpreferences/check-feedback-status/')
         .then(response => response.json())
         .then(data => {
-            // Check the response and show the modal if the user has not submitted feedback today
+            // Check the response and show the modal or button if the user has not submitted feedback today
             if (data.has_submitted === false && isAuthenticated) {
-                // Show the modal only if feedback hasn't been submitted today
-                $('#helloModal').modal('show');
+                // Check sessionStorage to see if the modal has been shown
+                if (!sessionStorage.getItem('modalShown')) {
+                    // Show the modal only if feedback hasn't been submitted today
+                    $('#helloModal').modal('show');
+                    // Show the feedback button
+                    $('#feedbackButton').show();
+                    // Set sessionStorage to indicate the modal has been shown
+                    sessionStorage.setItem('modalShown', 'true');
+                } else {
+                    // Show the feedback button if the modal was already shown
+                    $('#feedbackButton').show();
+                }
             }
         })
         .catch(error => {
             console.error('Error checking feedback status:', error);
         });
+
+    // Add an event listener to the feedback button to show the modal
+    document.getElementById('feedbackButton').addEventListener('click', function () {
+        $('#helloModal').modal('show');
+    });
 
     // Highlight the selected rating button
     const buttons = document.querySelectorAll('.rating-btn');
@@ -62,6 +77,8 @@ $(document).ready(function () {
                     alert('Your rating has been saved!');
                     // Close the modal
                     $('#helloModal').modal('hide');
+                    // Hide the feedback button after submission
+                    $('#feedbackButton').hide();
                 } else {
                     alert('Something went wrong. Please try again.');
                 }
@@ -75,4 +92,3 @@ $(document).ready(function () {
         }
     });
 });
-

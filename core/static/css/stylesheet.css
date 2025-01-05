@@ -479,6 +479,27 @@ main p{
   cursor: pointer;
 }
 
+.feedback-btn {
+  position: fixed;
+  bottom: 60px;
+  right: 30px;
+  background-color: #007bff; /* Change to your preferred color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+  z-index: 1000; /* Ensure the button is on top of other elements */
+  display: none;
+  font-size: larger;
+  font-weight: bold;
+}
+
+.feedback-btn:hover {
+  background-color: #0056b3; /* Darken the button on hover */
+}
+
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
@@ -636,7 +657,11 @@ main p{
   .modal-body h1 {
     font-size: 1.2rem; /* Smaller font size for mobile devices */
 }
-
+.feedback-btn { 
+  bottom: 70px;
+  right: 10px;
+  font-weight: normal;
+}
 
 }
 
