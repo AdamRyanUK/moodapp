@@ -13,6 +13,16 @@
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         <title>ClearSky App</title>
         
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-M70Z64NK87"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-M70Z64NK87');
+        </script>
+        
         <!-- Additional custom styles or scripts specific to a page can go here -->
         {% block extra_head %}{% endblock %}
         
@@ -20,6 +30,7 @@
     </head>
     
 <body>
+
 
     <nav class="{% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}" id="navbar">
         <ul class="navbar-list">
