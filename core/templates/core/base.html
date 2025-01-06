@@ -161,12 +161,16 @@
         "{% get_static_prefix %}"
     </script>
     <!-- the hourly forecast modal  -->
-    <div id="hourlyModal" class="hourly-modal">
-        <div class="hourly-modal-content">
+<div id="hourlyModal" class="hourly-modal">
+    <div class="hourly-modal-content">
+        <div class="hourly-header">
+            <h2 id="hourly-title">Hourly Forecast</h2>
             <span class="hourly-close">&times;</span>
-            <div id="hourlyDataContainer" class="table-responsive"></div>
         </div>
+        <div id="hourlyDataContainer" class="table-responsive"></div>
     </div>
+</div>
+
 
 
     {% endif %}

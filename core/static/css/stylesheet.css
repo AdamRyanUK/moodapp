@@ -467,7 +467,6 @@ main p{
 
 .hourly-close {
   color: #aaa;
-  float: right;
   font-size: 28px;
   font-weight: bold;
 }
@@ -478,6 +477,21 @@ main p{
   text-decoration: none;
   cursor: pointer;
 }
+
+#hourly-title {
+  font-size: 2rem; /* Larger font size */
+  margin: 0; /* Remove bottom margin */
+  flex-grow: 1;
+  text-align: center;
+}
+
+.hourly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
 
 .feedback-btn {
   position: fixed;
@@ -663,6 +677,19 @@ main p{
   font-weight: normal;
 }
 
+.hourly-modal {
+  padding: 0%;
+}
+
+.hourly-modal-content {
+  width: 100%;
+  padding: 0;
+  border-radius: 0px;
+}
+
+.hourly-close {
+  font-size: 40px;
+  padding-right: 10px;
 }
 
 @media(max-width: 400px){

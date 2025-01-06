@@ -6,6 +6,7 @@
     <h2>Mood Calendar</h2>
     <h4>~ color each day depending on what your mood was / is ~</h4>
     <p>Select mood:</p>
+    <div class="sticky-moods-container">
     <div class="moods_container">
         <button class="mood mood_5" id="mood_5">
             ☹️
@@ -23,6 +24,7 @@
             😊
         </button>
     </div>
+    </div>  
     <p>then click on the circles below</p>
     <div id="calendar" class="calendar"></div>
 </div>
@@ -148,6 +150,15 @@ p {
 	.months {
 		width: 50%;	
 	}
+    .sticky-moods-container {
+            position: -webkit-sticky; /* For Safari */
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1000;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 }
 
 @media screen and (max-width: 480px) {
