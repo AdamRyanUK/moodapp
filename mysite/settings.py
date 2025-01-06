@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'core',
     'weatherapi',
     'weatherpreferences',
-    # 'corsheaders',
     'forum',
 ]
 
@@ -57,16 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'weatherapi.middleware.ForecastMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
 ]
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://127.0.0.1:8000",
-#     "https://www.clearskyapp.io",
-#     "https://clearskyapp.io",
-#     "https://clearsky-staging-app-f7ac40698cd6.herokuapp.com"
-# ]
-
 
 ROOT_URLCONF = 'mysite.urls'
 
