@@ -3,13 +3,30 @@
 {% load custom_filters %}
 
 {% block content %}
-<h1>{{ topic.name }}</h1>
-<p>{{ topic.description }}</p>
-<ul>
-    {% for thread in threads %}
-        <li><a href="{% url 'thread_detail' thread.id %}">{{ thread.title }}</a></li>
-    {% endfor %}
-</ul>
-
-
+<div class="container mt-5">
+    <h1 class="mb-4">{{ topic.name }}</h1>
+    <p>{{ topic.description }}</p>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Thread Title</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Date</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for thread in threads %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ thread.title }}</td>
+                    <td>{{ thread.created_by.username }}</td>
+                    <td>{{ thread.created_at }}</td>
+                    <td><a href="{% url 'thread_detail' thread.id %}" class="btn btn-primary">View Thread</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

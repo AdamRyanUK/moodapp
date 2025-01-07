@@ -3,12 +3,20 @@
 {% load custom_filters %}
 
 {% block content %}
-<h1>Topics</h1>
-<ul>
-    {% for topic in topics %}
-        <li><a href="{% url 'thread_list' topic.id %}">{{ topic.name }}</a></li>
-    {% endfor %}
-</ul>
-
-
+<div class="container mt-5">
+    <h1 class="mb-4">Topics</h1>
+    <div class="row">
+        {% for topic in topics %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ topic.name }}</h5>
+                        <p class="card-text">{{ topic.description }}</p>
+                        <a href="{% url 'thread_list' topic.id %}" class="btn btn-primary">View Threads</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
