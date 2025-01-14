@@ -1,0 +1,17 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% blocktrans with site_name="ClearSky" %}
+    Hello from {{ site_name }}!
+{% endblocktrans %}
+
+{% block content %}
+    <!-- Your content for the block goes here -->
+{% endblock content %}
+
+{% blocktrans with site_name="ClearSky" site_domain="www.clearskyapp.io" %}
+    Thank you for using {{ site_name }}!
+    {{ site_domain }}
+{% endblocktrans %}
+
+{% endautoescape %}

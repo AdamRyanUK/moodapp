@@ -101,7 +101,7 @@ def home(request):
         for city_search in most_selected_cities:
             city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
 
-        return render(request, 'core/home.html', {
+        return render(request, 'home.html', {
             'city_first_part': city_first_part,
             'city': city,
             'weather_data': weather_data,
@@ -145,7 +145,7 @@ def calendar_view(request):
         'date': today_date,
         'feedback_json': feedback_json,
     }
-    return render(request, 'core/calendar.html', context)
+    return render(request, 'calendar.html', context)
 
 @login_required
 def feedback_anomaly_data(request):
@@ -200,3 +200,8 @@ def feedback_chart_data(request):
 
     return JsonResponse(data)
 
+def user_register(request): 
+	return render(request, 'account/signup.html')
+
+def user_login(request):
+	return render(request, 'account/login.html')

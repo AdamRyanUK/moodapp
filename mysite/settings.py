@@ -24,8 +24,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # setting the fallback login url 
 
-LOGIN_URL = '/authenticate/' # Change this to your custom login URL
-
+LOGIN_URL = '/accounts/login/' # Change this to your custom login URL
+ACCOUNT_SIGNUP_REDIRECT_URL = '/authenticate/check_email/'  # URL to redirect after signup
 # where users are redirected after a sucessful login i.e. homepage
 
 LOGIN_REDIRECT_URL = '/' 
@@ -39,12 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_extensions',
     'authenticate',
     'core',
     'weatherapi',
     'weatherpreferences',
     'forum',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'weatherapi.middleware.ForecastMiddleware',
@@ -152,4 +159,70 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'core', 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 django_heroku.settings(locals())
+
+# For local testing
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# For production
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.protonmail.ch'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'admin@clearskyapp.io'
+EMAIL_HOST_PASSWORD = 'NTDSEQ2KNG4HW1A7'
+DEFAULT_FROM_EMAIL = 'admin@clearskyapp.io'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Clearsky '
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': config('GOOGLE_OAUTH_CLIENT_ID'),
+            'secret': config('GOOGLE_OAUTH_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['profile', 'email',],
+        'AUTH_PARAMS': {'access_type': 'online',}
+    },
+    'facebook': {
+        'APP': {
+            'client_id':config('FACEBOOK_APP_CLIENT_ID'),
+            'secret': config('FACEBOOK_APP_SECRET'),
+        },
+        'METHOD': 'oauth2',  # Set to 'js_sdk' to use the Facebook connect SDK
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'picture',
+            'short_name',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v17.0',
+        'GRAPH_API_URL': 'https://graph.facebook.com/v17.0',
+    }
+}
+
+SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
+
 

@@ -28,6 +28,20 @@ git push staging main
 git push heroku main
 
 *run database migrations*
-heroku run python manage.py migrate
+heroku run python manage.py migrate --app clearsky-staging-app
+
+*to dump data*
+python manage.py dumpdata [app_label].[model] > [output_file]
+*run heroku bash* 
+heroku run bash -a clearsky-staging-app
+*to push data created *
+python manage.py loaddata *name*.json
+
+
+
+
+
+
+
 
 

@@ -8,4 +8,5 @@ urlpatterns = [
     path('forum/', include('forum.urls')),
     path('weatherapi/', include('weatherapi.urls')),
     path('weatherpreferences/', include('weatherpreferences.urls')),
+    path('accounts/', include('allauth.urls')),
 ]

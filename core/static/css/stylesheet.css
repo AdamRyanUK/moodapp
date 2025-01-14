@@ -514,6 +514,15 @@ main p{
   background-color: #0056b3; /* Darken the button on hover */
 }
 
+.center-content {
+  display: flex;
+  justify-content: center;  /* Center horizontally */
+  padding-top: 50px;     /* Center vertically */
+  height: 100vh; 
+  padding-bottom: 60px;
+  
+}
+
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
