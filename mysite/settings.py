@@ -25,7 +25,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # setting the fallback login url 
 
 LOGIN_URL = '/accounts/login/' # Change this to your custom login URL
-ACCOUNT_SIGNUP_REDIRECT_URL = '/authenticate/check_email/'  # URL to redirect after signup
 # where users are redirected after a sucessful login i.e. homepage
 
 LOGIN_REDIRECT_URL = '/' 
@@ -222,6 +221,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 
 

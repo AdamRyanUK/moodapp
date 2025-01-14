@@ -523,6 +523,8 @@ main p{
   
 }
 
+
+
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
