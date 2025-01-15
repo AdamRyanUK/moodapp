@@ -523,27 +523,6 @@ main p{
   
 }
 
-.login-page-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  height: 100vh; /* Optional: Adjusts to the full height of the viewport */
-}
-
-.login-form-container,
-.social-login-container {
-  width: 50%; /* Each takes up 50% of the horizontal space */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.social-login-container {
-  border-left: 1px solid #ccc; /* Optional: Adds a separator between the sections */
-}
-
-
-
 @media (max-width: 800px) {
   #navbar {
     height: auto; /* Ensure navbar adjusts to content */
@@ -720,24 +699,6 @@ main p{
 .hourly-close {
   font-size: 40px;
   padding-right: 10px;
-}
-
-.login-page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center contents horizontally */
-}
-
-.login-form-container,
-.social-login-container {
-  width: 100%; /* Stacks sections vertically on smaller screens */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center contents horizontally */
-}
-
-.social-login-container {
-  justify-content: center; /* Center contents vertically if container height allows */
 }
 
 @media(max-width: 400px){
