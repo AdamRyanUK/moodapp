@@ -43,6 +43,7 @@ def location_history(request):
         'history': history,
     })
 
+@login_required
 def register_weather_preferences(request):
     if request.method == 'POST':
         weather_preferences_form = WeatherPreferencesForm(request.POST)
@@ -54,8 +55,13 @@ def register_weather_preferences(request):
             health_conditions.user = request.user
             weather_preferences.save()
             health_conditions.save()
-            messages.success(request, ('You Have Registered Your Weather Preferences...'))
-            return redirect('preference-summary')
+
+            # Update the first_login flag for the current user
+            request.user.userprofile.first_login = False
+            request.user.userprofile.save()
+
+            messages.success(request, 'You Have Registered Your Weather Preferences...')
+            return redirect('home')  # Redirect to the home page after form submission
     else:
         weather_preferences_form = WeatherPreferencesForm()
         health_conditions_form = HealthConditionsForm()

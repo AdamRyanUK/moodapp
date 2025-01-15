@@ -1,4 +1,4 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css">
@@ -7,33 +7,10 @@
 <style>
     .noUi-connect { background: linear-gradient(to right, blue, red); }
 
-    .option {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .option:hover {
-        background-color: #f0f0f0;
-    }
-
-    .option.selected {
-        background-color: #007bff;
-        color: #fff;
-        border-color: #007bff;
-    }
-
-    .centered-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        text-align: center;
-    }
+    .option { display: inline-block; padding: 10px 20px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+    .option:hover { background-color: #f0f0f0; }
+    .option.selected { background-color: #007bff; color: #fff; border-color: #007bff; }
+    .centered-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
 </style>
 {% endblock %}
 
@@ -45,6 +22,26 @@
             <br><br>
             <form method="post">
                 {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="hometown">Hometown</label>
+                    <input 
+                        type="text" 
+                        id="hometown" 
+                        name="hometown" 
+                        class="form-control form-item" 
+                        placeholder="Start typing your hometown..." 
+                        onkeyup="fetchCitySuggestions(this.value)" 
+                        autocomplete="off"
+                    />
+                    <ul id="suggestions" class="list-group mt-1"></ul>
+                </div>
+
+                <!-- Hidden input fields for latitude and longitude -->
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+                <input type="hidden" id="country" name="country">
+
                 <div class="slider-container">
                     <div id="temp-slider"></div>
                 </div>
@@ -54,6 +51,7 @@
                 <input type="hidden" name="ideal_temp_min" id="id_ideal_temp_min" value="15">
                 <input type="hidden" name="ideal_temp_max" id="id_ideal_temp_max" value="25">
                 <br>
+                
                 <div>
                     <p>Do you love rainy days?</p>
                     <span class="option" data-value="true" data-target="rain_lover">Yes</span>
@@ -82,6 +80,7 @@
                     <input type="hidden" name="wind_hater" id="wind_hater">
                 </div>
                 <br>
+                
                 <div>
                     <p>Do you have Seasonal Affective Disorder (SAD)?</p>
                     <div>
@@ -106,7 +105,7 @@
                     </div>
                 </div>
                 <br>
-                <button type="submit" class="btn btn-secondary btn-lg">Submit</button>
+                <input type="submit" value="Register" class="btn btn-secondary btn-block form-item">
             </form>
         </div>
     </div>
@@ -155,7 +154,7 @@
         idealTempMinInput.value = slider.noUiSlider.get()[0];
         idealTempMaxInput.value = slider.noUiSlider.get()[1];
 
-        // Handle questions
+        // Handle weather preferences options
         var options = document.querySelectorAll('.option');
         options.forEach(function(option) {
             option.addEventListener('click', function() {
@@ -166,6 +165,32 @@
                 document.getElementById(target).value = option.getAttribute('data-value');
             });
         });
+
+        // Function to fetch city suggestions
+        window.fetchCitySuggestions = function(value) {
+            if (value.length > 2) {
+                // Replace with your API or data source
+                fetch(`your_api_endpoint?q=${value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var suggestions = document.getElementById('suggestions');
+                        suggestions.innerHTML = '';
+                        data.forEach(city => {
+                            var li = document.createElement('li');
+                            li.classList.add('list-group-item');
+                            li.textContent = city.name;
+                            li.addEventListener('click', function() {
+                                document.getElementById('hometown').value = city.name;
+                                document.getElementById('latitude').value = city.lat;
+                                document.getElementById('longitude').value = city.lon;
+                                document.getElementById('country').value = city.country;
+                                suggestions.innerHTML = '';
+                            });
+                            suggestions.appendChild(li);
+                        });
+                    });
+            }
+        }
     });
 </script>
 {% endblock %}

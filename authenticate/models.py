@@ -12,14 +12,8 @@ class UserProfile(models.Model):
         ('uk', 'UK'),
         ('ca', 'Canada'),
     ]
-
-    units = models.CharField(
-        max_length=10,
-        choices=UNIT_CHOICES,
-        default='metric',  # Set a default value
-    )
+    units = models.CharField(max_length=10, choices=UNIT_CHOICES, default='metric')
+    first_login = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user.username
-
-    

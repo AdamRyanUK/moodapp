@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'weatherapi.middleware.ForecastMiddleware',
+    'authenticate.middleware.FirstLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
