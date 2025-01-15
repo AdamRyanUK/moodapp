@@ -6,6 +6,7 @@
     <style>
         .login-buttons-container {
             display: flex;
+            flex-direction: column;
             gap: 16px; /* Adjust the gap value to space the buttons as needed */
     }
         .gsi-material-button {
@@ -113,8 +114,8 @@
         }
     </style>
     <div id="login-buttons" class="login-buttons-container">
-    {% element provider_list %}
         {% for provider in socialaccount_providers %}
+        
             {% if provider.id == "google" %}
                 {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
                 <button class="gsi-material-button" onclick="location.href='{{ href }}';">
@@ -134,12 +135,12 @@
                 </button>
             {% elif provider.id == "facebook" %}
                 {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
-                <div class="fb-login-button" data-width="400" data-size="" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="true"></div>
+                <div class="fb-login-button" data-width="400" data-size="large" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="true"></div>
             {% else %}
                 {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
                 {% element provider name=provider.name provider_id=provider.id href=href %}{% endelement %}
             {% endif %}
         {% endfor %}
-    {% endelement %}
+    
     </div>
 {% endif %}
