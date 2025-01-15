@@ -129,7 +129,7 @@ def remove_city(request, city_id):
 
 
 def insights(request):
-    return render(request, 'core/insights.html')
+    return render(request, 'insights.html')
 
 @login_required
 def calendar_view(request):
@@ -200,8 +200,3 @@ def feedback_chart_data(request):
 
     return JsonResponse(data)
 
-def user_register(request): 
-	return render(request, 'account/signup.html')
-
-def user_login(request):
-	return render(request, 'account/login.html')
