@@ -16,7 +16,13 @@ SECRET_KEY = '=4kyj)60h7iy7)_3%djs%npl6*#*pc&-p(-)7pzr$4ae9c+-@z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['clearskyapp.herokuapp.com']
+ALLOWED_HOSTS = [
+    'clearskyapp.herokuapp.com',  # Heroku domain
+    'clearskyapp.io',             # Custom domain without "https://"
+    'www.clearskyapp.io',         # Custom domain with "www"
+    'clearsky-staging-app-f7ac40698cd6.herokuapp.com',  # Specific Heroku staging app domain
+]
+
 
 # Setting the default primary key field type
 
