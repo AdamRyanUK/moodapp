@@ -309,3 +309,34 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
     except KeyError as e:
         logger.error(f"Missing expected data in response: {e}")
         return []
+
+import requests
+
+def get_nearest_place(lat, lon, api_key):
+    """
+    Fetch the nearest place information from the Meteosource API.
+    
+    Args:
+        lat (float): Latitude of the location.
+        lon (float): Longitude of the location.
+        api_key (str): API key for Meteosource.
+
+    Returns:
+        dict: A dictionary containing place details (e.g., name, region, country).
+    """
+    url = f"https://www.meteosource.com/api/v1/startup/nearest_place"
+    params = {
+        "lat": lat,
+        "lon": lon,
+        "language": "en",
+        "key": api_key,
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raise an HTTPError if the response code is 4xx or 5xx
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Error fetching nearest place from Meteosource: {e}")
+        return None
+

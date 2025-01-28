@@ -9,7 +9,7 @@ from django.contrib import messages
 from authenticate.models import UserProfile
 from .models import WeatherFeedback, HealthConditions, WeatherPreferences
 from authenticate.models import UserProfile
-from .forms import UserActionsForm, JournalEntryForm, WeatherPreferencesForm, HealthConditionsForm
+from .forms import UserActionsForm, JournalEntryForm, WeatherPreferencesForm, HealthConditionsForm, HometownForm
 from weatherapi.services import fetch_forecast_by_lat_lon
 
 @csrf_exempt  # Add this to bypass CSRF for API calls (be mindful of CSRF security in production)
@@ -43,11 +43,25 @@ def location_history(request):
         'history': history,
     })
 
+import logging
+
+logger = logging.getLogger('django')
+
+def parseCoordinate(coord):
+    try:
+        value = float(coord)
+        if 'S' in coord or 'W' in coord:
+            return -value
+        return value
+    except (ValueError, TypeError):
+        return None
+    
 @login_required
 def register_weather_preferences(request):
     if request.method == 'POST':
         weather_preferences_form = WeatherPreferencesForm(request.POST)
         health_conditions_form = HealthConditionsForm(request.POST)
+
         if weather_preferences_form.is_valid() and health_conditions_form.is_valid():
             weather_preferences = weather_preferences_form.save(commit=False)
             health_conditions = health_conditions_form.save(commit=False)
@@ -56,12 +70,13 @@ def register_weather_preferences(request):
             weather_preferences.save()
             health_conditions.save()
 
-            # Update the first_login flag for the current user
             request.user.userprofile.first_login = False
             request.user.userprofile.save()
 
-            messages.success(request, 'You Have Registered Your Weather Preferences...')
-            return redirect('home')  # Redirect to the home page after form submission
+            messages.success(request, 'You have successfully registered your weather preferences!')
+            return redirect('home')
+        else:
+            messages.error(request, 'There was an issue with your form submission. Please correct the errors below.')
     else:
         weather_preferences_form = WeatherPreferencesForm()
         health_conditions_form = HealthConditionsForm()

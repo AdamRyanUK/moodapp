@@ -3,11 +3,26 @@ from django.shortcuts import render
 def landing_page(request): 
 	return render(request, 'authenticate/landing_page.html')
 
-def check_email(request): 
-	return render(request, 'authenticate/check_email.html')
+# views.py
+from django.shortcuts import render, redirect
+from .forms import UserDetailsForm
+from .models import UserProfile
 
-def user_register(request): 
-	return render(request, 'account/signup.html')
+from django.shortcuts import render, redirect
+from .forms import UserDetailsForm
+from .models import UserProfile
 
-def user_login(request):
-	return render(request, 'account/login.html')
+def user_details(request):
+    user = request.user
+    profile = UserProfile.objects.get(user=user)
+
+    if request.method == 'POST':
+        form = UserDetailsForm(request.POST, instance=profile, user=user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redirect to a success page
+    else:
+        form = UserDetailsForm(instance=profile, user=user)
+    
+    return render(request, 'authenticate/user_details.html', {'form': form})
+

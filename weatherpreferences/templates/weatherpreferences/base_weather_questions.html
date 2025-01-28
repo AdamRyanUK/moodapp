@@ -15,33 +15,16 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="container centered-container">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h1>Register Your Weather Preferences</h1>
             <br><br>
-            <form method="post">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="hometown">Hometown</label>
-                    <input 
-                        type="text" 
-                        id="hometown" 
-                        name="hometown" 
-                        class="form-control form-item" 
-                        placeholder="Start typing your hometown..." 
-                        onkeyup="fetchCitySuggestions(this.value)" 
-                        autocomplete="off"
-                    />
-                    <ul id="suggestions" class="list-group mt-1"></ul>
-                </div>
-
-                <!-- Hidden input fields for latitude and longitude -->
-                <input type="hidden" id="latitude" name="latitude">
-                <input type="hidden" id="longitude" name="longitude">
-                <input type="hidden" id="country" name="country">
-
+            <form id="register-weather-form" method="post">
+            {% csrf_token %}
+                <br>
+                <br>
                 <div class="slider-container">
                     <div id="temp-slider"></div>
                 </div>
@@ -104,7 +87,7 @@
                         </label>
                     </div>
                 </div>
-                <br>
+                <br> 
                 <input type="submit" value="Register" class="btn btn-secondary btn-block form-item">
             </form>
         </div>
@@ -112,7 +95,8 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Existing noUiSlider functionality
         var slider = document.getElementById('temp-slider');
         var minTempValue = document.getElementById('min_temp_value');
         var maxTempValue = document.getElementById('max_temp_value');
@@ -148,49 +132,18 @@
             }
         });
 
-        // Initialize display
-        minTempValue.textContent = slider.noUiSlider.get()[0];
-        maxTempValue.textContent = slider.noUiSlider.get()[1];
-        idealTempMinInput.value = slider.noUiSlider.get()[0];
-        idealTempMaxInput.value = slider.noUiSlider.get()[1];
-
-        // Handle weather preferences options
+        // Weather preference options functionality
         var options = document.querySelectorAll('.option');
-        options.forEach(function(option) {
-            option.addEventListener('click', function() {
+        options.forEach(function (option) {
+            option.addEventListener('click', function () {
                 var target = option.getAttribute('data-target');
                 var inputs = document.querySelectorAll('[data-target="' + target + '"]');
-                inputs.forEach(function(input) { input.classList.remove('selected'); });
+                inputs.forEach(function (input) { input.classList.remove('selected'); });
                 option.classList.add('selected');
                 document.getElementById(target).value = option.getAttribute('data-value');
             });
         });
-
-        // Function to fetch city suggestions
-        window.fetchCitySuggestions = function(value) {
-            if (value.length > 2) {
-                // Replace with your API or data source
-                fetch(`your_api_endpoint?q=${value}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        var suggestions = document.getElementById('suggestions');
-                        suggestions.innerHTML = '';
-                        data.forEach(city => {
-                            var li = document.createElement('li');
-                            li.classList.add('list-group-item');
-                            li.textContent = city.name;
-                            li.addEventListener('click', function() {
-                                document.getElementById('hometown').value = city.name;
-                                document.getElementById('latitude').value = city.lat;
-                                document.getElementById('longitude').value = city.lon;
-                                document.getElementById('country').value = city.country;
-                                suggestions.innerHTML = '';
-                            });
-                            suggestions.appendChild(li);
-                        });
-                    });
-            }
-        }
     });
 </script>
+
 {% endblock %}
