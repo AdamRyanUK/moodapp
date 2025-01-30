@@ -225,7 +225,7 @@ body{
     position: absolute;
     max-height: 200px; /* Limit the height */
     overflow-y: auto; /* Enable scrolling */
-    width: calc(100% - 40px); /* Match the width of the input field */
+    width: calc(90% - 80px); /* Match the width of the input field */
     background-color: white; /* Background color */
     top: calc(100% + 10px); /* Position below the input field */
     left: 0; /* Align with the input field */
@@ -235,6 +235,7 @@ body{
 .suggestion-item {
     padding: 10px;
     cursor: pointer;
+    border-radius: 25px;
 }
 
 .suggestion-item:hover {

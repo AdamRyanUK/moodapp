@@ -11,7 +11,7 @@ class HealthConditions(models.Model):
         return f"{self.user.username}'s health conditions"
 
 class WeatherPreferences(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     ideal_temp_max = models.CharField(max_length=50, null=True, blank=True)
     ideal_temp_min = models.CharField(max_length=50, null=True, blank=True)
     rain_lover = models.BooleanField(default=False)

@@ -178,6 +178,8 @@ p {
 <!-- Forecast Table -->
 {% if weather_data %}
 <h2 style="text-align: center;">Forecast for {{ city }}</h2>
+<a href="{% url 'mood-forecast-graph' %}">Graph</a>
+
 <div class="table-responsive">    
     <table class="table table-hover">
         <thead>

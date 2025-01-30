@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@polymer/iron-selector": "^3.0.1",
-    "@polymer/polymer": "^3.5.2"
+    "@polymer/polymer": "^3.5.2",
+    "maplibre-gl": "^5.1.0"
   }
 }

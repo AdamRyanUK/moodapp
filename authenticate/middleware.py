@@ -7,7 +7,7 @@ class FirstLoginMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            if hasattr(request.user, 'userprofile') and request.user.userprofile.first_login:
+            if hasattr(request.user, 'profile') and request.user.profile.first_login:
                 excluded_paths = [reverse('register_weather_preferences'), '/weatherapi/city-autocomplete/']
                 # Check if path is in excluded paths or starts with /admin
                 if request.path not in excluded_paths and not request.path.startswith('/admin'):

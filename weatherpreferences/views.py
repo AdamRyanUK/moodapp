@@ -6,11 +6,10 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from authenticate.models import UserProfile
 from .models import WeatherFeedback, HealthConditions, WeatherPreferences
-from authenticate.models import UserProfile
-from .forms import UserActionsForm, JournalEntryForm, WeatherPreferencesForm, HealthConditionsForm, HometownForm
+from .forms import UserActionsForm, JournalEntryForm, WeatherPreferencesForm, HealthConditionsForm
 from weatherapi.services import fetch_forecast_by_lat_lon
+from authenticate.models import Profile
 
 @csrf_exempt  # Add this to bypass CSRF for API calls (be mindful of CSRF security in production)
 @login_required
@@ -70,11 +69,11 @@ def register_weather_preferences(request):
             weather_preferences.save()
             health_conditions.save()
 
-            request.user.userprofile.first_login = False
-            request.user.userprofile.save()
+            request.user.profile.first_login = False
+            request.user.profile.save()
 
             messages.success(request, 'You have successfully registered your weather preferences!')
-            return redirect('home')
+            return redirect('edit_hometown')
         else:
             messages.error(request, 'There was an issue with your form submission. Please correct the errors below.')
     else:
@@ -90,7 +89,7 @@ def register_weather_preferences(request):
 def preference_summary(request):
     weather_preferences = WeatherPreferences.objects.get(user=request.user)
     health_conditions = HealthConditions.objects.get(user=request.user)
-    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile = Profile.objects.get(user=request.user)
 
     context = {
         'weather_preferences': weather_preferences,

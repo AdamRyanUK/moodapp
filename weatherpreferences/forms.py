@@ -1,24 +1,5 @@
 from django import forms
 from .models import JournalEntry, UserActions, WeatherFeedback, HealthConditions, WeatherPreferences
-from authenticate.models import UserProfile  # Assuming the UserProfile model is in `models.py`
-
-class HometownForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile  # This form is related to the UserProfile model
-        fields = ['hometown', 'latitude', 'longitude']  # Explicitly define these fields
-        widgets = {
-    'hometown': forms.TextInput(attrs={
-        'class': 'form-control form-item', 
-        'placeholder': 'Start typing your hometown...', 
-        'id': 'hometown'
-    }),
-    'latitude': forms.HiddenInput(),
-    'longitude': forms.HiddenInput(),
-}
-
-
- 
-
 
 class HealthConditionsForm(forms.ModelForm):
     class Meta:

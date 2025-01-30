@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import CitySearch 
 from weatherapi.models import DailyForecast
@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from datetime import timedelta
 from core.feedbackanomaly.anomaly_calculations import fetch_anomaly_data
+from authenticate.models import Profile
+
 
 def home(request):
     if request.user.is_authenticated:
@@ -24,7 +26,7 @@ def home(request):
         longitude = request.GET.get('longitude')
 
         # Fetch the user profile once
-        user_profile = request.user.userprofile
+        user_profile = request.user.profile
 
         if location and latitude and longitude:
             # Fetch forecast for the entered location using lat/lon
@@ -60,8 +62,8 @@ def home(request):
 
         else:
             # Use user's profile latitude and longitude if no location is provided
-            latitude = user_profile.latitude
-            longitude = user_profile.longitude
+            latitude = user_profile.lat
+            longitude = user_profile.lon
 
             if latitude and longitude:
                 fetch_and_save_forecast(request.user)
@@ -130,6 +132,21 @@ def remove_city(request, city_id):
 
 def insights(request):
     return render(request, 'insights.html')
+
+def mood_forecast_graph(request):
+    if request.user.is_authenticated:
+        # Retrieve the weather data from the session
+        weather_data = request.session.get('weather_data')
+
+        if not weather_data:
+            # Handle the case where there is no weather data (perhaps redirect to home or show an error)
+            return redirect('home')
+
+        return render(request, 'mood_forecast_graph.html', {
+            'weather_data': weather_data,  # Use the weather data here
+        })
+    else:
+        return render(request, 'authenticate/landing_page.html')
 
 @login_required
 def calendar_view(request):

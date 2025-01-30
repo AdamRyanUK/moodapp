@@ -1,28 +1,27 @@
-from django.shortcuts import render
+import json
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from .models import Profile
+from .forms import ChangeProfileForm
 
 def landing_page(request): 
 	return render(request, 'authenticate/landing_page.html')
 
-# views.py
-from django.shortcuts import render, redirect
-from .forms import UserDetailsForm
-from .models import UserProfile
-
-from django.shortcuts import render, redirect
-from .forms import UserDetailsForm
-from .models import UserProfile
-
-def user_details(request):
-    user = request.user
-    profile = UserProfile.objects.get(user=user)
+def edit_hometown(request):
+    user_profile = request.user.profile
+    form = ChangeProfileForm(request.POST or None, instance=user_profile)
 
     if request.method == 'POST':
-        form = UserDetailsForm(request.POST, instance=profile, user=user)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirect to a success page
-    else:
-        form = UserDetailsForm(instance=profile, user=user)
-    
-    return render(request, 'authenticate/user_details.html', {'form': form})
+            return redirect('home')
+        else:
+            return redirect('edit_hometown')
+    context = {
+        'hometown': user_profile.hometown,
+        'latitude': user_profile.lat,
+        'longitude': user_profile.lon,
+        'form': form,
+    }
 
+    return render(request, 'authenticate/edit_hometown.html', context)

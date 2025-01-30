@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Graph of your Mood</h2>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Extract data passed from the view
+        const weatherData = {{ weather_data|safe }};
+        
+        const labels = weatherData.map(item => item.day);  // Days (e.g., 2025-01-30)
+        const moodScores = weatherData.map(item => item.mood_score);  // Mood scores
+
+        const ctx = document.getElementById('moodGraph').getContext('2d');
+        const moodGraph = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Mood Score',
+                    data: moodScores,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 10
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

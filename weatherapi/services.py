@@ -8,6 +8,7 @@ import requests
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
 
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -16,9 +17,9 @@ api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
 
 def fetch_and_save_forecast(user):
     # Get user's saved geolocation
-    user_profile = user.userprofile
-    latitude = user_profile.latitude
-    longitude = user_profile.longitude
+    user_profile = user.profile
+    latitude = user_profile.lat
+    longitude = user_profile.lon
 
     url = f"https://www.meteosource.com/api/v1/startup/point"
     params = {
@@ -235,7 +236,7 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
     api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici"
     url = f"https://www.meteosource.com/api/v1/startup/point"
 
-    user_profile = user.userprofile
+    user_profile = user.profile
     unit_system = user_profile.units
     
     # Set the unit system to the user's preference
