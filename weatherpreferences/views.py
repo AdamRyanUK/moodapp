@@ -73,7 +73,7 @@ def register_weather_preferences(request):
             request.user.profile.save()
 
             messages.success(request, 'You have successfully registered your weather preferences!')
-            return redirect('edit_hometown')
+            return redirect('register_hometown')
         else:
             messages.error(request, 'There was an issue with your form submission. Please correct the errors below.')
     else:
@@ -129,9 +129,9 @@ def submit_feedback(request):
             # Extract the rating and optional feedback date from the request
             rating = data.get('rating')
             feedback_date = data.get('date')
-            user_profile = user.userprofile
-            latitude = user_profile.latitude
-            longitude = user_profile.longitude
+            user_profile = user.profile
+            latitude = user_profile.lat
+            longitude = user_profile.lon
             city = user_profile.hometown
 
             # Debug log for received fields

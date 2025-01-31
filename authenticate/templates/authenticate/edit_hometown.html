@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %} 
 <style>
-        .card {
+    .card {
         width: 300px;
         height: 300px;
         border-radius: 8px;
@@ -27,27 +27,25 @@
         height: 80%;
     }
 
-/* Initially hidden */
-.dropdown-menu {
-    display: none; /* Hidden by default */
-    position: absolute;  /* Position relative to parent container */
-    background-color: white;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    list-style: none;
-    padding: 10px;
-    margin-top: 5px;  /* Space between the input and the dropdown */
-}
+    .dropdown-menu {
+        display: none;  /* Hidden by default */
+        position: absolute;  /* Position relative to parent container */
+        background-color: white;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        list-style: none;
+        padding: 10px;
+        margin-top: 5px;  /* Space between the input and the dropdown */
+    }
 
-.dropdown-item {
-    padding: 8px 12px;
-    cursor: pointer;
-}
+    .dropdown-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
 
-.dropdown-item:hover {
-    background-color: #f1f1f1;
-}
-
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
 </style>
 
 <h2>Edit your hometown</h2>
@@ -81,83 +79,71 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const hometownField = document.querySelector('[name="hometown"]');
-    const latitudeField = document.querySelector('[name="lat"]');
-    const longitudeField = document.querySelector('[name="lon"]');
-    const dropdownMenu = document.getElementById('dropdown-menu');
+        const hometownField = document.querySelector('[name="hometown"]');
+        const dropdownMenu = document.getElementById('dropdown-menu');
 
-    // Ensure latitude and longitude fields are empty on load
-    hometownField.value = '';
-    latitudeField.value = '';
-    longitudeField.value = '';
+        hometownField.addEventListener('focus', positionDropdown);
+        hometownField.addEventListener('input', handleCityAutocomplete);
+        hometownField.addEventListener('blur', function () {
+            setTimeout(() => dropdownMenu.style.display = 'none', 100);  // Delay hiding
+        });
 
-    // Event listeners for input field
-    hometownField.addEventListener('focus', positionDropdown);  // Position the dropdown when focused
-    hometownField.addEventListener('input', handleCityAutocomplete);  // Fetch cities on input
-    hometownField.addEventListener('blur', function () {
-        setTimeout(() => dropdownMenu.style.display = 'none', 100);  // Delay hiding
-    });
+        document.addEventListener('click', function (event) {
+            if (!hometownField.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
 
-    // Close dropdown if clicking outside
-    document.addEventListener('click', function (event) {
-        if (!hometownField.contains(event.target) && !dropdownMenu.contains(event.target)) {
-            dropdownMenu.style.display = 'none';
-        }
-    });
-
-    // Function to position the dropdown based on the input field
-    function positionDropdown() {
-        const rect = hometownField.getBoundingClientRect();
-        dropdownMenu.style.display = 'block';
-        dropdownMenu.style.top = `${rect.bottom + window.scrollY}px`; // Position dropdown directly below
-        dropdownMenu.style.left = `${rect.left + window.scrollX}px`;  // Align with input field
-    }
-
-    // Function to handle city autocomplete based on input
-    function handleCityAutocomplete() {
-        const query = hometownField.value.trim();
-
-        if (query.length < 3) {
-            dropdownMenu.style.display = 'none';
-            return;
+        function positionDropdown() {
+            const rect = hometownField.getBoundingClientRect();
+            dropdownMenu.style.display = 'block';
+            dropdownMenu.style.top = `${rect.bottom + window.scrollY}px`;
+            dropdownMenu.style.left = `${rect.left + window.scrollX}px`;
         }
 
-        fetch(`/weatherapi/city-autocomplete/?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                dropdownMenu.innerHTML = `
-                    <li class="dropdown-item" onclick="useCurrentLocation()">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
-                            <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
-                        </svg>
-                        Use Current Location
-                    </li>`;
+        function handleCityAutocomplete() {
+            const query = hometownField.value.trim();
 
-                data.suggestions.forEach(city => {
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('dropdown-item');
-                    listItem.innerHTML = `
-                        <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
-                        <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}`;
+            if (query.length < 3) {
+                dropdownMenu.style.display = 'none';
+                return;
+            }
 
-                    listItem.addEventListener('click', function () {
-                        hometownField.value = city.name;
-                        document.querySelector('[name="lat"]').value = parseCoordinate(city.lat);
-                        document.querySelector('[name="lon"]').value = parseCoordinate(city.lon);
-                        dropdownMenu.style.display = 'none';  // Hide the dropdown after selection
+            fetch(`/weatherapi/city-autocomplete/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    dropdownMenu.innerHTML = `
+                        <li class="dropdown-item" onclick="useCurrentLocation()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
+                                <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+                            </svg>
+                            Use Current Location
+                        </li>`;
+
+                    data.suggestions.forEach(city => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('dropdown-item');
+                        listItem.innerHTML = `
+                            <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
+                            <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}`;
+
+                        listItem.addEventListener('click', function () {
+                            hometownField.value = city.name;
+                            document.querySelector('[name="lat"]').value = parseCoordinate(city.lat);
+                            document.querySelector('[name="lon"]').value = parseCoordinate(city.lon);
+                            dropdownMenu.style.display = 'none';
+                        });
+
+                        dropdownMenu.appendChild(listItem);
                     });
 
-                    dropdownMenu.appendChild(listItem);
+                    positionDropdown();
+                })
+                .catch(error => {
+                    console.error('Error fetching city suggestions:', error);
                 });
-
-                positionDropdown();  // Reposition the dropdown after data is fetched
-            })
-            .catch(error => {
-                console.error('Error fetching city suggestions:', error);
-            });
-    }
-
-    // Helper function to parse latitude and longitude coordinates
+        }
+            // Helper function to parse latitude and longitude coordinates
     function parseCoordinate(coord) {
         const value = parseFloat(coord);
         if (coord.includes('S') || coord.includes('W')) {
@@ -165,35 +151,33 @@
         }
         return value;
     }
-});
+    });
 
-// Function to get the user's current location
-function useCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+    function useCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
 
-            document.querySelector('[name="lat"]').value = lat;
-            document.querySelector('[name="lon"]').value = lon;
+                document.querySelector('[name="lat"]').value = lat;
+                document.querySelector('[name="lon"]').value = lon;
 
-            fetch(`/weatherapi/nearest-place/?lat=${lat}&lon=${lon}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        document.querySelector('[name="hometown"]').value = data.name;
-                    }
-                })
-                .catch(error => {
-                    alert('Error fetching nearest place: ' + error);
-                });
-        });
-    } else {
-        alert("Geolocation is not supported by this browser.");
+                fetch(`/weatherapi/nearest-place/?lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            document.querySelector('[name="hometown"]').value = data.name;
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error fetching nearest place: ' + error);
+                    });
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
-}
-
 </script>
 {% endblock %}
