@@ -46,6 +46,7 @@ def register_hometown(request):
         'latitude': user_profile.lat,
         'longitude': user_profile.lon,
         'form': form,
+        'block_feedback_script': True,
     }
 
     return render(request, 'authenticate/register_hometown.html', context)

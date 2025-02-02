@@ -199,9 +199,14 @@
 <script>
   const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
 </script>
-<script src="{% static 'js/feedback.js' %}"></script>
+
+{% block body_scripts %}
+{% if not block_feedback_script %}
+    <script src="{% static 'js/feedback.js' %}"></script>
+{% endif %}
 <script src="{% static 'js/findcity.js' %}"></script>
 <script src="{% static 'js/accountsidebartoggle.js' %}"></script>
 <script src="{% static 'js/hourly_forecast_modal.js' %}"></script>
+{% endblock %}
 </div>
 </html>
