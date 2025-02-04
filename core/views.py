@@ -15,6 +15,16 @@ from datetime import timedelta
 from core.feedbackanomaly.anomaly_calculations import fetch_anomaly_data
 from authenticate.models import Profile
 
+def serialize_weather_data(weather_data):
+    """Convert datetime and timedelta objects in weather_data to strings."""
+    for forecast in weather_data:
+        for key, value in forecast.items():
+            if isinstance(value, datetime):
+                forecast[key] = value.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
+            elif isinstance(value, timedelta):
+                forecast[key] = str(value)  # Convert timedelta to string (e.g., '1 day, 2:30:00')
+    return weather_data
+
 
 def home(request):
     if request.user.is_authenticated:
@@ -102,6 +112,10 @@ def home(request):
         # Add city_first_part to most_selected_cities for easy template rendering
         for city_search in most_selected_cities:
             city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
+
+        # Store weather data in session
+        if weather_data:
+            request.session['weather_data'] = serialize_weather_data(weather_data)
 
         return render(request, 'home.html', {
             'city_first_part': city_first_part,

@@ -2,37 +2,129 @@
 {% load static %}
 
 {% block content %}
-<h2>Graph of your Mood</h2>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Extract data passed from the view
-        const weatherData = {{ weather_data|safe }};
-        
-        const labels = weatherData.map(item => item.day);  // Days (e.g., 2025-01-30)
-        const moodScores = weatherData.map(item => item.mood_score);  // Mood scores
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="mb-0">Graph of your Mood</h2>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-sm">Home</a>
+</div>
 
-        const ctx = document.getElementById('moodGraph').getContext('2d');
-        const moodGraph = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Mood Score',
-                    data: moodScores,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    tension: 0.1,
-                    fill: false
-                }]
+<!-- Container for the graph to allow scrolling on smaller screens -->
+<div class="graph-container">
+    <canvas id="moodGraph" width="800" height="400"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const weatherData = {{ weather_data|safe }};
+    
+    // Filter out undefined values from labels and moodScores
+    const labels = weatherData.map(item => item.day).filter(day => day !== undefined);
+    const moodScores = weatherData.map(item => item.mood_score).filter(score => score !== undefined);
+
+    function getMoodColor(score) {
+        if (score <= 3) return 'rgba(255, 99, 132, 1)';  // Red
+        if (score <= 6) return 'rgba(255, 206, 86, 1)';  // Yellow
+        return 'rgba(75, 192, 192, 1)';  // Green
+    }
+
+    const pointColors = moodScores.map(score => getMoodColor(score));
+
+    const drawTextPlugin = {
+        id: 'drawTextPlugin',
+        afterDatasetsDraw: (chart) => {
+            const ctx = chart.ctx;
+            chart.data.datasets[0].data.forEach((value, index) => {
+                const meta = chart.getDatasetMeta(0);
+                const point = meta.data[index];
+                
+                if (point) {
+                    ctx.save();
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(value, point.x, point.y);
+                    ctx.restore();
+                }
+            });
+        }
+    };
+
+    const ctx = document.getElementById('moodGraph').getContext('2d');
+    const moodGraph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: moodScores,
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                pointBackgroundColor: pointColors,
+                pointBorderColor: pointColors,
+                pointRadius: 12,
+                pointHoverRadius: 14,
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            legend: {
+                display: false  // This hides the legend
             },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        min: 0,
-                        max: 10
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        font: { size: 16 },
+                        color: 'black'
+                    },
+                    grid: {
+                        display: false  // Remove gridlines on the X-axis
+                    }
+                },
+                y: {
+                    min: -1,
+                    max: 11,
+                    ticks: {
+                        font: { size: 16 },
+                        color: 'black',
+                        callback: function(value) {
+                            if (value === -1 || value === 11) {
+                                return '';  // Hide -1 and 11 on the axis
+                            }
+                            return value;
+                        }
+                    },
+                    grid: {
+                        display: false  // Remove gridlines on the Y-axis
                     }
                 }
+            },
+            plugins: {
+                tooltip: { enabled: false }
             }
-        });
-    </script>
+        },
+        plugins: [drawTextPlugin]
+    });
+</script>
+
+<style>
+    /* Make the X-axis scrollable on smaller screens and set a minimum width */
+    .graph-container {
+        overflow-x: auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #moodGraph {
+        min-width: 800px; /* Set a minimum width */
+        height: 400px; /* Set a fixed height */
+    }
+
+    @media (max-width: 800px) {
+        .graph-container canvas {
+            width: 100%;  /* Allow the canvas to be 100% wide until it hits 800px */
+        }
+    }
+</style>
+
 {% endblock %}
