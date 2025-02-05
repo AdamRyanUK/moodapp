@@ -72,13 +72,15 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {
+                                x: {
                     ticks: {
-                        font: { size: 16 },
-                        color: 'black'
+                        font: { size: 14 },
+                        color: 'black',
+                        maxRotation: 0,  // Prevent label rotation
+                        minRotation: 0,  // Force horizontal labels
                     },
                     grid: {
-                        display: false  // Remove gridlines on the X-axis
+                        display: false
                     }
                 },
                 y: {
@@ -112,7 +114,6 @@
     .graph-container {
         overflow-x: auto;
         width: 100%;
-        max-width: 100%;
     }
 
     #moodGraph {
@@ -123,6 +124,7 @@
     @media (max-width: 800px) {
         .graph-container canvas {
             width: 100%;  /* Allow the canvas to be 100% wide until it hits 800px */
+            height: 400px;
         }
     }
 </style>

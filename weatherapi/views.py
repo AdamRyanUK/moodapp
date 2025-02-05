@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .services import get_city_suggestions, fetch_hourly_forecast, get_nearest_place
 from .moodscore import calculate_mood_score
+from django.template.defaultfilters import register
 
 def city_autocomplete(request):
     query = request.GET.get('q', '')
@@ -10,16 +11,11 @@ def city_autocomplete(request):
     suggestions = get_city_suggestions(query)
     return JsonResponse({'suggestions': suggestions})
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.template.defaultfilters import register
-
 @register.filter
 def mood_score_color(mood_score):
     red = 255 - (mood_score * 25)
     green = 255 - ((10 - mood_score) * 25)
     return f'rgb({red},{green},0)'
-
 
 @login_required
 def get_hourly_forecast(request):
@@ -41,17 +37,13 @@ def get_hourly_forecast(request):
 
         # Add mood score and icon to each hourly forecast entry
         for hour in hourly_data:
-            hour['mood_score'] = calculate_mood_score(user, hour)
+            hour['mood_score'] = calculate_mood_score(request.user, hour)
             hour['mood_score_color'] = mood_score_color(hour['mood_score'])
             hour['icon'] = hour['icon']
 
         return JsonResponse(hourly_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-from django.http import JsonResponse
-from django.conf import settings
-from .services import get_nearest_place
 
 @login_required
 def nearest_place(request):
