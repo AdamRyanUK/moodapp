@@ -14,6 +14,7 @@ from django.utils import timezone
 from datetime import timedelta
 from core.feedbackanomaly.anomaly_calculations import fetch_anomaly_data
 from authenticate.models import Profile
+from django.http import HttpResponseForbidden
 
 def serialize_weather_data(weather_data):
     """Convert datetime and timedelta objects in weather_data to strings."""
@@ -141,7 +142,6 @@ def remove_city(request, city_id):
     except CitySearch.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'City not found.'})
 
-
 def insights(request):
     return render(request, 'insights.html')
 
@@ -228,4 +228,7 @@ def feedback_chart_data(request):
     }
 
     return JsonResponse(data)
+
+def csrf_failure_view(request, reason=""):
+    return render(request, "csrf_failure.html", {"message": "Please refresh the page and try again."}, status=403)
 

@@ -35,6 +35,10 @@ LOGIN_URL = '/accounts/login/' # Change this to your custom login URL
 
 LOGIN_REDIRECT_URL = '/' 
 
+# when the user does not refresh page
+CSRF_FAILURE_VIEW = "core.views.csrf_failure_view"
+
+
 # Application definition
 
 INSTALLED_APPS = [

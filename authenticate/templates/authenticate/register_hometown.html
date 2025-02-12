@@ -1,27 +1,51 @@
 {% extends 'base.html' %}
 
-
-{% block content %} 
+{% block content %}
 <style>
     #change-location-details { 
         width: 80%;
+        margin: 0 auto; /* Center the container */
     }
     .change-location-container {
         display: flex;
-        flex-direction: row;
-        gap: 200px;
-        height: 80%;
+        flex-direction: column; /* Change to column for mobile */
+        gap: 20px; /* Adjust the gap between elements */
     }
 
+    .form {
+        order: 1; /* Ensure form appears first in normal flow */
+    }
+
+    .map-container {
+        order: 2; /* Map comes after form */
+        width: 100%; /* Full width on mobile */
+        margin-top: 20px;
+        border: 2px solid black;
+    }
+
+    #map {
+        width: 100%;
+        height: 280px;
+    }
+
+    /* Add Leaflet CSS */
+    .leaflet-container {
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Adjust dropdown menu for mobile */
     .dropdown-menu {
-        display: none;  /* Hidden by default */
-        position: absolute;  /* Position relative to parent container */
+        display: none;  
+        position: absolute;
         background-color: white;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
         z-index: 1;
         list-style: none;
         padding: 10px;
-        margin-top: 5px;  /* Space between the input and the dropdown */
+        margin-top: 5px;
+        width: 100%;  /* Full width on mobile */
+        max-width: 500px; /* Limit max width for larger screens */
     }
 
     .dropdown-item {
@@ -33,29 +57,27 @@
         background-color: #f1f1f1;
     }
 
-    .form-row {
-    display: flex;
-    align-items: center; /* Align button and map vertically */
-    gap: 20px; /* Add some spacing between the button and map */
-    margin-top: 15px;
-    }
+    /* Media query for larger screens */
+    @media (min-width: 600px) {
+        .change-location-container {
+            flex-direction: row; /* Back to row layout for larger screens */
+        }
 
+        .form, .map-container {
+            flex: 1; /* Equal flex for both form and map */
+        }
 
-    .map-container {
-        margin-top: 20px;
-        width: 80%;
-        height: 280px;
-    }
+        .map-container {
+            order: 0; /* Reset order for desktop */
+        }
 
-    #map {
-        width: 100%;
-        height: 100%;
-    }
+        .form {
+            order: 0; /* Reset order for desktop */
+        }
 
-    /* Add Leaflet CSS */
-    .leaflet-container {
-        height: 100%;
-        width: 100%;
+        .dropdown-menu {
+            width: 500px; /* Revert to fixed width on larger screens */
+        }
     }
 </style>
 
@@ -63,194 +85,232 @@
 
 <br>
 
-
-    <div id="change-location-details">
-        <h3>What should we call you and where is home?</h3>
-        <p> This is so we can do some fancy calculations to link the weather to your mood</p>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" id="username" name="username" placeholder="What should we call you?" class="form-control">
-
-            {{ form.as_p }}
-            <div class="form-row">
-                <div class="map-container">
-                    <div id="map"></div>
+<div id="change-location-details">
+    <h3>What should we call you and where is home?</h3>
+    <p> This is so we can do some fancy calculations to link the weather to your mood</p>
+    <div class="change-location-container">
+        <div class="form">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" id="username" name="username" placeholder="What should we call you?" class="form-control">
+                {{ form.as_p }}
+                <div id="error-message" style="color: red; display: none; font-size: 14px;">
+                    Please select a hometown from the dropdown.
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg">Save</button>
-            </div>
-        </form>
-        <ul id="dropdown-menu" class="dropdown-menu">
-            <li class="dropdown-item" onclick="useCurrentLocation()">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
-                    <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
-                </svg>
-                Use Current Location
-            </li>
-        </ul>
+                <button type="submit" id="submit-button" class="btn btn-primary btn-lg" style="margin-top: 20px;">Save</button>
+            </form>
+        </div>
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
     </div>
-
-
+    <ul id="dropdown-menu" class="dropdown-menu">
+        <li class="dropdown-item" onclick="useCurrentLocation()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
+                <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+            </svg>
+            Use Current Location
+        </li>
+    </ul>
+</div>
 
 <!-- Leaflet CSS and JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
-console.log('DOM content loaded script running...');
-
-function updateMap() {
-    const latField = document.querySelector('[name="lat"]');
-    const lonField = document.querySelector('[name="lon"]');
-    const lat = parseFloat(latField.value) || 0;
-    const lon = parseFloat(lonField.value) || 0;
-    console.log('Updating map to lat:', lat, 'lon:', lon);
-
-    if (window.map && window.marker) {
-        window.map.setView([lat, lon], 8);
-        window.marker.setLatLng([lat, lon]);
-        console.log('Map view and marker position updated.');
-    } else {
-        initMap(lat, lon);
-        console.log('Map initialized during update.');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('Inside DOMContentLoaded');
-
-    const hometownField = document.querySelector('[name="hometown"]');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const latField = document.querySelector('[name="lat"]');
-    const lonField = document.querySelector('[name="lon"]');
-    window.map = null;
-    window.marker = null;
-
-    function initMap(lat, lon) {
-        console.log('Initializing map with lat:', lat, 'lon:', lon);
-        window.map = L.map('map').setView([lat, lon], 8);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(window.map);
-        window.marker = L.marker([lat, lon]).addTo(window.map);
-        console.log('Map and marker initialized.');
-    }
-
-    // Initialize the map on page load
-    initMap(parseFloat(latField.value) || 0, parseFloat(lonField.value) || 0);
-
-    // Update the map when latitude or longitude fields change
-    latField.addEventListener('change', updateMap);
-    lonField.addEventListener('change', updateMap);
-
-    hometownField.addEventListener('focus', positionDropdown);
-    hometownField.addEventListener('input', handleCityAutocomplete);
-    hometownField.addEventListener('blur', function () {
-        setTimeout(() => dropdownMenu.style.display = 'none', 100);
-    });
-
-    document.addEventListener('click', function (event) {
-        if (!hometownField.contains(event.target) && !dropdownMenu.contains(event.target)) {
-            dropdownMenu.style.display = 'none';
-        }
-    });
-
-    function positionDropdown() {
-        const rect = hometownField.getBoundingClientRect();
-        const screenWidth = window.innerWidth;
-
-        dropdownMenu.style.display = 'block';
-
-        if (screenWidth < 600) {
-            dropdownMenu.style.top = `${rect.bottom + window.scrollY - 100}px`;
-            dropdownMenu.style.left = `${rect.left + window.scrollX}px`;
+    console.log('DOM content loaded script running...');
+    
+    function updateMap() {
+        const lat = parseFloat(document.querySelector('[name="lat"]').value) || 0;
+        const lon = parseFloat(document.querySelector('[name="lon"]').value) || 0;
+        console.log('Updating map to lat:', lat, 'lon:', lon);
+    
+        if (window.map && window.marker) {
+            window.map.setView([lat, lon], 8);
+            window.marker.setLatLng([lat, lon]);
+            console.log('Map view and marker position updated.');
         } else {
-            dropdownMenu.style.top = `${rect.bottom + window.scrollY - 50}px`;
-            dropdownMenu.style.left = `${rect.left + window.scrollX - 245}px`;
+            initMap(lat, lon);
+            console.log('Map initialized during update.');
         }
     }
 
-    function handleCityAutocomplete() {
-        const query = hometownField.value.trim();
-
-        if (query.length < 3) {
-            dropdownMenu.style.display = 'none';
-            return;
+    // Define enableSubmitButton outside the event listener to make it globally accessible
+    function enableSubmitButton() {
+        const submitButton = document.getElementById('submit-button');
+        const errorMessage = document.getElementById('error-message');
+        const selectionMade = window.selectionMade || false; // Use window to access selectionMade
+        
+        if (selectionMade) {
+            submitButton.disabled = false;
+            errorMessage.style.display = 'none';
+        } else {
+            submitButton.disabled = true;
         }
-
-        fetch(`/weatherapi/city-autocomplete/?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                dropdownMenu.innerHTML = `
-                    <li class="dropdown-item" onclick="useCurrentLocation()">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
-                            <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
-                        </svg>
-                        Use Current Location
-                    </li>`;
-
-                data.suggestions.forEach(city => {
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('dropdown-item');
-                    listItem.innerHTML = `
-                        <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
-                        <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}`;
-
-                    listItem.addEventListener('click', function () {
-                        hometownField.value = city.name;
-                        latField.value = parseCoordinate(city.lat);
-                        lonField.value = parseCoordinate(city.lon);
-                        dropdownMenu.style.display = 'none';
-                        updateMap();
-                    });
-
-                    dropdownMenu.appendChild(listItem);
-                });
-
-                positionDropdown();
-            })
-            .catch(error => {
-                console.error('Error fetching city suggestions:', error);
-            });
     }
 
-    function parseCoordinate(coord) {
-        const value = parseFloat(coord);
-        if (coord.includes('S') || coord.includes('W')) {
-            return -value;
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Inside DOMContentLoaded');
+    
+        const hometownField = document.querySelector('[name="hometown"]');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const latField = document.querySelector('[name="lat"]');
+        const lonField = document.querySelector('[name="lon"]');
+        const submitButton = document.getElementById('submit-button');
+        const errorMessage = document.getElementById('error-message');
+        
+        window.map = null;
+        window.marker = null;
+        window.selectionMade = false; // Flag to check if selection from dropdown is made, made global
+
+        // Make these variables global so they can be accessed by useCurrentLocation
+        window.latField = latField;
+        window.lonField = lonField;
+        window.hometownField = hometownField;
+
+        // Disable button initially
+        submitButton.disabled = true;
+
+        function initMap(lat, lon) {
+            console.log('Initializing map with lat:', lat, 'lon:', lon);
+            window.map = L.map('map').setView([lat, lon], 8);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(window.map);
+            window.marker = L.marker([lat, lon]).addTo(window.map);
+            console.log('Map and marker initialized.');
         }
-        return value;
-    }
-});
+    
+        // Initialize the map on page load
+        initMap(parseFloat(latField.value) || 0, parseFloat(lonField.value) || 0);
+    
+        // Update the map when latitude or longitude fields change
+        latField.addEventListener('change', updateMap);
+        lonField.addEventListener('change', updateMap);
+    
+        hometownField.addEventListener('focus', positionDropdown);
+        hometownField.addEventListener('input', handleCityAutocomplete);
+        hometownField.addEventListener('blur', function () {
+            setTimeout(() => dropdownMenu.style.display = 'none', 100);
+        });
+    
+        document.addEventListener('click', function (event) {
+            if (!hometownField.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
 
-function useCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(event) {
+            if (!window.selectionMade) {
+                event.preventDefault();
+                errorMessage.style.display = 'block';
+            }
+        });
 
-            document.querySelector('[name="lat"]').value = lat;
-            document.querySelector('[name="lon"]').value = lon;
+        // Position the dropdown menu dynamically
+        function positionDropdown() {
+            const rect = hometownField.getBoundingClientRect();
+            const screenWidth = window.innerWidth;
+    
+            dropdownMenu.style.display = 'block';
+    
+            if (screenWidth < 600) {
+                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 10}px`;
+                dropdownMenu.style.left = `${rect.left + window.scrollX}px`;
+            } else {
+                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 80}px`;
+                dropdownMenu.style.left = `${rect.left + window.scrollX - 245}px`;
+            }
+        }
 
-            fetch(`/weatherapi/nearest-place/?lat=${lat}&lon=${lon}`)
+        // Autocomplete for city names and fetch lat, lon for the selected city
+        function handleCityAutocomplete() {
+            const query = hometownField.value.trim();
+    
+            if (query.length < 3) {
+                dropdownMenu.style.display = 'none';
+                return;
+            }
+        
+            fetch(`/weatherapi/city-autocomplete/?q=${query}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        document.querySelector('[name="hometown"]').value = data.name;
-                    }
+                    dropdownMenu.innerHTML = ` 
+                        <li class="dropdown-item" onclick="useCurrentLocation()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
+                                <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+                            </svg>
+                            Use Current Location
+                        </li>`;
+    
+                    data.suggestions.forEach(city => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('dropdown-item');
+                        listItem.innerHTML = `
+                            <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
+                            <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}`;
+    
+                        listItem.addEventListener('click', function () {
+                            hometownField.value = city.name;
+                            latField.value = parseCoordinate(city.lat);
+                            lonField.value = parseCoordinate(city.lon);
+                            dropdownMenu.style.display = 'none';
+                            updateMap();
+                            window.selectionMade = true; // Mark that selection has been made
+                            enableSubmitButton(); // Enable the submit button after selection
+                        });
+    
+                        dropdownMenu.appendChild(listItem);
+                    });
+    
+                    positionDropdown();
                 })
                 .catch(error => {
-                    alert('Error fetching nearest place: ' + error);
+                    console.error('Error fetching city suggestions:', error);
                 });
+        }
+    
+        // Parse coordinate values for proper formatting
+        function parseCoordinate(coord) {
+            const value = parseFloat(coord);
+            if (coord.includes('S') || coord.includes('W')) {
+                return -value;
+            }
+            return value;
+        }
+    });
+    
+    function useCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                window.latField.value = lat;
+                window.lonField.value = lon;
+                updateMap(); // Update map before setting hometown
 
-            updateMap(); // Ensure map updates after location is set
-        });
-    } else {
-        alert("Geolocation is not supported by this browser.");
+                fetch(`/weatherapi/nearest-place/?lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            window.hometownField.value = data.name;
+                            window.selectionMade = true; // Mark that selection has been made via current location
+                            enableSubmitButton(); // Enable submit button after setting location
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error fetching nearest place: ' + error);
+                    });
+            }, function(error) {
+                alert('Error getting your location: ' + error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
-}
-
 </script>
-
 {% endblock %}
