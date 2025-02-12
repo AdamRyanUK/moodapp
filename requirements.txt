@@ -15,6 +15,7 @@ git-filter-repo==2.47.0
 gunicorn==23.0.0
 idna==3.10
 mailchimp-marketing==3.0.80
+mailchimp-transactional==1.0.47
 oauthlib==3.2.2
 packaging==24.2
 psycopg2==2.9.10
