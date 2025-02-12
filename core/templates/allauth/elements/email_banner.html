@@ -1,0 +1,10 @@
+{% load static %}
+<div class="text-center">
+    <img class="img-fluid"
+         src="{% static 'images/logo/logo.png' %}" 
+         alt="ClearSky Logo" 
+         style="width: 100px; height: auto;">
+    <img class="img-fluid"
+         src="{{ attrs.src }}"
+         {% if attrs.alt %}alt="{{ attrs.alt }}"{% endif %}>
+</div>

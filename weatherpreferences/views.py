@@ -22,7 +22,7 @@ def update_location(request):
             longitude = data.get('longitude')
             
             # Save the location to the user's profile
-            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+            user_profile, created = Profile.objects.get_or_create(user=request.user)
             user_profile.latitude = latitude
             user_profile.longitude = longitude
             user_profile.save()

@@ -25,7 +25,6 @@ def serialize_weather_data(weather_data):
                 forecast[key] = str(value)  # Convert timedelta to string (e.g., '1 day, 2:30:00')
     return weather_data
 
-
 def home(request):
     if request.user.is_authenticated:
         city = None
@@ -86,7 +85,7 @@ def home(request):
                         'icon': forecast.icon,
                         'temperature_min': forecast.temperature_min,
                         'temperature_max': forecast.temperature_max,
-                        'precipitation_amt': forecast.precipitation_total,
+                        'precipitation_total': forecast.precipitation_total,
                         'precipitation_type': forecast.precipitation_type,
                         'wind_speed': forecast.wind_speed,
                         'sunrise': forecast.sunrise,
@@ -132,7 +131,6 @@ def home(request):
     else:
         # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
-
 
 @csrf_exempt
 def remove_city(request, city_id):

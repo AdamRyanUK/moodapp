@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'weatherapi',
     'weatherpreferences',
     'forum',
+    'marketing',
+    'transactional',    
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -232,8 +234,11 @@ SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 # Mailchimp settings 
-MAILCHIMP_API_KEY = "f3856a10d2751ec628f74ad91c1f9a63-us9"
-MAILCHIMP_AUDIENCE_ID = "e85afe938b"
+MAILCHIMP_API_KEY = "f2f6d3ea79517d8e40a4925bfce40167-us9"
+MAILCHIMP_MARKETING_AUDIENCE_ID = "e85afe938b"
+MAILCHIMP_REGION = "us9"
+
+MAILCHIMP_TRANSACTIONAL_API_KEY = "md-7IwFoMBYRDMqX7rrnNapdg"
 
 
 

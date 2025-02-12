@@ -10,8 +10,9 @@
 {% endblock content %}
 
 {% blocktrans with site_name="ClearSky" site_domain="www.clearskyapp.io" %}
-    Thank you for using {{ site_name }}!
-    {{ site_domain }}
+Thank you for using {{ site_name }}!
+{{ site_domain }}
 {% endblocktrans %}
 
 {% endautoescape %}
+

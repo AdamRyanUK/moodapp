@@ -9,4 +9,6 @@ urlpatterns = [
     path('weatherapi/', include('weatherapi.urls')),
     path('weatherpreferences/', include('weatherpreferences.urls')),
     path('accounts/', include('allauth.urls')),
+    path('marketing/', include('marketing.urls')),
+    path('transactional/', include('transactional.urls')),
 ]
