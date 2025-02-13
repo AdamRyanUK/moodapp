@@ -57,6 +57,17 @@
         background-color: #f1f1f1;
     }
 
+    #hometown:focus + .dropdown-menu,
+    #hometown:valid + .dropdown-menu {
+        display: block;
+    }
+
+    /* Ensure dropdown menu stays open when hovering over it */
+    #hometown:focus + .dropdown-menu:hover,
+    #hometown:valid + .dropdown-menu:hover {
+        display: block;
+    }
+
     /* Media query for larger screens */
     @media (min-width: 600px) {
         .change-location-container {

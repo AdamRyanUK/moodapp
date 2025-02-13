@@ -15,85 +15,92 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container centered-container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>Register Your Weather Preferences</h1>
-            <br>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <h1 class="text-center mb-5">Register Your Weather Preferences</h1> <!-- Increased margin bottom -->
             <form id="register-weather-form" method="post">
-            {% csrf_token %}
-                <br>
-                <br>
-                <div class="slider-container">
-                    <div id="temp-slider"></div>
+                {% csrf_token %}
+                
+                <div class="row justify-content-center mb-4">
+                    <div class="slider-container col-md-9">
+                        <div id="temp-slider" class="mx-auto"></div>
+                    </div>
                 </div>
-                <div class="temperature-display">
-                    Min Temperature: <span id="min_temp_value">15</span>°C - Max Temperature: <span id="max_temp_value">25</span>°C
+                
+                <div class="row justify-content-center mb-4">
+                    <div class="temperature-display">
+                        Min Temperature: <span id="min_temp_value">15</span>°C - Max Temperature: <span id="max_temp_value">25</span>°C
+                    </div>
                 </div>
                 <input type="hidden" name="ideal_temp_min" id="id_ideal_temp_min" value="15">
                 <input type="hidden" name="ideal_temp_max" id="id_ideal_temp_max" value="25">
                 <br>
                 
-                <div>
-                    <p>Do you love rainy days?</p>
-                    <span class="option" data-value="true" data-target="rain_lover">Yes</span>
-                    <span class="option" data-value="false" data-target="rain_lover">No</span>
-                    <input type="hidden" name="rain_lover" id="rain_lover">
-                </div>
+                <div class="row">
+                    <div class="col-md-5 d-flex flex-column">
+                        <div>
+                            <p>Do you love rainy days?</p>
+                            <span class="option" data-value="true" data-target="rain_lover">Yes</span>
+                            <span class="option" data-value="false" data-target="rain_lover">No</span>
+                            <input type="hidden" name="rain_lover" id="rain_lover">
+                        </div>
 
-                <div>
-                    <p>Do you love snowy days?</p>
-                    <span class="option" data-value="true" data-target="snow_lover">Yes</span>
-                    <span class="option" data-value="false" data-target="snow_lover">No</span>
-                    <input type="hidden" name="snow_lover" id="snow_lover">
-                </div>
+                        <div>
+                            <p>Do you love snowy days?</p>
+                            <span class="option" data-value="true" data-target="snow_lover">Yes</span>
+                            <span class="option" data-value="false" data-target="snow_lover">No</span>
+                            <input type="hidden" name="snow_lover" id="snow_lover">
+                        </div>
 
-                <div>
-                    <p>Are you a sun worshipper?</p>
-                    <span class="option" data-value="true" data-target="sun_lover">Yes</span>
-                    <span class="option" data-value="false" data-target="sun_lover">No</span>
-                    <input type="hidden" name="sun_lover" id="sun_lover">
-                </div>
-
-                <div>
-                    <p>Do you love or hate the wind?</p>
-                    <span class="option" data-value="true" data-target="wind_hater">Hate</span>
-                    <span class="option" data-value="false" data-target="wind_hater">Love</span>
-                    <input type="hidden" name="wind_hater" id="wind_hater">
-                </div>
-                <br>
-                
-                <div>
-                    <p>Do you have Seasonal Affective Disorder (SAD)?</p>
-                    <div>
-                        <label>
-                            <input type="radio" name="sad" value="true" {% if health_conditions_form.sad.value == 'true' %}checked{% endif %}> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="sad" value="false" {% if health_conditions_form.sad.value == 'false' %}checked{% endif %}> No
-                        </label>
+                        <div>
+                            <p>Are you a sun worshipper?</p>
+                            <span class="option" data-value="true" data-target="sun_lover">Yes</span>
+                            <span class="option" data-value="false" data-target="sun_lover">No</span>
+                            <input type="hidden" name="sun_lover" id="sun_lover">
+                        </div>
                     </div>
-                </div>
-                <br>
-                <div>
-                    <p>Do you suffer from Joint Pain &/or Arthritis?</p>
-                    <div>
-                        <label>
-                            <input type="radio" name="joint_pain_arthritis" value="true" {% if health_conditions_form.joint_pain_arthritis.value == 'true' %}checked{% endif %}> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="joint_pain_arthritis" value="false" {% if health_conditions_form.joint_pain_arthritis.value == 'false' %}checked{% endif %}> No
-                        </label>
+                    <div class="col-md-5 d-flex flex-column">
+                        <div>
+                            <p>Do you love or hate the wind?</p>
+                            <span class="option" data-value="false" data-target="wind_hater">Love</span>
+                            <span class="option" data-value="true" data-target="wind_hater">Hate</span>
+                            <input type="hidden" name="wind_hater" id="wind_hater">
+                        </div>
+                        
+                        <div>
+                            <p>Do you have Seasonal Affective Disorder (SAD)?</p>
+                            <div>
+                                <label>
+                                    <input type="radio" name="sad" value="true" {% if health_conditions_form.sad.value == 'true' %}checked{% endif %}> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="sad" value="false" {% if health_conditions_form.sad.value == 'false' %}checked{% endif %}> No
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p>Do you suffer from Joint Pain &/or Arthritis?</p>
+                            <div>
+                                <label>
+                                    <input type="radio" name="joint_pain_arthritis" value="true" {% if health_conditions_form.joint_pain_arthritis.value == 'true' %}checked{% endif %}> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="joint_pain_arthritis" value="false" {% if health_conditions_form.joint_pain_arthritis.value == 'false' %}checked{% endif %}> No
+                                </label>
+                            </div>
+                        </div>
                     </div>
+               
+                <div class="col-md-2 d-flex flex-column row justify-content-center mt-4"> <!-- Center the button row -->
+                    <input type="submit" value="Register" class="btn btn-lg form-item" style="background-color:#5e63ff; border-color:#5e63ff;">
                 </div>
-                <br> 
-                <input type="submit" value="Register" class="btn btn-secondary btn-block form-item">
+            </div>
             </form>
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Existing noUiSlider functionality
