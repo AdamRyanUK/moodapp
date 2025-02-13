@@ -6,7 +6,7 @@ class ChangeProfileForm(forms.ModelForm):
         model = Profile
         fields = ['hometown', 'lat', 'lon']
         widgets = {
-            'hometown': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'select your hometown'}),
+            'hometown': forms.HiddenInput(),
             'lat': forms.HiddenInput(),
             'lon': forms.HiddenInput(),
         }

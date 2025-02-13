@@ -2,51 +2,38 @@
 
 {% block content %}
 <style>
+    #hometown:focus ~ .dropdown-menu {
+        display: block;
+    }
+
     #change-location-details { 
         width: 80%;
         margin: 0 auto; /* Center the container */
     }
     .change-location-container {
         display: flex;
-        flex-direction: column; /* Change to column for mobile */
-        gap: 20px; /* Adjust the gap between elements */
+        gap: 20px; /* Adjust the gap between the form and map */
     }
 
     .form {
-        order: 1; /* Ensure form appears first in normal flow */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative; /* This is now the positioning context for dropdown */
     }
 
-    .map-container {
-        order: 2; /* Map comes after form */
-        width: 100%; /* Full width on mobile */
-        margin-top: 20px;
-        border: 2px solid black;
-        z-index: -20
-    }
-
-    #map {
-        width: 100%;
-        height: 280px;
-    }
-
-    /* Add Leaflet CSS */
-    .leaflet-container {
-        height: 100%;
-        width: 100%;
-    }
-
-    /* Adjust dropdown menu for mobile */
     .dropdown-menu {
-        display: none;  
+        display: none;
         position: absolute;
+        top: 125px; /* Adjusted to align with the bottom of the input */
+        left: 0;
         background-color: white;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
         z-index: 1;
         list-style: none;
         padding: 10px;
-        margin-top: 5px;
-        width: 100%;  /* Full width on mobile */
-        max-width: 500px; /* Limit max width for larger screens */
+        width: 100%;
+        margin-top: 0;
     }
 
     .dropdown-item {
@@ -58,74 +45,76 @@
         background-color: #f1f1f1;
     }
 
-    #hometown:focus + .dropdown-menu,
-    #hometown:valid + .dropdown-menu {
-        display: block;
+    .map-container {
+        flex: 1;
+        height: 280px;
+        border: 2px solid black; /* Black outline */
     }
 
-    /* Ensure dropdown menu stays open when hovering over it */
-    #hometown:focus + .dropdown-menu:hover,
-    #hometown:valid + .dropdown-menu:hover {
-        display: block;
+    #map {
+        width: 100%;
+        height: 100%;
+        
     }
 
-    /* Media query for larger screens */
-    @media (min-width: 600px) {
+    .leaflet-container {
+        height: 100%;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
         .change-location-container {
-            flex-direction: row; /* Back to row layout for larger screens */
-        }
-
-        .form, .map-container {
-            flex: 1; /* Equal flex for both form and map */
-        }
-
-        .map-container {
-            order: 0; /* Reset order for desktop */
+            flex-direction: column;
         }
 
         .form {
-            order: 0; /* Reset order for desktop */
+            margin-bottom: 20px; /* Add some space between form and map */
         }
 
-        .dropdown-menu {
-            width: 90%;
-            max-width: 300px; /* Revert to fixed width on larger screens */
+        .leaflet-container {
+            min-height: 200px;
         }
+
+        .map-container {
+            min-height: 200px;
+            margin-bottom: 40px;
+        }
+        
+       
     }
 </style>
 
 <h2>One Last Thing...</h2>
-
 <br>
-
 <div id="change-location-details">
-    <h3>What should we call you and where is home?</h3>
+    <h3>What Should we Call you and Where are you From?</h3>
     <p> This is so we can do some fancy calculations to link the weather to your mood</p>
     <div class="change-location-container">
         <div class="form">
             <form method="POST">
                 {% csrf_token %}
                 <input type="text" id="username" name="username" placeholder="What should we call you?" class="form-control">
-                {{ form.as_p }}
-                <div id="error-message" style="color: red; display: none; font-size: 14px;">
-                    Please select a hometown from the dropdown.
-                </div>
-                <button type="submit" id="submit-button" class="btn btn-primary btn-lg" style="margin-top: 20px;">Save</button>
+                <br>
+                <input type="text" id="hometown" name="hometown" placeholder="Where is home?" class="form-control" autocomplete="off" onfocus="showDropdown()" onblur="hideDropdown()">
+                <input type="hidden" id="lat" name="lat" value="{{ form.lat.value }}">
+                <input type="hidden" id="lon" name="lon" value="{{ form.lon.value }}">
+                <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 20px;" id="save-btn" disabled>Save</button>
             </form>
+            <ul id="dropdown-menu" class="dropdown-menu">
+                <li class="dropdown-item" onclick="useCurrentLocation()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
+                        <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+                    </svg>
+                    Use Current Location
+                </li>
+            </ul>
         </div>
         <div class="map-container">
             <div id="map"></div>
         </div>
     </div>
-    <ul id="dropdown-menu" class="dropdown-menu">
-        <li class="dropdown-item" onclick="useCurrentLocation()">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
-                <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
-            </svg>
-            Use Current Location
-        </li>
-    </ul>
 </div>
+
 
 <!-- Leaflet CSS and JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -150,36 +139,40 @@
 
     // Define enableSubmitButton outside the event listener to make it globally accessible
     function enableSubmitButton() {
-        const submitButton = document.getElementById('submit-button');
-        const errorMessage = document.getElementById('error-message');
+        const submitButton = document.getElementById('save-btn');
         const selectionMade = window.selectionMade || false; // Use window to access selectionMade
         
-        if (selectionMade) {
-            submitButton.disabled = false;
-            errorMessage.style.display = 'none';
-        } else {
-            submitButton.disabled = true;
-        }
+        submitButton.disabled = !selectionMade;
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         console.log('Inside DOMContentLoaded');
     
-        const hometownField = document.querySelector('[name="hometown"]');
+        const hometownField = document.getElementById('hometown');
         const dropdownMenu = document.getElementById('dropdown-menu');
-        const latField = document.querySelector('[name="lat"]');
-        const lonField = document.querySelector('[name="lon"]');
-        const submitButton = document.getElementById('submit-button');
-        const errorMessage = document.getElementById('error-message');
+        const latField = document.getElementById('lat');
+        const lonField = document.getElementById('lon');
+        const submitButton = document.getElementById('save-btn');
         
         window.map = null;
         window.marker = null;
         window.selectionMade = false; // Flag to check if selection from dropdown is made, made global
 
-        // Make these variables global so they can be accessed by useCurrentLocation
+        // Make these variables global so they can be accessed by useCurrentLocation and inline event handlers
         window.latField = latField;
         window.lonField = lonField;
         window.hometownField = hometownField;
+        window.dropdownMenu = dropdownMenu;
+
+        // Functions for showing and hiding the dropdown
+        window.showDropdown = function() {
+            dropdownMenu.style.display = 'block';
+        };
+        window.hideDropdown = function() {
+            setTimeout(function(){
+                dropdownMenu.style.display = 'none';
+            }, 100);
+        };
 
         // Disable button initially
         submitButton.disabled = true;
@@ -201,48 +194,29 @@
         latField.addEventListener('change', updateMap);
         lonField.addEventListener('change', updateMap);
     
-        hometownField.addEventListener('focus', positionDropdown);
+        // Autocomplete for city names and fetch lat, lon for the selected city
         hometownField.addEventListener('input', handleCityAutocomplete);
-        hometownField.addEventListener('blur', function () {
-            setTimeout(() => dropdownMenu.style.display = 'none', 100);
-        });
     
-        document.addEventListener('click', function (event) {
-            if (!hometownField.contains(event.target) && !dropdownMenu.contains(event.target)) {
-                dropdownMenu.style.display = 'none';
-            }
-        });
-
         // Handle form submission
         document.querySelector('form').addEventListener('submit', function(event) {
             if (!window.selectionMade) {
                 event.preventDefault();
-                errorMessage.style.display = 'block';
+                // Here you might want to show an error message or similar feedback
             }
         });
-
-        // Position the dropdown menu dynamically
-        function positionDropdown() {
-            const rect = hometownField.getBoundingClientRect();
-            const screenWidth = window.innerWidth;
-    
-            dropdownMenu.style.display = 'block';
-    
-            if (screenWidth < 600) {
-                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 110}px`;
-                dropdownMenu.style.left = `${rect.left + window.scrollX -30}px`;
-            } else {
-                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 80}px`;
-                dropdownMenu.style.left = `${rect.left + window.scrollX - 245}px`;
-            }
-        }
 
         // Autocomplete for city names and fetch lat, lon for the selected city
         function handleCityAutocomplete() {
             const query = hometownField.value.trim();
     
             if (query.length < 3) {
-                dropdownMenu.style.display = 'none';
+                dropdownMenu.innerHTML = ` 
+                    <li class="dropdown-item" onclick="useCurrentLocation()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368" style="margin-right: 8px;">
+                            <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+                        </svg>
+                        Use Current Location
+                    </li>`;
                 return;
             }
         
@@ -268,7 +242,6 @@
                             hometownField.value = city.name;
                             latField.value = parseCoordinate(city.lat);
                             lonField.value = parseCoordinate(city.lon);
-                            dropdownMenu.style.display = 'none';
                             updateMap();
                             window.selectionMade = true; // Mark that selection has been made
                             enableSubmitButton(); // Enable the submit button after selection
@@ -276,8 +249,6 @@
     
                         dropdownMenu.appendChild(listItem);
                     });
-    
-                    positionDropdown();
                 })
                 .catch(error => {
                     console.error('Error fetching city suggestions:', error);
