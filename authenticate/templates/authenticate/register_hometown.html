@@ -21,6 +21,7 @@
         width: 100%; /* Full width on mobile */
         margin-top: 20px;
         border: 2px solid black;
+        z-index: -20
     }
 
     #map {
@@ -87,7 +88,8 @@
         }
 
         .dropdown-menu {
-            width: 500px; /* Revert to fixed width on larger screens */
+            width: 90%;
+            max-width: 300px; /* Revert to fixed width on larger screens */
         }
     }
 </style>
@@ -227,8 +229,8 @@
             dropdownMenu.style.display = 'block';
     
             if (screenWidth < 600) {
-                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 10}px`;
-                dropdownMenu.style.left = `${rect.left + window.scrollX}px`;
+                dropdownMenu.style.top = `${rect.bottom + window.scrollY - 110}px`;
+                dropdownMenu.style.left = `${rect.left + window.scrollX -30}px`;
             } else {
                 dropdownMenu.style.top = `${rect.bottom + window.scrollY - 80}px`;
                 dropdownMenu.style.left = `${rect.left + window.scrollX - 245}px`;
