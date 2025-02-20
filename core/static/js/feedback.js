@@ -5,16 +5,15 @@ $(document).ready(function () {
         .then(data => {
             // Check the response and show the modal or button if the user has not submitted feedback today
             if (data.has_submitted === false && isAuthenticated) {
-                // Check sessionStorage to see if the modal has been shown
                 if (!sessionStorage.getItem('modalShown')) {
-                    // Show the modal only if feedback hasn't been submitted today
+                    // Show the modal if feedback hasn't been submitted today
                     $('#helloModal').modal('show');
-                    // Show the feedback button
                     $('#feedbackButton').show();
+
                     // Set sessionStorage to indicate the modal has been shown
                     sessionStorage.setItem('modalShown', 'true');
                 } else {
-                    // Show the feedback button if the modal was already shown
+                    // Show only the feedback button if the modal was already shown
                     $('#feedbackButton').show();
                 }
             }
@@ -26,6 +25,13 @@ $(document).ready(function () {
     // Add an event listener to the feedback button to show the modal
     document.getElementById('feedbackButton').addEventListener('click', function () {
         $('#helloModal').modal('show');
+    });
+
+    // Add an event listener to the checkbox to redirect to the 'vacation' page
+    document.getElementById('vacationCheckbox').addEventListener('change', function () {
+        if (this.checked) {
+            window.location.href = '/vacation';
+        }
     });
 
     // Highlight the selected rating button
@@ -54,7 +60,7 @@ $(document).ready(function () {
             const rating = selectedButton.getAttribute('data-value');
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // Fetch CSRF token from hidden input
             const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
-            
+
             console.log('Payload:', {
                 rating: rating,
                 date: today,
@@ -79,6 +85,8 @@ $(document).ready(function () {
                     $('#helloModal').modal('hide');
                     // Hide the feedback button after submission
                     $('#feedbackButton').hide();
+                    // Reset sessionStorage for modal visibility
+                    sessionStorage.removeItem('modalShown');
                 } else {
                     alert('Something went wrong. Please try again.');
                 }

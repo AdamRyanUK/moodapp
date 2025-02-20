@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile
+from .models import Profile, Location
 
 class ChangeProfileForm(forms.ModelForm):
     class Meta:
@@ -10,4 +10,6 @@ class ChangeProfileForm(forms.ModelForm):
             'lat': forms.HiddenInput(),
             'lon': forms.HiddenInput(),
         }
+
+
 

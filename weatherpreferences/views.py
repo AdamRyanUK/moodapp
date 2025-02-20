@@ -32,15 +32,6 @@ def update_location(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
-@login_required
-def location_history(request):
-
-    # Get the user's location history
-    history = LocationHistory.objects.filter(user=request.user).order_by('-timestamp')
-    
-    return render(request, 'weatherpreferences/location_history.html', {
-        'history': history,
-    })
 
 import logging
 
@@ -70,6 +61,8 @@ def register_weather_preferences(request):
             health_conditions.save()
 
             request.user.profile.first_login = False
+            request.user.profile.weather_preferences_completed = True
+
             request.user.profile.save()
 
             messages.success(request, 'You have successfully registered your weather preferences!')

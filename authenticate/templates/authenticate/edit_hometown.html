@@ -268,8 +268,10 @@
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
+                console.log('Setting lat and lon:', lat, lon);
                 window.latField.value = lat;
                 window.lonField.value = lon;
+                console.log('After setting values:', window.latField.value, window.lonField.value);
                 updateMap(); // Update map before setting hometown
 
                 fetch(`/weatherapi/nearest-place/?lat=${lat}&lon=${lon}`)

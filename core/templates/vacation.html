@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<style>
+    #hometown:focus ~ .dropdown-menu {
+        display: block;
+    }
+
+    #change-location-details { 
+        width: 80%;
+        margin: 0 auto; /* Center the container */
+    }
+    .change-location-container {
+        display: flex;
+        gap: 20px; /* Adjust the gap between the form and map */
+    }
+
+    .form {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative; /* This is now the positioning context for dropdown */
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 50px; /* Adjusted to align with the bottom of the input */
+        left: 0;
+        background-color: white;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        list-style: none;
+        padding: 10px;
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .dropdown-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    .map-container {
+        flex: 1;
+        height: 280px;
+        border: 2px solid black; /* Black outline */
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .leaflet-container {
+        height: 100%;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .change-location-container {
+            flex-direction: column;
+        }
+
+        .form {
+            margin-bottom: 20px; /* Add some space between form and map */
+        }
+
+        .leaflet-container {
+            min-height: 200px;
+        }
+
+        .map-container {
+            min-height: 200px;
+        }
+        
+       
+    }
+</style>
+
+<h2>Bon Voyage...</h2>
+
+<br>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message|safe }}  <!-- Use |safe to render the HTML link -->
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+<div id="change-location-details">
+    <h3>Where are you going on Vacation?</h3>
+    <p> This is so we can link the weather to your correct location.</p>
+    <div class="change-location-container">
+        <div class="form">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" id="vacationLocation" name="vacationLocation" placeholder="Where are you going?" class="form-control" autocomplete="off" onfocus="showDropdown()" onblur="hideDropdown()">
+                <input type="hidden" id="lat" name="lat" value="{{ form.lat.value }}">
+                <input type="hidden" id="lon" name="lon" value="{{ form.lon.value }}">
+                <p>Enter your vacation start date</p>
+                <input type="date" id="vacationStartDate" name="vacationStartDate" class="form-control" required>
+                <p>Enter your vacation end date</p>
+                <input type="date" id="vacationEndDate" name="vacationEndDate" class="form-control" required>
+                
+
+                <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 20px;" id="save-btn" disabled>Save</button>
+            </form>
+            <ul id="dropdown-menu" class="dropdown-menu">
+            
+            </ul>
+        </div>
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+ <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Inside DOMContentLoaded');
+        
+        const hometownField = document.getElementById('vacationLocation');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const latField = document.getElementById('lat');
+        const lonField = document.getElementById('lon');
+        const vacationStartDate = document.getElementById('vacationStartDate');
+        const vacationEndDate = document.getElementById('vacationEndDate');
+        vacationStartDate.addEventListener('change', enableSubmitButton);
+        vacationEndDate.addEventListener('change', enableSubmitButton);
+        const submitButton = document.getElementById('save-btn');
+        
+        window.map = null;
+        window.marker = null;
+        window.selectionMade = false; // Flag to check if selection from dropdown is made, made global
+    
+        // Make these variables global so they can be accessed by useCurrentLocation and inline event handlers
+        window.latField = latField;
+        window.lonField = lonField;
+        window.hometownField = hometownField;
+        window.dropdownMenu = dropdownMenu;
+    
+        // Functions for showing and hiding the dropdown
+        window.showDropdown = function() {
+            dropdownMenu.style.display = 'block';
+        };
+        window.hideDropdown = function() {
+            setTimeout(function(){
+                dropdownMenu.style.display = 'none';
+            }, 100);
+        };
+    
+        // Disable button initially
+        submitButton.disabled = true;
+    
+        function initMap(lat, lon) {
+            console.log('Initializing map with lat:', lat, 'lon:', lon);
+            window.map = L.map('map').setView([lat, lon], 8);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(window.map);
+            window.marker = L.marker([lat, lon]).addTo(window.map);
+            console.log('Map and marker initialized.');
+        }
+    
+        // Initialize the map on page load
+        initMap(parseFloat(latField.value) || 0, parseFloat(lonField.value) || 0);
+    
+        // Update the map when latitude or longitude fields change
+        latField.addEventListener('change', updateMap);
+        lonField.addEventListener('change', updateMap);
+    
+        // Autocomplete for city names and fetch lat, lon for the selected city
+        hometownField.addEventListener('input', handleCityAutocomplete);
+    
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(event) {
+            if (!window.selectionMade) {
+                event.preventDefault();
+                // Here you might want to show an error message or similar feedback
+            }
+        });
+    
+        // Autocomplete for city names and fetch lat, lon for the selected city
+        function handleCityAutocomplete() {
+            const query = hometownField.value.trim();
+    
+            if (query.length > 3) {
+    fetch(`/weatherapi/city-autocomplete/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            dropdownMenu.innerHTML = ''; // Clear previous suggestions
+
+            data.suggestions.forEach(city => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('dropdown-item');
+                listItem.innerHTML = `
+                    <img src="https://flagcdn.com/16x12/${city.country_code}.png" alt="${city.country}" style="margin-right: 5px;">
+                    <strong>${city.name}</strong>, ${city.adm_area1 || ''}, ${city.country || ''}`;
+
+                listItem.addEventListener('click', function () {
+                    hometownField.value = city.name;
+                    latField.value = parseCoordinate(city.lat);
+                    lonField.value = parseCoordinate(city.lon);
+                    updateMap();
+                    window.selectionMade = true; // Mark that selection has been made
+                    enableSubmitButton(); // Enable the submit button after selection
+                });
+
+                dropdownMenu.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching city suggestions:', error);
+        });
+}
+        }
+    
+        // Parse coordinate values for proper formatting
+        function parseCoordinate(coord) {
+            const value = parseFloat(coord);
+            if (coord.includes('S') || coord.includes('W')) {
+                return -value;
+            }
+            return value;
+        }
+    
+        function updateMap() {
+            const lat = parseFloat(document.querySelector('[name="lat"]').value) || 0;
+            const lon = parseFloat(document.querySelector('[name="lon"]').value) || 0;
+            console.log('Updating map to lat:', lat, 'lon:', lon);
+        
+            if (window.map && window.marker) {
+                window.map.setView([lat, lon], 8);
+                window.marker.setLatLng([lat, lon]);
+                console.log('Map view and marker position updated.');
+            } else {
+                initMap(lat, lon);
+                console.log('Map initialized during update.');
+            }
+        }
+    
+        // Define enableSubmitButton outside the event listener to make it globally accessible
+        function enableSubmitButton() {
+            const submitButton = document.getElementById('save-btn');
+            const startDate = document.getElementById('vacationStartDate');
+            const endDate = document.getElementById('vacationEndDate'); 
+            const selectionMade = window.selectionMade || false; // Use window to access selectionMade
+            
+             
+            // Check if both a selection is made and the end date is entered
+            if (submitButton) {
+                submitButton.disabled = !(selectionMade && endDate.value && startDate.value);
+            } else {
+                console.error('Submit button is not found.');
+            }
+        }
+    
+        submitButton.addEventListener('click', function (event) {
+            console.log('Submitting Form with the following values:');
+            console.log('Vacation Location: ', hometownField.value);
+            console.log('Vacation Start Date: ', vacationStartDate.value);
+            console.log('Vacation End Date: ', vacationEndDate.value);
+            console.log('Latitude: ', latField.value);
+            console.log('Longitude: ', lonField.value);
+    
+            // Ensure the form is submitted
+            document.querySelector('form').submit();
+        });
+        
+        
+    });
+    </script>
+
+
+{% endblock %}

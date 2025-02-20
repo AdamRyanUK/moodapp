@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from marketing.forms import EmailForm
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 def subscribe_view(request):
@@ -19,8 +20,8 @@ def subscribe_view(request):
                     'email_address': form_email,
                     'status': 'subscribed',
                     'merge_fields': {
-                        'FNAME': 'Elliot',
-                        'LNAME': 'Alderson',
+                        'FNAME': request.user.first_name,
+                        'LNAME': request.user.last_name,
                         }}
                 response = mailchimp.lists.add_list_member(
                     settings.MAILCHIMP_MARKETING_AUDIENCE_ID,
@@ -98,3 +99,4 @@ mailchimp.set_config({
 def mailchimp_ping_view(request):
     response = mailchimp.ping.get()
     return JsonResponse(response)
+

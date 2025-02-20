@@ -15,16 +15,18 @@ logger = logging.getLogger(__name__)
 # my API key
 api_key = "d6duuiqm1wlscqmf8e6a4v3y91pugctik2uw9ici" 
 
-def fetch_and_save_forecast(user):
-    # Get user's saved geolocation
+def fetch_and_save_forecast(user, latitude=None, longitude=None):
+    # Get user's profile
     user_profile = user.profile
-    latitude = user_profile.lat
-    longitude = user_profile.lon
+    
+    # Utiliser les coordonnées fournies si elles existent, sinon celles du profil
+    lat = latitude if latitude is not None else user_profile.lat
+    lon = longitude if longitude is not None else user_profile.lon
 
     url = f"https://www.meteosource.com/api/v1/startup/point"
     params = {
-        'lat': latitude,
-        'lon': longitude,
+        'lat': lat,
+        'lon': lon,
         'sections': 'daily',
         'language': 'en',
         'units': 'auto',  
@@ -149,7 +151,6 @@ def fetch_hourly_forecast(latitude, longitude, date):
         logger.error(f"Missing expected data in weather response: {e}")
         raise
 
-
 def get_forecast_for_location(user, location):
 
     url = f"https://www.meteosource.com/api/v1/free/point"
@@ -222,9 +223,6 @@ def get_city_suggestions(query):
                 })
         return suggestions
     return []
-
-import requests
-import logging
 
 def parse_coordinate(coord):
     value = float(coord[:-1])
@@ -310,8 +308,6 @@ def fetch_forecast_by_lat_lon(lat, lon, user):
     except KeyError as e:
         logger.error(f"Missing expected data in response: {e}")
         return []
-
-import requests
 
 def get_nearest_place(lat, lon, api_key):
     """

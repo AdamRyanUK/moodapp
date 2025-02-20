@@ -1,9 +1,30 @@
-{% extends "account/base_manage_email.html" %}
+{% extends "base.html" %}
 {% load allauth i18n %}
 {% block head_title %}
     {% trans "Email Addresses" %}
 {% endblock head_title %}
 {% block content %}
+<style>
+    .button-container {
+    display: flex;
+    gap: 10px; /* Adjust the gap between buttons as needed */
+    max-width: 200px;
+}
+
+.button-container .btn {
+    flex: 1; /* Makes all buttons the same width */
+}
+
+@media screen and (max-width: 600px) {
+    .button-container {
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px; /* Adjust the gap between buttons as needed */
+    }
+    
+}
+
+</style>
     {% element h1 %}
         {% trans "Email Addresses" %}
     {% endelement %}
@@ -40,6 +61,7 @@
                 {% endfor %}
             {% endslot %}
             {% slot actions %}
+            <div class="button-container">
                 {% element button type="submit" name="action_primary" %}
                     {% trans 'Make Primary' %}
                 {% endelement %}
@@ -49,11 +71,13 @@
                 {% element button tags="danger,delete" type="submit" name="action_remove" %}
                     {% trans 'Remove' %}
                 {% endelement %}
+            </div>
             {% endslot %}
         {% endelement %}
     {% else %}
         {% include "account/snippets/warn_no_email.html" %}
     {% endif %}
+    <br>
     {% if can_add_email %}
         {% element h2 %}
             {% trans "Add Email Address" %}

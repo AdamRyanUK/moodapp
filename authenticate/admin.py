@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, Location
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_id', 'hometown', 'lat', 'lon', 'units', 'first_login')
@@ -8,5 +8,8 @@ class ProfileAdmin(admin.ModelAdmin):
         return obj.user.id
     user_id.short_description = 'User ID'
 
-# Register your custom UserProfileAdmin
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'place_name', 'lat', 'lon', 'start_date', 'end_date', 'location_type')
+
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Location, LocationAdmin)

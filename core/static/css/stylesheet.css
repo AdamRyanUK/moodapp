@@ -702,6 +702,35 @@ main p{
   padding-right: 10px;
 }
 
+.input-wrapper {
+  position: relative;
+}
+
+#vacationDropdownMenu.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px); /* Position it just below the input with a small gap */
+  left: 0; /* Align with the left edge of the input */
+  z-index: 1050; /* Ensure it appears above the modal (Bootstrap modals use z-index 1040) */
+  display: none; /* Hidden by default, controlled by JS */
+  width: 100%; /* Match the width of the input */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  border: 1px solid #ccc; /* Optional: Add a border for visibility */
+  border-radius: 4px; /* Optional: Match Bootstrap's form-control style */
+  background-color: white; /* Ensure it has a background */
+  max-height: 200px; /* Optional: Limit height and add scroll if needed */
+  overflow-y: auto; /* Optional: Add scroll for long lists */
+}
+
+#vacationDropdownMenu.dropdown-menu li {
+  padding: 8px 12px; /* Add padding to list items */
+  cursor: pointer; /* Indicate clickable items */
+}
+
+#vacationDropdownMenu.dropdown-menu li:hover {
+  background-color: #f8f9fa; /* Light gray hover effect */
+}
+
 @media(max-width: 400px){
   .account-sidebar{
     height: 100vh;

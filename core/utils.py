@@ -3,8 +3,9 @@ import xml.etree.ElementTree as ET
 from geopy.geocoders import Nominatim # type: ignore
 from geopy.exc import GeocoderTimedOut # type: ignore
 import requests
-from weatherpreferences.models import LocationHistory
+from authenticate.models import Location
 from django.utils.timezone import now
+from datetime import date
 
 def get_nearest_town(latitude, longitude):
     geolocator = Nominatim(user_agent="weather_app")  # Replace with your app's name
@@ -41,3 +42,20 @@ def save_location_history(user, latitude, longitude, city):
         city=city,
         timestamp=now()  # Set the current time
     )
+
+def get_current_location(profile):
+    """
+    Determine the current location based on today's date and vacation locations.
+    Returns the place name of an active vacation or the profile's hometown.
+    """
+    today = date.today()
+    current_vacation = Location.objects.filter(
+        profile=profile,
+        location_type='vacation',
+        start_date__lte=today,
+        end_date__gte=today
+    ).first()  # Get first matching vacation if any
+    
+    if current_vacation:
+            return (current_vacation.place_name, current_vacation.lat, current_vacation.lon)
+    return (profile.hometown if profile.hometown else "Not set", profile.lat, profile.lon)
