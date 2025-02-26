@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Historique des prévisions{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Check l’historique des prévisions, mon pote !</h2>
+    
+    <!-- Formulaire pour choisir la date -->
+    <form method="POST" class="mb-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="selected_date">Sélectionne une date :</label>
+            <input type="date" id="selected_date" name="selected_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Go voir les prévisions</button>
+    </form>
+
+    <!-- Résultat -->
+    {% if message %}
+        <p class="text-danger">{{ message }}</p>
+    {% endif %}
+
+    {% if forecast_data %}
+        <h3>Prévisions pour le {{ selected_date }}</h3>
+        <p>Généré le : {{ created_at }}</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Résumé</th>
+                    <th>Icône</th>
+                    <th>Temp. Max</th>
+                    <th>Précipitations</th>
+                    <th>Vent</th>
+                    <th>Nébulosité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in forecast_data %}
+                <tr>
+                    <td>{{ data.day }}</td>
+                    <td>{{ data.summary }}</td>
+                    <td><img src="{% static 'images/icons/' %}{{ data.icon }}.png" alt="Icon" width="30"></td>
+                    <td>{{ data.temperature_max|floatformat:1 }}°</td>
+                    <td>{{ data.precipitation_total|floatformat:1 }} mm</td>
+                    <td>{{ data.wind_speed|floatformat:1 }} km/h</td>
+                    <td>{{ data.cloud_cover }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<style>
+    .form-control {
+        max-width: 200px;
+        display: inline-block;
+    }
+    .btn-primary {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}

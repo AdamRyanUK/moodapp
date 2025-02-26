@@ -18,6 +18,7 @@ class WeatherPreferences(models.Model):
     snow_lover = models.BooleanField(default=False)
     sun_lover = models.BooleanField(default=False)
     wind_hater = models.CharField(max_length=50, null=True, blank=True)
+    date_updated = models.DateTimeField(auto_now=True)  # Champ pour la date de mise à jour
 
     def __str__(self):
         return f"{self.user.username}'s weather preferences"

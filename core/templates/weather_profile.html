@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<h1>Weather Profile for {{ user.username }}</h1>
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Update Information</h5>
+        <p>Weather preferences last updated: {{ weather_preferences.date_updated }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Ideal Temperature</h5>
+        <p>Minimum: <span id="min_temp_value" style="color: blue;">{{ weather_preferences.ideal_temp_min }}</span>°C</p>
+        <p>Maximum: <span id="max_temp_value" style="color: red;">{{ weather_preferences.ideal_temp_max }}</span>°C</p>
+        <div id="temp-slider" style="width: 500px; pointer-events: none;"></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Preferences</h5>
+        <p>
+            {% if weather_preferences.rain_lover %}
+                I like the rain,
+            {% else %}
+                I don't like the rain,
+            {% endif %}
+            {% if weather_preferences.snow_lover %}
+                I like snow,
+            {% else %}
+                I don't like snow,
+            {% endif %}
+            {% if weather_preferences.sun_lover %}
+                I enjoy sunny days,
+            {% else %}
+                I prefer cloudy days,
+            {% endif %}
+            {% if weather_preferences.wind_hater %}
+                I hate the wind.
+            {% else %}
+                I quite enjoy a windy day.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Include noUiSlider CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
+
+<!-- Include noUiSlider JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Existing noUiSlider functionality
+        var slider = document.getElementById('temp-slider');
+        var minTempValue = document.getElementById('min_temp_value');
+        var maxTempValue = document.getElementById('max_temp_value');
+        var idealTempMinInput = document.getElementById('id_ideal_temp_min');
+        var idealTempMaxInput = document.getElementById('id_ideal_temp_max');
+
+        noUiSlider.create(slider, {
+            start: [parseInt(minTempValue.textContent), parseInt(maxTempValue.textContent)],
+            connect: true,
+            range: {
+                'min': -30,
+                'max': 45
+            },
+            tooltips: [true, true],
+            format: {
+                to: function (value) {
+                    return Math.round(value);
+                },
+                from: function (value) {
+                    return Number(value);
+                }
+            }
+        });
+
+        slider.setAttribute('disabled', true);
+
+        // Disable pointer events to make the slider read-only
+        slider.style.pointerEvents = 'none';
+
+        // Weather preferences options functionality
+        var options = document.querySelectorAll('.option');
+        options.forEach(function (option) {
+            option.addEventListener('click', function () {
+                var target = option.getAttribute('data-target');
+                var inputs = document.querySelectorAll('[data-target="' + target + '"]');
+                inputs.forEach(function (input) {
+                    input.classList.remove('selected');
+                });
+                option.classList.add('selected');
+                document.getElementById(target).value = option.getAttribute('data-value');
+            });
+        });
+    });
+</script>
+{% endblock %}

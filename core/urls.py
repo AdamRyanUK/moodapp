@@ -12,4 +12,5 @@ urlpatterns = [
     path('feedback-chart-data', views.feedback_chart_data, name='feedback-chart-data'),
     path('vacation', views.vacation_submit, name='vacation'),
     path('locations', views.location_display, name='locations'),
+    path('weather-profile', views.weather_profile, name='weather-profile'),
 ]

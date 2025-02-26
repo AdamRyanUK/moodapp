@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Vos feedbacks météo</h2>
+    
+    <form method="POST" class="mb-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="start_date">Date de début :</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" required>
+            <label for="end_date" class="ml-2">Date de fin :</label>
+            <input type="date" id="end_date" name="end_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Voir les feedbacks</button>
+    </form>
+
+    {% if message %}
+        <p class="text-danger">{{ message }}</p>
+    {% endif %}
+
+    {% if feedback_data %}
+        <h3>Feedbacks du {{ start_date }} au {{ end_date }}</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Note</th>
+                    <th>Ville</th>
+                    <th>Icône</th>
+                    <th>Temp. Max</th>
+                    <th>Précipitations</th>
+                    <th>Vent</th>
+                    <th>Nébulosité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in feedback_data %}
+                <tr>
+                    <td>{{ data.day }}</td>
+                    <td>{{ data.rating }}</td>
+                    <td>{{ data.city }}</td>
+                    <td><img src="{% static 'images/icons/'|add:data.icon|add:'.png' %}" alt="Icon" width="30"></td>
+                    <td>{{ data.temperature_max|floatformat:1 }}°</td>
+                    <td>{{ data.precipitation_total|floatformat:1 }} mm</td>
+                    <td>{{ data.wind_speed|floatformat:1 }} km/h</td>
+                    <td>{{ data.cloud_cover }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<style>
+    .form-control {
+        max-width: 200px;
+        display: inline-block;
+    }
+    .ml-2 {
+        margin-left: 10px;
+    }
+    .btn-primary {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}

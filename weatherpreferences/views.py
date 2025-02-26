@@ -107,44 +107,64 @@ import json
 from django.http import JsonResponse
 from django.utils import timezone
 
-
 @login_required
 @csrf_exempt
 def submit_feedback(request):
     if request.method == 'POST':
         try:
-            # Parse the JSON data from the request
-            print("Raw body:", request.body)  # Log raw request body
             data = json.loads(request.body)
-            print("Parsed data:", data)  # Log parsed JSON data
+            logger.debug(f"Données reçues : {data}")
 
             user = request.user
-            # Extract the rating and optional feedback date from the request
             rating = data.get('rating')
             feedback_date = data.get('date')
-            user_profile = user.profile
-            latitude = user_profile.lat
-            longitude = user_profile.lon
-            city = user_profile.hometown
-
-            # Debug log for received fields
-            print(f"Rating: {rating}, Feedback Date: {feedback_date}")
 
             if not rating or not feedback_date:
-                return JsonResponse({'success': False, 'message': 'Rating or date missing in request.'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Rating ou date manquant, mec !'}, status=400)
 
-            # Fetch the weather data for the user's location
+            # Convertir la date
+            feedback_date_obj = date.fromisoformat(feedback_date)
+
+            # Récupérer la localisation actuelle depuis Location
+            user_profile = user.profile
+            today = date.today()
+            current_location = user_profile.locations.filter(
+                start_date__lte=today,
+                end_date__gte=today  # On garde ça même si end_date peut être null
+            ).order_by('-start_date').first()
+
+            if not current_location:
+                current_location = user_profile.locations.filter(location_type='hometown').first()
+                if not current_location:
+                    latitude = user_profile.lat
+                    longitude = user_profile.lon
+                    city = user_profile.hometown
+                else:
+                    latitude = float(current_location.lat) if current_location.lat else user_profile.lat
+                    longitude = float(current_location.lon) if current_location.lon else user_profile.lon
+                    city = current_location.place_name
+            else:
+                latitude = float(current_location.lat) if current_location.lat else user_profile.lat
+                longitude = float(current_location.lon) if current_location.lon else user_profile.lon
+                city = current_location.place_name
+
+            logger.debug(f"Localisation utilisée : {city} (lat: {latitude}, lon: {longitude})")
+
+            # Fetch les données météo
             weather_data = fetch_forecast_by_lat_lon(latitude, longitude, user)
             if not weather_data:
-                return JsonResponse({'success': False, 'message': 'Weather data could not be fetched.'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Pas de données météo, ça craint !'}, status=400)
 
-            # Assuming the first entry in weather_data corresponds to today's forecast
-            today_weather = weather_data[0]
+            # Matcher la date du feedback
+            today_weather = next(
+                (forecast for forecast in weather_data if forecast['day'] == feedback_date),
+                weather_data[0]  # Fallback sur le premier jour
+            )
 
-            # Save or update feedback with weather details
+            # Sauvegarder le feedback
             feedback, created = WeatherFeedback.objects.update_or_create(
                 user=user,
-                date=feedback_date,
+                date=feedback_date_obj,
                 defaults={
                     'rating': rating,
                     'latitude': latitude,
@@ -175,13 +195,11 @@ def submit_feedback(request):
                 }
             )
 
-            return JsonResponse({'success': True, 'message': 'Feedback submitted successfully.'})
+            return JsonResponse({'success': True, 'message': 'Feedback envoyé, t’es un boss !'})
         except Exception as e:
-            print(f"Error: {e}")  # Log the error
-            return JsonResponse({'success': False, 'message': 'An error occurred while processing your request.'}, status=500)
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
-
-from django.utils.timezone import now
+            logger.error(f"Erreur de ouf : {e}")
+            return JsonResponse({'success': False, 'message': 'Ça a merdé, désolé mon pote !'}, status=500)
+    return JsonResponse({'success': False, 'message': 'Mauvaise méthode, faut du POST, mec !'}, status=400)
 
 @login_required
 def check_feedback_status(request):
@@ -235,7 +253,7 @@ def action_questions(request):
 
 
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import date, timedelta
 
 @login_required
 def feedback_chart_data(request):

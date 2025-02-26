@@ -1,8 +1,13 @@
+from datetime import datetime
+from venv import logger
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from weatherpreferences.models import WeatherFeedback
+from .models import HistoricalForecast
 from .services import get_city_suggestions, fetch_hourly_forecast, get_nearest_place
 from .moodscore import calculate_mood_score
 from django.template.defaultfilters import register
+from django.shortcuts import render
 
 def city_autocomplete(request):
     query = request.GET.get('q', '')
@@ -77,3 +82,98 @@ def nearest_place(request):
         return JsonResponse(place_data, status=200)
     else:
         return JsonResponse({"error": "Unable to fetch place data. Please try again later."}, status=500)
+
+@login_required
+def historical_forecast_view(request):
+    if request.method == 'POST':
+        selected_date = request.POST.get('selected_date')
+        try:
+            # Convertir la date sélectionnée en objet date
+            date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
+            # Chercher tous les HistoricalForecast pour cet user, triés par date_generated
+            historical_forecasts = HistoricalForecast.objects.filter(user=request.user).order_by('-date_generated')
+            forecast_data = None
+            generated_date = None
+
+            # Parcourir les historiques pour trouver un qui contient la date voulue
+            for historical in historical_forecasts:
+                forecasts = historical.forecasts.filter(date=date_obj)
+                if forecasts.exists():
+                    forecast_data = [
+                        {
+                            'day': f.date.strftime('%Y-%m-%d'),
+                            'summary': f.summary,
+                            'icon': f.icon,
+                            'temperature_max': f.temperature_max,
+                            'precipitation_total': f.precipitation_total,
+                            'wind_speed': f.wind_speed,
+                            'cloud_cover': f.cloud_cover,
+                        }
+                        for f in forecasts
+                    ]
+                    generated_date = historical.date_generated.strftime('%Y-%m-%d')
+                    break  # On sort dès qu’on trouve un match
+
+            context = {
+                'selected_date': selected_date,
+                'forecast_data': forecast_data,
+                'generated_date': generated_date,
+                'message': 'Aucune prévision trouvée pour cette date dans l’historique.' if not forecast_data else None
+            }
+        except ValueError:
+            context = {'message': 'Date invalide, utilise le format YYYY-MM-DD, mon pote !'}
+    else:
+        context = {}
+
+    return render(request, 'weatherapi/historical_forecast.html', context)
+
+@login_required
+def weather_feedback_view(request):
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            # Vérifier que la date de fin n’est pas avant la date de début
+            if end_date_obj < start_date_obj:
+                return render(request, 'weatherapi/weather_feedback.html', {
+                    'message': 'La date de fin doit être après la date de début.'
+                })
+
+            # Récupérer les feedbacks dans la plage de dates
+            feedbacks = WeatherFeedback.objects.filter(
+                user=request.user,
+                date__range=(start_date_obj, end_date_obj)
+            ).order_by('date')
+
+            if feedbacks.exists():
+                feedback_data = [
+                    {
+                        'day': f.date.strftime('%Y-%m-%d'),
+                        'rating': f.rating,
+                        'city': f.city,
+                        'icon': f.icon,
+                        'temperature_max': f.temperature_max,
+                        'precipitation_total': f.precipitation_total,
+                        'wind_speed': f.wind_speed,
+                        'cloud_cover': f.cloud_cover,
+                    }
+                    for f in feedbacks
+                ]
+            else:
+                feedback_data = None
+
+            context = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'feedback_data': feedback_data,
+                'message': 'Aucun feedback trouvé dans cette plage de dates.' if not feedback_data else None
+            }
+        except ValueError:
+            context = {'message': 'Dates invalides, utilise le format YYYY-MM-DD.'}
+    else:
+        context = {}
+
+    return render(request, 'weatherapi/weather_feedback.html', context)

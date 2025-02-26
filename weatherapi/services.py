@@ -7,6 +7,7 @@ import pycountry
 import requests
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
+from .weather_utils import update_forecast_analysis
 
 
 # Set up logging
@@ -29,7 +30,7 @@ def fetch_and_save_forecast(user, latitude=None, longitude=None):
         'lon': lon,
         'sections': 'daily',
         'language': 'en',
-        'units': 'auto',  
+        'units': user_profile.units,  
         'key': api_key
     }
 
@@ -67,7 +68,7 @@ def fetch_and_save_forecast(user, latitude=None, longitude=None):
                 # Calculate day length
             day_length = sunset - sunrise
 
-            DailyForecast.objects.update_or_create(
+            forecast, created = DailyForecast.objects.update_or_create(
                 user=user,
                 date=forecast_data['day'],
                 defaults={
@@ -105,6 +106,8 @@ def fetch_and_save_forecast(user, latitude=None, longitude=None):
                 }
             )
             logger.debug(f"Saved forecast for date: {forecast_data['day']}")
+            # Mettre à jour l’analyse associée
+            update_forecast_analysis(forecast)
 
         return data['daily']['data']  # Return the entire forecast data
 

@@ -6,7 +6,7 @@ class HealthConditionsAdmin(admin.ModelAdmin):
     search_fields = ('user__username',)
 
 class WeatherPreferencesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'ideal_temp_min', 'ideal_temp_max', 'rain_lover', 'snow_lover', 'sun_lover', 'wind_hater')
+    list_display = ('user', 'ideal_temp_min', 'ideal_temp_max', 'rain_lover', 'snow_lover', 'sun_lover', 'wind_hater', 'date_updated')
     search_fields = ('user__username',)
 
 # Register your models here

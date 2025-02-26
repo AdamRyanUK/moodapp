@@ -36,6 +36,7 @@ def subscribe_view(request):
 
     return render(request, 'subscribe.html', {
         'form': EmailForm(),
+        'block_feedback_script': True,
     })
 
 def subscribe_success_view(request):

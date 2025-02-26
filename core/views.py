@@ -19,6 +19,9 @@ from core.feedbackanomaly.anomaly_calculations import fetch_anomaly_data
 from authenticate.models import Location, Profile
 from django.http import HttpResponseForbidden
 from .utils import get_current_location  # Import from utils.py
+from django.shortcuts import render, get_object_or_404
+from weatherpreferences.models import WeatherPreferences
+from weatherapi.weather_utils import calculate_consecutive_days
 
 def serialize_weather_data(weather_data):
     """Convert datetime and timedelta objects in weather_data to strings."""
@@ -30,6 +33,7 @@ def serialize_weather_data(weather_data):
                 forecast[key] = str(value)  # Convert timedelta to string (e.g., '1 day, 2:30:00')
     return weather_data
 
+@login_required
 def home(request):
     if request.user.is_authenticated:
         city = None
@@ -39,51 +43,36 @@ def home(request):
         latitude = request.GET.get('latitude')
         longitude = request.GET.get('longitude')
 
-        # Fetch the user profile once
         user_profile = request.user.profile
 
         if location and latitude and longitude:
-            # Fetch forecast for the entered location using lat/lon
             weather_data = fetch_forecast_by_lat_lon(latitude, longitude, request.user)
-
-            # Add mood score to the weather data for searchable forecasts
             for forecast in weather_data:
                 forecast['mood_score'] = calculate_mood_score(request.user, forecast)
-
-            # Ensure the 'day' attribute is a datetime object
-            for forecast in weather_data:
                 if isinstance(forecast['day'], str):
                     forecast['day'] = datetime.strptime(forecast['day'], '%Y-%m-%d')
-
                 forecast['day'] = forecast['day'].strftime('%Y-%m-%d')
-            # Extract the first part of the city name (before any comma)
+                # Pas de jours consécutifs pour ville temporaire
+
             city = location
             city_first_part = location.split(',')[0] if ',' in location else location
-
-            # Track the city search for the user
-            if location != user_profile.hometown or (
-                latitude != str(user_profile.latitude)
-                and longitude != str(user_profile.longitude)
-            ):
+            if location != user_profile.hometown or (latitude != str(user_profile.lat) and longitude != str(user_profile.lon)):
                 city_search, created = CitySearch.objects.get_or_create(
                     city=location,
                     latitude=latitude,
                     longitude=longitude,
-                    user=request.user  # Associate with the user
+                    user=request.user
                 )
                 city_search.search_count += 1
                 city_search.save()
 
         else:
-            # Si aucune localisation n’est fournie via GET, on détermine la localisation actuelle
             city, lat, lon = get_current_location(user_profile)
             latitude = lat
-            longitude = lon  # Récupère le nom de la localisation actuelle
-
+            longitude = lon
             if latitude and longitude:
                 fetch_and_save_forecast(request.user, latitude=latitude, longitude=longitude)
                 latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
-
                 weather_data = [
                     {
                         'day': forecast.date.strftime('%Y-%m-%d'),
@@ -97,27 +86,25 @@ def home(request):
                         'sunrise': forecast.sunrise,
                         'sunset': forecast.sunset,
                         'day_length': forecast.day_length,
-                        'mood_score': calculate_mood_score(request.user, forecast),  # Calculate mood score
+                        'mood_score': calculate_mood_score(request.user, forecast),
+                        'cloud_cover': forecast.cloud_cover,
+                        **calculate_consecutive_days(request.user, forecast.date.strftime('%Y-%m-%d'), {'all_day': {
+                            'cloud_cover': {'total': forecast.cloud_cover},
+                            'precipitation': {'total': forecast.precipitation_total}
+                        }}),
                     }
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
-
-                # Use user's hometown as the city name if no location is provided
                 city_first_part = city
 
-        # Extract sunrise and sunset for the first day
         first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
         first_day_sunset = weather_data[0]['sunset'] if weather_data else None
         first_day_length = weather_data[0]['day_length'] if weather_data else None
 
-        # Query the most selected cities by the current user
         most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
-
-        # Add city_first_part to most_selected_cities for easy template rendering
         for city_search in most_selected_cities:
             city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
 
-        # Store weather data in session
         if weather_data:
             request.session['weather_data'] = serialize_weather_data(weather_data)
 
@@ -129,14 +116,12 @@ def home(request):
             'first_day_sunset': first_day_sunset,
             'first_day_length': first_day_length,
             'most_selected_cities': most_selected_cities,
-            'latitude': latitude, 
+            'latitude': latitude,
             'longitude': longitude
         })
-
     else:
-        # This is the view for non-logged-in users
         return render(request, 'authenticate/landing_page.html')
-
+    
 @csrf_exempt
 def remove_city(request, city_id):
     try:
@@ -327,3 +312,12 @@ def vacation_submit(request):
         return redirect('vacation')  # Redirect back if there's an error
         
     return render(request, 'vacation.html')
+
+def weather_profile(request):
+    user = request.user
+    weather_preferences = get_object_or_404(WeatherPreferences, user=user)
+    context = {
+        'user': user,
+        'weather_preferences': weather_preferences,
+    }
+    return render(request, 'weather_profile.html', context)

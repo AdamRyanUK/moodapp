@@ -40,6 +40,17 @@ class DailyForecast(models.Model):
     def __str__(self):
         return f"{self.user} - {self.date}"
     
+class ForecastAnalysis(models.Model):
+    forecast = models.OneToOneField(DailyForecast, on_delete=models.CASCADE, related_name='analysis')
+    temp_max_diff_from_avg = models.FloatField(null=True, blank=True)  # Écart de température
+    wind_ave_speed_diff_from_avg = models.FloatField(null=True, blank=True)  # Écart de nébulosité
+    consecutive_cloudy_days = models.IntegerField(default=0)  # Jours consécutifs nuageux
+    consecutive_sunny_days = models.IntegerField(default=0)  # Jours consécutifs ensoleillés
+    consecutive_rainy_days = models.IntegerField(default=0)  # Jours consécutifs pluvieux
+
+    def __str__(self):
+        return f"Analysis for {self.forecast.date}"
+    
 class HistoricalForecast(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_generated = models.DateField(auto_now_add=True)  # Both initialization and base date

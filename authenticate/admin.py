@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Profile, Location
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'user_id', 'hometown', 'lat', 'lon', 'units', 'first_login')
+    list_display = ('user', 'user_id', 'hometown', 'current_location', 'lat', 'lon', 'units', 'first_login')
 
     def user_id(self, obj):
         return obj.user.id
