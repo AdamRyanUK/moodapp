@@ -6,15 +6,9 @@
 <style>
 /* Styles existants inchangés */
 @media (max-width: 600px) {
-    h2 {
-        font-size: 1.2rem;
-    }
-    .ampm {
-        display: none;
-    }
-    .card-content.card-content-last {
-        display: none;
-    }
+    h2 { font-size: 1.2rem; }
+    .ampm { display: none; }
+    .card-content.card-content-last { display: none; }
 }
 
 .city-list-wrapper {
@@ -42,9 +36,7 @@
     height: 50px;
 }
 
-.city-list::-webkit-scrollbar {
-    display: none;
-}
+.city-list::-webkit-scrollbar { display: none; }
 
 .city-item {
     display: flex;
@@ -82,9 +74,7 @@
     margin-left: 5px;
 }
 
-.city-item .remove-btn:hover {
-    background: white;
-}
+.city-item .remove-btn:hover { background: white; }
 
 .sunrise-sunset-card {
     padding: 10px;
@@ -109,12 +99,9 @@
     text-align: center;
 }
 
-p {
-    font-size: 1rem;
-    margin: 0 5px;
-}
+p { font-size: 1rem; margin: 0 5px; }
 
-/* Nouveaux styles pour le tableau d’analyse */
+/* Styles pour le tableau d’analyse */
 .analysis-table td, .analysis-table th {
     text-align: center;
     padding: 8px;
@@ -123,6 +110,42 @@ p {
     font-weight: bold;
     background-color: #f5f5f5;
 }
+
+/* Ajout pour les cercles et couleurs graduées */
+.consecutive-circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+}
+
+/* Couleurs graduées pour Overcast */
+.cloudy-1 { background-color: #e0e0e0; color: #333; }
+.cloudy-2 { background-color: #b0b0b0; }
+.cloudy-3 { background-color: #8c8c8c; }
+.cloudy-4 { background-color: #666666; }
+.cloudy-5 { background-color: #4d4d4d; } /* 5+ jours */
+
+/* Couleurs graduées pour Sunny */
+.sunny-1 { background-color: #fffde7; color: #333; }
+.sunny-2 { background-color: #fff176; }
+.sunny-3 { background-color: #ffd54f; }
+.sunny-4 { background-color: #ffb300; }
+.sunny-5 { background-color: #ff8f00; }
+
+/* Couleurs graduées pour Rainy */
+.rainy-1 { background-color: #e3f2fd; color: #333; }
+.rainy-2 { background-color: #bbdefb; }
+.rainy-3 { background-color: #64b5f6; }
+.rainy-4 { background-color: #1976d2; }
+.rainy-5 { background-color: #0d47a1; }
+
+.consecutive-circle:hover { opacity: 0.8; }
 </style>
 
 <div class="city-list-wrapper">
@@ -130,8 +153,8 @@ p {
     <div class="city-list" id="city-list">
         <div class="city-item" 
              data-city="{{ request.user.userprofile.hometown }}" 
-             data-latitude="{{ request.user.userprofile.latitude }}" 
-             data-longitude="{{ request.user.userprofile.longitude }}">
+             data-latitude="{{ request.user.userprofile.lat }}" 
+             data-longitude="{{ request.user.userprofile.lon }}">
             Home
             <button class="remove-btn">×</button>
         </div>
@@ -149,7 +172,7 @@ p {
     <svg class="scroll-right" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
 </div>
 
-<!-- astro card -->
+<!-- Astro Card -->
 <div class="sunrise-sunset-card">
     <div class="card-body">
         <div class="card-content">
@@ -181,7 +204,7 @@ p {
 {% if weather_data %}
 <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="mb-0">Forecast for {{ city }}</h2>
-    <a href="{% url 'mood-forecast-graph' %}" class="btn btn-primary btn-sm">Voir le graphe d'humeur</a>
+    <a href="{% url 'mood-forecast-graph' %}" class="btn btn-primary btn-sm">View Mood Graph</a>
 </div>
 
 <div class="table-responsive">    
@@ -191,8 +214,8 @@ p {
                 <th class="freeze-col" scope="col">Day</th>
                 <th scope="col">Mood Score</th>
                 <th scope="col">Icon</th>
-                <th scope="col">Temperature Max</th>
-                <th scope="col">Precipitation Amount</th>
+                <th scope="col">Max Temp</th>
+                <th scope="col">Precipitation</th>
                 <th scope="col">Wind Speed</th>
             </tr>
         </thead>
@@ -201,7 +224,6 @@ p {
             <tr onclick="showHourlyData('{{ data.day }}', '{{ latitude }}', '{{ longitude }}')">                
                 <td class="freeze-col">{{ data.day }}</td>
                 <td>
-                    <!-- Dynamically setting button color based on mood score -->
                     <button class="mood-score-btn" 
                             style="border-color: {{ data.mood_score|mood_score_color }}; color: {{ data.mood_score|mood_score_color }};">
                             {{ data.mood_score }}
@@ -217,14 +239,14 @@ p {
     </table>
 </div>
 
-<!-- Nouveau tableau d’analyse -->
+<!-- Tableau des jours consécutifs ajusté -->
 <div class="forecast-analysis mt-3">
-    <h3>Forecast Analysis</h3>
+    <h3>Weather Analysis</h3>
     <div class="table-responsive">
         <table class="table table-bordered analysis-table">
             <thead>
                 <tr>
-                    <th scope="col">Consecutive days</th>
+                    <th scope="col">Condition</th>
                     {% for data in weather_data %}
                         <th scope="col">{{ data.day }}</th>
                     {% endfor %}
@@ -234,9 +256,19 @@ p {
                 <tr>
                     <td>Overcast</td>
                     {% for data in weather_data %}
-                        <td style="background-color: {% if data.consecutive_cloudy_days > 0 %}#d3d3d3{% else %}#ffffff{% endif %};">
+                        <td>
                             {% if data.consecutive_cloudy_days > 0 %}
-                                {{ data.consecutive_cloudy_days }}
+                                {% if data.consecutive_cloudy_days >= 5 %}
+                                    <span class="consecutive-circle cloudy-5">{{ data.consecutive_cloudy_days }}</span>
+                                {% elif data.consecutive_cloudy_days == 4 %}
+                                    <span class="consecutive-circle cloudy-4">{{ data.consecutive_cloudy_days }}</span>
+                                {% elif data.consecutive_cloudy_days == 3 %}
+                                    <span class="consecutive-circle cloudy-3">{{ data.consecutive_cloudy_days }}</span>
+                                {% elif data.consecutive_cloudy_days == 2 %}
+                                    <span class="consecutive-circle cloudy-2">{{ data.consecutive_cloudy_days }}</span>
+                                {% else %}
+                                    <span class="consecutive-circle cloudy-1">{{ data.consecutive_cloudy_days }}</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endfor %}
@@ -244,9 +276,19 @@ p {
                 <tr>
                     <td>Sunny</td>
                     {% for data in weather_data %}
-                        <td style="background-color: {% if data.consecutive_sunny_days > 0 %}#fffacd{% else %}#ffffff{% endif %};">
+                        <td>
                             {% if data.consecutive_sunny_days > 0 %}
-                                {{ data.consecutive_sunny_days }}
+                                {% if data.consecutive_sunny_days >= 5 %}
+                                    <span class="consecutive-circle sunny-5">{{ data.consecutive_sunny_days }}</span>
+                                {% elif data.consecutive_sunny_days == 4 %}
+                                    <span class="consecutive-circle sunny-4">{{ data.consecutive_sunny_days }}</span>
+                                {% elif data.consecutive_sunny_days == 3 %}
+                                    <span class="consecutive-circle sunny-3">{{ data.consecutive_sunny_days }}</span>
+                                {% elif data.consecutive_sunny_days == 2 %}
+                                    <span class="consecutive-circle sunny-2">{{ data.consecutive_sunny_days }}</span>
+                                {% else %}
+                                    <span class="consecutive-circle sunny-1">{{ data.consecutive_sunny_days }}</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endfor %}
@@ -254,9 +296,19 @@ p {
                 <tr>
                     <td>Rainy</td>
                     {% for data in weather_data %}
-                        <td style="background-color: {% if data.consecutive_rainy_days > 0 %}#add8e6{% else %}#ffffff{% endif %};">
+                        <td>
                             {% if data.consecutive_rainy_days > 0 %}
-                                {{ data.consecutive_rainy_days }}
+                                {% if data.consecutive_rainy_days >= 5 %}
+                                    <span class="consecutive-circle rainy-5">{{ data.consecutive_rainy_days }}</span>
+                                {% elif data.consecutive_rainy_days == 4 %}
+                                    <span class="consecutive-circle rainy-4">{{ data.consecutive_rainy_days }}</span>
+                                {% elif data.consecutive_rainy_days == 3 %}
+                                    <span class="consecutive-circle rainy-3">{{ data.consecutive_rainy_days }}</span>
+                                {% elif data.consecutive_rainy_days == 2 %}
+                                    <span class="consecutive-circle rainy-2">{{ data.consecutive_rainy_days }}</span>
+                                {% else %}
+                                    <span class="consecutive-circle rainy-1">{{ data.consecutive_rainy_days }}</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endfor %}
@@ -267,7 +319,7 @@ p {
 </div>
 
 {% else %}
-    <p>Aucune prévision météo disponible pour les prochains jours.</p>
+    <p>No weather forecast available for the upcoming days.</p>
 {% endif %}
 
 {% endblock %}
@@ -290,12 +342,8 @@ p {
     text-align: center;
     font-size: 16px;
 }
-.mood-score-btn:hover {
-    background-color: #f0f0f0;
-}
-.mood-score-btn:focus {
-    outline: none;
-}
+.mood-score-btn:hover { background-color: #f0f0f0; }
+.mood-score-btn:focus { outline: none; }
 </style>
 <script type="module" src="{% static 'node_modules/@polymer/polymer/polymer-element.js' %}"></script>
 <script type="module" src="{% static 'node_modules/@polymer/iron-selector/iron-selector.js' %}"></script>
@@ -335,10 +383,10 @@ p {
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {
-                        alert('Échec de la suppression de la ville.');
+                        alert('Failed to remove the city.');
                     }
                 })
-                .catch(error => console.error('Erreur:', error));
+                .catch(error => console.error('Error:', error));
             }
         });
     });

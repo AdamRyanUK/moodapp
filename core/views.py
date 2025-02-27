@@ -52,7 +52,6 @@ def home(request):
                 if isinstance(forecast['day'], str):
                     forecast['day'] = datetime.strptime(forecast['day'], '%Y-%m-%d')
                 forecast['day'] = forecast['day'].strftime('%Y-%m-%d')
-                # Pas de jours consécutifs pour ville temporaire
 
             city = location
             city_first_part = location.split(',')[0] if ',' in location else location
@@ -73,6 +72,50 @@ def home(request):
             if latitude and longitude:
                 fetch_and_save_forecast(request.user, latitude=latitude, longitude=longitude)
                 latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
+
+                # Préparer les données pour tous les jours
+                forecast_days = [
+                    (forecast.date, forecast.cloud_cover, forecast.precipitation_total)
+                    for forecast in latest_forecast
+                ]
+                
+                # Calculer les jours consécutifs en une passe
+                cloudy_count = 0
+                sunny_count = 0
+                rainy_count = 0
+                consecutive_days = {}
+
+                cloud_threshold = 75
+                sunny_threshold = 25
+                rain_threshold = 0.1
+
+                # Trier et parcourir les jours dans l’ordre
+                forecast_days.sort()  # Par date croissante
+                
+                for forecast_date, cloud_cover, precipitation in forecast_days:
+                    # Vérifier les conditions pour le jour actuel
+                    if cloud_cover > cloud_threshold:
+                        cloudy_count += 1
+                    else:
+                        cloudy_count = 0
+                    
+                    if cloud_cover <= sunny_threshold and precipitation <= rain_threshold:
+                        sunny_count += 1
+                    else:
+                        sunny_count = 0
+                    
+                    if precipitation > rain_threshold:
+                        rainy_count += 1
+                    else:
+                        rainy_count = 0
+                    
+                    # Stocker les compteurs pour ce jour
+                    consecutive_days[forecast_date.strftime('%Y-%m-%d')] = {
+                        'consecutive_cloudy_days': cloudy_count,
+                        'consecutive_sunny_days': sunny_count,
+                        'consecutive_rainy_days': rainy_count,
+                    }
+
                 weather_data = [
                     {
                         'day': forecast.date.strftime('%Y-%m-%d'),
@@ -88,10 +131,7 @@ def home(request):
                         'day_length': forecast.day_length,
                         'mood_score': calculate_mood_score(request.user, forecast),
                         'cloud_cover': forecast.cloud_cover,
-                        **calculate_consecutive_days(request.user, forecast.date.strftime('%Y-%m-%d'), {'all_day': {
-                            'cloud_cover': {'total': forecast.cloud_cover},
-                            'precipitation': {'total': forecast.precipitation_total}
-                        }}),
+                        **consecutive_days[forecast.date.strftime('%Y-%m-%d')],
                     }
                     for forecast in latest_forecast
                 ] if latest_forecast.exists() else None
@@ -121,7 +161,7 @@ def home(request):
         })
     else:
         return render(request, 'authenticate/landing_page.html')
-    
+
 @csrf_exempt
 def remove_city(request, city_id):
     try:
