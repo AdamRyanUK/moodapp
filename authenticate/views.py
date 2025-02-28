@@ -45,8 +45,10 @@ def edit_hometown(request):
             )
             print(f"New history entry created: {new_history.place_name}")
             
-            # Save the new data to the Profile
-            form.save()
+            # Mettre à jour current_location avec le nouveau hometown
+            user_profile.current_location = new_hometown
+            form.save() # Save the new data to the Profile
+            user_profile.save()  # Sauvegarde current_location
             
             return redirect('home')
         else:

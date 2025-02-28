@@ -21,7 +21,8 @@ from django.http import HttpResponseForbidden
 from .utils import get_current_location  # Import from utils.py
 from django.shortcuts import render, get_object_or_404
 from weatherpreferences.models import WeatherPreferences
-from weatherapi.weather_utils import calculate_consecutive_days
+from weatherapi.weather_utils import calculate_consecutive_days, generate_weather_text
+
 
 def serialize_weather_data(weather_data):
     """Convert datetime and timedelta objects in weather_data to strings."""
@@ -33,134 +34,134 @@ def serialize_weather_data(weather_data):
                 forecast[key] = str(value)  # Convert timedelta to string (e.g., '1 day, 2:30:00')
     return weather_data
 
-@login_required
 def home(request):
-    if request.user.is_authenticated:
-        city = None
-        city_first_part = None
-        weather_data = None
-        location = request.GET.get('location')
-        latitude = request.GET.get('latitude')
-        longitude = request.GET.get('longitude')
-
-        user_profile = request.user.profile
-
-        if location and latitude and longitude:
-            weather_data = fetch_forecast_by_lat_lon(latitude, longitude, request.user)
-            for forecast in weather_data:
-                forecast['mood_score'] = calculate_mood_score(request.user, forecast)
-                if isinstance(forecast['day'], str):
-                    forecast['day'] = datetime.strptime(forecast['day'], '%Y-%m-%d')
-                forecast['day'] = forecast['day'].strftime('%Y-%m-%d')
-
-            city = location
-            city_first_part = location.split(',')[0] if ',' in location else location
-            if location != user_profile.hometown or (latitude != str(user_profile.lat) and longitude != str(user_profile.lon)):
-                city_search, created = CitySearch.objects.get_or_create(
-                    city=location,
-                    latitude=latitude,
-                    longitude=longitude,
-                    user=request.user
-                )
-                city_search.search_count += 1
-                city_search.save()
-
-        else:
-            city, lat, lon = get_current_location(user_profile)
-            latitude = lat
-            longitude = lon
-            if latitude and longitude:
-                fetch_and_save_forecast(request.user, latitude=latitude, longitude=longitude)
-                latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
-
-                # Préparer les données pour tous les jours
-                forecast_days = [
-                    (forecast.date, forecast.cloud_cover, forecast.precipitation_total)
-                    for forecast in latest_forecast
-                ]
-                
-                # Calculer les jours consécutifs en une passe
-                cloudy_count = 0
-                sunny_count = 0
-                rainy_count = 0
-                consecutive_days = {}
-
-                cloud_threshold = 75
-                sunny_threshold = 25
-                rain_threshold = 0.1
-
-                # Trier et parcourir les jours dans l’ordre
-                forecast_days.sort()  # Par date croissante
-                
-                for forecast_date, cloud_cover, precipitation in forecast_days:
-                    # Vérifier les conditions pour le jour actuel
-                    if cloud_cover > cloud_threshold:
-                        cloudy_count += 1
-                    else:
-                        cloudy_count = 0
-                    
-                    if cloud_cover <= sunny_threshold and precipitation <= rain_threshold:
-                        sunny_count += 1
-                    else:
-                        sunny_count = 0
-                    
-                    if precipitation > rain_threshold:
-                        rainy_count += 1
-                    else:
-                        rainy_count = 0
-                    
-                    # Stocker les compteurs pour ce jour
-                    consecutive_days[forecast_date.strftime('%Y-%m-%d')] = {
-                        'consecutive_cloudy_days': cloudy_count,
-                        'consecutive_sunny_days': sunny_count,
-                        'consecutive_rainy_days': rainy_count,
-                    }
-
-                weather_data = [
-                    {
-                        'day': forecast.date.strftime('%Y-%m-%d'),
-                        'summary': forecast.summary,
-                        'icon': forecast.icon,
-                        'temperature_min': forecast.temperature_min,
-                        'temperature_max': forecast.temperature_max,
-                        'precipitation_total': forecast.precipitation_total,
-                        'precipitation_type': forecast.precipitation_type,
-                        'wind_speed': forecast.wind_speed,
-                        'sunrise': forecast.sunrise,
-                        'sunset': forecast.sunset,
-                        'day_length': forecast.day_length,
-                        'mood_score': calculate_mood_score(request.user, forecast),
-                        'cloud_cover': forecast.cloud_cover,
-                        **consecutive_days[forecast.date.strftime('%Y-%m-%d')],
-                    }
-                    for forecast in latest_forecast
-                ] if latest_forecast.exists() else None
-                city_first_part = city
-
-        first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
-        first_day_sunset = weather_data[0]['sunset'] if weather_data else None
-        first_day_length = weather_data[0]['day_length'] if weather_data else None
-
-        most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
-        for city_search in most_selected_cities:
-            city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
-
-        if weather_data:
-            request.session['weather_data'] = serialize_weather_data(weather_data)
-
-        return render(request, 'home.html', {
-            'city_first_part': city_first_part,
-            'city': city,
-            'weather_data': weather_data,
-            'first_day_sunrise': first_day_sunrise,
-            'first_day_sunset': first_day_sunset,
-            'first_day_length': first_day_length,
-            'most_selected_cities': most_selected_cities,
-            'latitude': latitude,
-            'longitude': longitude
-        })
-    else:
+    # 🚨 Vérification de l'authentification en premier
+    if not request.user.is_authenticated:
         return render(request, 'authenticate/landing_page.html')
+
+    # 🌍 Initialisation des variables pour les utilisateurs connectés
+    city = None
+    city_first_part = None
+    weather_data = None
+    location = request.GET.get('location')
+    latitude = request.GET.get('latitude')
+    longitude = request.GET.get('longitude')
+
+    user_profile = request.user.profile
+
+    if location and latitude and longitude:
+        weather_data = fetch_forecast_by_lat_lon(latitude, longitude, request.user)
+        for forecast in weather_data:
+            forecast['mood_score'] = calculate_mood_score(request.user, forecast)
+            if isinstance(forecast['day'], str):
+                forecast['day'] = datetime.strptime(forecast['day'], '%Y-%m-%d')
+            forecast['day'] = forecast['day'].strftime('%Y-%m-%d')
+
+        city = location
+        city_first_part = location.split(',')[0] if ',' in location else location
+
+        # 📌 Sauvegarde de la ville si elle est différente du hometown de l'utilisateur
+        if location != user_profile.hometown or (latitude != str(user_profile.lat) and longitude != str(user_profile.lon)):
+            city_search, created = CitySearch.objects.get_or_create(
+                city=location,
+                latitude=latitude,
+                longitude=longitude,
+                user=request.user
+            )
+            city_search.search_count += 1
+            city_search.save()
+
+    else:
+        # 🌍 Récupérer la localisation actuelle si aucune n'est fournie
+        city, lat, lon = get_current_location(user_profile)
+        latitude = lat
+        longitude = lon
+
+        if latitude and longitude:
+            fetch_and_save_forecast(request.user, latitude=latitude, longitude=longitude)
+            latest_forecast = DailyForecast.objects.filter(user=request.user).order_by('date')[:7]
+
+            # 📊 Calcul des jours consécutifs de pluie, soleil, nuages
+            forecast_days = [(forecast.date, forecast.cloud_cover, forecast.precipitation_total) for forecast in latest_forecast]
+            forecast_days.sort()
+
+            cloudy_count = 0
+            sunny_count = 0
+            rainy_count = 0
+            consecutive_days = {}
+
+            for forecast_date, cloud_cover, precipitation in forecast_days:
+                if cloud_cover > 75:
+                    cloudy_count += 1
+                else:
+                    cloudy_count = 0
+
+                if cloud_cover <= 25 and precipitation <= 0.1:
+                    sunny_count += 1
+                else:
+                    sunny_count = 0
+
+                if precipitation > 0.1:
+                    rainy_count += 1
+                else:
+                    rainy_count = 0
+
+                consecutive_days[forecast_date.strftime('%Y-%m-%d')] = {
+                    'consecutive_cloudy_days': cloudy_count,
+                    'consecutive_sunny_days': sunny_count,
+                    'consecutive_rainy_days': rainy_count,
+                }
+
+            # 📡 Construction des données météo
+            weather_data = [
+                {
+                    'day': forecast.date.strftime('%Y-%m-%d'),
+                    'summary': forecast.summary,
+                    'icon': forecast.icon,
+                    'temperature_min': forecast.temperature_min,
+                    'temperature_max': forecast.temperature_max,
+                    'precipitation_total': forecast.precipitation_total,
+                    'precipitation_type': forecast.precipitation_type,
+                    'wind_speed': forecast.wind_speed,
+                    'sunrise': forecast.sunrise,
+                    'sunset': forecast.sunset,
+                    'day_length': forecast.day_length,
+                    'mood_score': calculate_mood_score(request.user, forecast),
+                    'cloud_cover': forecast.cloud_cover,
+                    **consecutive_days[forecast.date.strftime('%Y-%m-%d')],
+                }
+                for forecast in latest_forecast
+            ] if latest_forecast.exists() else None
+
+            city_first_part = city
+
+    first_day_sunrise = weather_data[0]['sunrise'] if weather_data else None
+    first_day_sunset = weather_data[0]['sunset'] if weather_data else None
+    first_day_length = weather_data[0]['day_length'] if weather_data else None
+
+    most_selected_cities = CitySearch.objects.filter(user=request.user).order_by('-search_count')[:10]
+    for city_search in most_selected_cities:
+        city_search.city_first_part = city_search.city.split(',')[0] if ',' in city_search.city else city_search.city
+
+    # ✍ Générer un texte basé sur la météo
+    weather_text = generate_weather_text(request.user, weather_data) if weather_data else "No forecast data available."
+
+    if weather_data:
+        request.session['weather_data'] = serialize_weather_data(weather_data)
+
+    # ✅ Affichage de la page d'accueil avec les données météo
+    return render(request, 'home.html', {
+        'city_first_part': city_first_part,
+        'city': city,
+        'weather_data': weather_data,
+        'first_day_sunrise': first_day_sunrise,
+        'first_day_sunset': first_day_sunset,
+        'first_day_length': first_day_length,
+        'most_selected_cities': most_selected_cities,
+        'latitude': latitude,
+        'longitude': longitude,
+        'weather_text': weather_text,
+    })
 
 @csrf_exempt
 def remove_city(request, city_id):

@@ -129,7 +129,7 @@ p { font-size: 1rem; margin: 0 5px; }
 .cloudy-2 { background-color: #b0b0b0; }
 .cloudy-3 { background-color: #8c8c8c; }
 .cloudy-4 { background-color: #666666; }
-.cloudy-5 { background-color: #4d4d4d; } /* 5+ jours */
+.cloudy-5 { background-color: #4d4d4d; }
 
 /* Couleurs graduées pour Sunny */
 .sunny-1 { background-color: #fffde7; color: #333; }
@@ -146,6 +146,15 @@ p { font-size: 1rem; margin: 0 5px; }
 .rainy-5 { background-color: #0d47a1; }
 
 .consecutive-circle:hover { opacity: 0.8; }
+
+/* Style pour le texte personnalisé */
+.weather-text {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
 </style>
 
 <div class="city-list-wrapper">
@@ -205,6 +214,11 @@ p { font-size: 1rem; margin: 0 5px; }
 <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="mb-0">Forecast for {{ city }}</h2>
     <a href="{% url 'mood-forecast-graph' %}" class="btn btn-primary btn-sm">View Mood Graph</a>
+</div>
+
+<!-- Texte personnalisé -->
+<div class="weather-text">
+    <p>{{ weather_text }}</p>
 </div>
 
 <div class="table-responsive">    

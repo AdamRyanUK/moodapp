@@ -34,6 +34,9 @@ from weatherpreferences.models import WeatherFeedback, WeatherPreferences
 
 logger = logging.getLogger(__name__)
 
+# weatherapi/weather_utils.py
+from weatherpreferences.models import WeatherPreferences
+
 def generate_weather_text(user, weather_data):
     """Generate a personalized weather text based on user preferences and forecast."""
     try:
@@ -41,19 +44,27 @@ def generate_weather_text(user, weather_data):
     except WeatherPreferences.DoesNotExist:
         return "No weather preferences set yet."
 
-    # Demain (premier jour de weather_data)
-    tomorrow = weather_data[0]
+    if len(weather_data) < 2:
+        return "Not enough forecast data for tomorrow."
+
+    # Demain (weather_data[1])
+    tomorrow = weather_data[1]
     temp_max = float(tomorrow['temperature_max']) if tomorrow['temperature_max'] else 0
     cloud_cover = tomorrow['cloud_cover'] if tomorrow['cloud_cover'] else 0
     precipitation = tomorrow['precipitation_total'] if tomorrow['precipitation_total'] else 0
     wind_speed = tomorrow['wind_speed'] if tomorrow['wind_speed'] else 0
+    
+    logger.debug(f"Tomorrow's data: day={tomorrow['day']}, temp_max={temp_max}, cloud_cover={cloud_cover}, precipitation={precipitation}, wind_speed={wind_speed}")
 
     # Préférences utilisateur
-    ideal_temp_max = float(prefs.ideal_temp_max) if prefs.ideal_temp_max else 25  # Default 25°C
-    ideal_temp_min = float(prefs.ideal_temp_min) if prefs.ideal_temp_min else 15  # Default 15°C
+    ideal_temp_max = float(prefs.ideal_temp_max) if prefs.ideal_temp_max else 25
+    ideal_temp_min = float(prefs.ideal_temp_min) if prefs.ideal_temp_min else 15
     sun_lover = prefs.sun_lover
     rain_lover = prefs.rain_lover
-    wind_hater = float(prefs.wind_hater) if prefs.wind_hater else 20  # Default 20 km/h
+    try:
+        wind_hater = float(prefs.wind_hater) if prefs.wind_hater else 20
+    except (ValueError, TypeError):
+        wind_hater = 20
 
     # Description de demain
     if cloud_cover > 75:
@@ -63,20 +74,55 @@ def generate_weather_text(user, weather_data):
     else:
         cloud_text = "partly cloudy"
 
-    temp_diff = temp_max - ideal_temp_max
-    if temp_diff > 5:
-        temp_text = "warmer than your ideal"
-    elif temp_diff < -5:
-        temp_text = "cooler than your ideal"
+    # Température avec marge de 3°C
+    if temp_max > ideal_temp_max + 3:
+        temp_text = "warmer than you like"
+    elif temp_max < ideal_temp_min - 3:
+        temp_text = "colder than you enjoy"
+    elif abs(temp_max - ideal_temp_max) <= 3:
+        temp_text = "almost your ideal"
+    elif temp_max < ideal_temp_min:
+        temp_text = "a bit too cool for you"
     else:
-        temp_text = "close to your ideal"
+        temp_text = "pretty chilly for your taste"
 
     rain_text = "with some rain" if precipitation > 0.1 else "with no rain"
 
-    tomorrow_text = f"Tomorrow will be {cloud_text} with a temperature {temp_text} and {rain_text}."
+    # Évaluation du ressenti pour demain
+    score_tomorrow = 0
+    reasons = []
+    if sun_lover and cloud_cover < 25:
+        score_tomorrow += 2  # Gros bonus pour soleil
+    elif sun_lover and cloud_cover > 75:
+        reasons.append("it’s too cloudy for your sunny vibe")
+    if rain_lover and precipitation > 0.1:
+        score_tomorrow += 1
+    elif not rain_lover and precipitation > 0.1:
+        reasons.append("there’s rain you hate")
+    if wind_speed < wind_hater:
+        score_tomorrow += 1
+    elif wind_speed > wind_hater:
+        reasons.append("the wind’s too strong")
+    if abs(temp_max - ideal_temp_max) <= 3:
+        score_tomorrow += 2  # Bonus si proche de l’idéal
+    elif ideal_temp_min <= temp_max <= ideal_temp_max:
+        score_tomorrow += 1
+    else:
+        reasons.append("the temp’s off your sweet spot")
 
-    # Les 3 prochains jours (jours 1-3)
-    next_three = weather_data[1:4]  # Prend les jours 1, 2, 3 (après demain)
+    if score_tomorrow >= 4:
+        tomorrow_vibe = "which looks awesome for you"
+    elif score_tomorrow >= 3:
+        tomorrow_vibe = "which should be pretty good"
+    elif score_tomorrow >= 2:
+        tomorrow_vibe = "which might be okay"
+    else:
+        tomorrow_vibe = f"and {', and '.join(reasons)} will probably annoy you"
+
+    tomorrow_text = f"Tomorrow will be {cloud_text} with a temperature {temp_text} and {rain_text}, {tomorrow_vibe}."
+
+    # Les 3 prochains jours (jours 2-4)
+    next_three = weather_data[2:5]
     if not next_three:
         return tomorrow_text + " No forecast for the next few days."
 
@@ -91,27 +137,28 @@ def generate_weather_text(user, weather_data):
     else:
         next_cloud = "a mix of sun and clouds"
 
-    # Évaluation par rapport aux préférences
-    score = 0
+    score_next = 0
     if sun_lover and avg_cloud < 25:
-        score += 1
+        score_next += 2
     elif not sun_lover and avg_cloud > 75:
-        score += 1
+        score_next += 1
     if rain_lover and avg_precip > 0.1:
-        score += 1
+        score_next += 1
     elif not rain_lover and avg_precip <= 0.1:
-        score += 1
+        score_next += 1
     if avg_wind < wind_hater:
-        score += 1
+        score_next += 1
 
-    if score >= 2:
-        vibe = "pretty good"
-    elif score == 1:
-        vibe = "okay"
+    if score_next >= 4:
+        next_vibe = "pretty awesome"
+    elif score_next >= 3:
+        next_vibe = "pretty good"
+    elif score_next >= 2:
+        next_vibe = "okay"
     else:
-        vibe = "not great"
+        next_vibe = "not great"
 
-    next_text = f"The next 3 days will be {next_cloud}, so based on your preferences, it’s {vibe} for you."
+    next_text = f"The next 3 days will be {next_cloud}, so based on your preferences, it’s {next_vibe} for you."
 
     return f"{tomorrow_text} {next_text}"
 
