@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}  {# ✅ Ajout pour gérer les images et le texte Wagtail #}
+
+{% block content %}
+<style>
+    .blog-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.blog-header-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.blog-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.blog-date {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.blog-content {
+    text-align: left;  /* ✅ Le texte est bien centré mais garde un alignement lisible */
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+</style>
+    <div class="blog-container">
+
+        <h1 class="blog-title">{{ page.title }}</h1>
+        <p class="blog-date">{{ page.date }}</p>
+
+        {% if page.header_image %}
+        {% image page.header_image width-1200 as header_img %}
+        <img src="{{ header_img.url }}" alt="{{ page.title }}" class="blog-header-image">
+        {% endif %}
+
+        <div class="blog-content">
+            {{ page.body|richtext }}  {# ✅ Le texte est bien formaté avec Wagtail #}
+        </div>
+    </div>
+{% endblock %}

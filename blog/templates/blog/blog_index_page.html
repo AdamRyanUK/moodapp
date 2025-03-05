@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}  {# ✅ Nécessaire pour gérer les images #}
+
+{% block content %}
+    <style>
+        .blog-post {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.blog-thumbnail {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.blog-info {
+    flex: 1;  /* ✅ Permet au texte de prendre tout l'espace restant */
+}
+
+@media (max-width: 800px) {
+    .blog-thumbnail, /* ✅ Cache l'image */
+    .blog-info p {    /* ✅ Cache l'intro */
+        display: none !important;
+    }
+
+}
+
+    </style>
+    <div style="font-size: 2.5em; font-weight: bold;">{{ page.intro|richtext }}</div>
+
+    {% for post in blogposts %}
+        <div class="blog-post">
+            {% if post.specific.header_image %}
+                {% image post.specific.header_image fill-200x150 as post_image %}
+                <img src="{{ post_image.url }}" alt="" class="blog-thumbnail">  {# ✅ Image à gauche, sans texte #}
+            {% endif %}
+
+            <div class="blog-info">
+                <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+                <p>{{ post.specific.intro }}</p>
+            </div>
+        </div>
+    {% empty %}
+        <p>Aucun article pour l'instant.</p>
+    {% endfor %}
+{% endblock %}

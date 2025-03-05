@@ -62,6 +62,20 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',  # wagtail.core est remplacé par wagtail depuis v2+
+    'modelcluster',
+    'taggit',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -126,7 +140,10 @@ else:
     DEBUG = True
     # Add other development-specific settings here
 
-
+WAGTAILADMIN_BASE_URL = "https://clearsky.io" #pour emails de reglage depuis wagtail pour le blog
+WAGTAIL_SITE_NAME = "ClearSky"  # Nom de ton site, mets ce que tu veux
+WAGTAIL_APPEND_SLASH = False
+DEBUG = True
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -159,6 +176,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+#media files 
+# Where uploaded images are stored
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Static files (CSS, JavaScript, Images)
@@ -242,7 +264,7 @@ MAILCHIMP_API_KEY = os.getenv("MAILCHIMP_API_KEY")  # 🔒 Récupère la clé AP
 MAILCHIMP_MARKETING_AUDIENCE_ID = "e85afe938b"
 MAILCHIMP_REGION = "us9"
 
-MAILCHIMP_TRANSACTIONAL_API_KEY = "md-7IwFoMBYRDMqX7rrnNapdg"
+MAILCHIMP_TRANSACTIONAL_API_KEY = os.getenv("MAILCHIMP_API_KEY")
 
 
 

@@ -70,6 +70,20 @@ body{
   flex-shrink: 0;
   fill: var(--text-clr);
 }
+
+.blog-btn {
+  padding: 8px 12px;
+  font-size: 1em;
+  color: black;
+  border-radius: 5px;
+  margin-right: 20px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.blog-btn:hover {
+  background-color: #333;
+}
 .account-sidebar {
   position: fixed;
   top: 0;
@@ -530,48 +544,69 @@ main p{
   }
 
   #navbar ul.navbar-list {
-    display: flex; /* Make ul a flex container */
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
-    justify-content: space-between; /* Distribute items horizontally */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
-  }
-
-  #navbar ul.navbar-list > li {
-    flex: 1 1 auto; /* Allow items to adjust their width as necessary */
-    display: flex; /* Ensure content inside li is flexed */
-    justify-content: center; /* Center align content */
-    align-items: center; /* Vertically align content */
-    margin: 0; /* Remove margins to fit them in the same row */
-    padding: 0 5px; /* Adjust padding to ensure they fit within the container */
+    display: flex;
+    flex-wrap: wrap; /* ✅ Permet le retour à la ligne si besoin */
+    justify-content: space-between; /* ✅ Espace équilibré entre les éléments */
+    align-items: center;
+    padding: 0;
+    margin: 0;
   }
 
   #navbar ul.navbar-list > li:first-child {
-    flex: 1 1 30%; /* Adjust width as needed */
+    flex: 0 1 auto; /* ✅ Ne pas s'étirer */
     order: 1;
   }
 
-  #navbar ul.navbar-list > li:nth-child(2) {
-    order: 3; /* Move the second item to the bottom */
-    flex: 1 1 100%; /* Ensure it takes up the full width of its row */
+  #navbar ul.navbar-list > li:nth-child(2) { 
+    flex: 1 1 100%; /* ✅ Permet à la barre de recherche de descendre */
+    order: 3;
+    text-align: center;
   }
 
-  #navbar ul.navbar-list > li:nth-child(3) {
-    order: 2; /* Move the third item above the second */
-    flex: 1 1 30%; /* Adjust width as needed */
-    justify-content: flex-end;
-  }
-
+  #navbar ul.navbar-list > li:nth-child(3),
   #navbar ul.navbar-list > li:last-child {
-    flex: 1 1 30%; /* Adjust width as needed */
-    margin-left: auto;
+    flex: 0 1 auto; /* ✅ Garder ces éléments alignés */
+    order: 2;
   }
 
   .search-form {
-    padding: 0;
-    width: 100%;
-    position: relative;
+    flex: 1 1 100%;
+    text-align: center;
+    margin-top: 10px; /* ✅ Séparation avec la ligne du haut */
   }
+
+   /* Appliquer seulement si l'utilisateur N'EST PAS connecté */
+   .unauthenticated #navbar ul.navbar-list {
+    display: flex;
+    justify-content: space-between; /* ✅ Garde tout aligné */
+    align-items: center;
+    flex-wrap: nowrap; /* ✅ Empêche le retour à la ligne */
+    width: 100%;
+}
+
+.unauthenticated #navbar li {
+    flex: 0 1 auto; /* ✅ Évite que les éléments tombent en dessous */
+    white-space: nowrap; /* ✅ Empêche le texte du bouton "Blog" de se couper */
+}
+
+/* Assurer que le logo, Blog et Login restent alignés */
+.unauthenticated #navbar li:first-child, 
+.unauthenticated .blog-btn,
+.unauthenticated .login-btn {
+    flex: 0 1 auto; /* ✅ Empêche ces éléments d’être poussés en dessous */
+    display: flex;
+    align-items: center;
+}
+
+/* Ajoute un petit espace entre le logo et le bouton "Blog" */
+.unauthenticated .blog-btn {
+    margin-left: 15px;
+}
+
+/* Envoie le bouton "Login" à droite */
+.unauthenticated .login-btn {
+    margin-left: auto;
+}
 
   .suggestion-box {
     position: absolute;
