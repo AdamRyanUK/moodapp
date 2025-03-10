@@ -1,6 +1,8 @@
 import logging
+from django.utils.translation import gettext as _  # Ajout pour la traduction
 from datetime import date, timedelta
 from .models import DailyForecast, ForecastAnalysis
+from weatherpreferences.models import WeatherFeedback, WeatherPreferences
 
 logger = logging.getLogger(__name__)
 
@@ -28,24 +30,15 @@ def calculate_forecast_differences(forecast_data):
             'wind_ave_speed_diff_from_avg': None,
         }
 
-import logging
-from datetime import date, timedelta
-from weatherpreferences.models import WeatherFeedback, WeatherPreferences
-
-logger = logging.getLogger(__name__)
-
-# weatherapi/weather_utils.py
-from weatherpreferences.models import WeatherPreferences
-
 def generate_weather_text(user, weather_data):
     """Generate a personalized weather text based on user preferences and forecast."""
     try:
         prefs = WeatherPreferences.objects.get(user=user)
     except WeatherPreferences.DoesNotExist:
-        return "No weather preferences set yet."
+        return _("No weather preferences set yet.")
 
     if len(weather_data) < 2:
-        return "Not enough forecast data for tomorrow."
+        return _("Not enough forecast data for tomorrow.")
 
     # Demain (weather_data[1])
     tomorrow = weather_data[1]
@@ -68,25 +61,25 @@ def generate_weather_text(user, weather_data):
 
     # Description de demain
     if cloud_cover > 75:
-        cloud_text = "cloudy"
+        cloud_text = _("cloudy")
     elif cloud_cover < 25:
-        cloud_text = "sunny"
+        cloud_text = _("sunny")
     else:
-        cloud_text = "partly cloudy"
+        cloud_text = _("partly cloudy")
 
     # Température avec marge de 3°C
     if temp_max > ideal_temp_max + 3:
-        temp_text = "warmer than you like"
+        temp_text = _("warmer than you like")
     elif temp_max < ideal_temp_min - 3:
-        temp_text = "colder than you enjoy"
+        temp_text = _("colder than you enjoy")
     elif abs(temp_max - ideal_temp_max) <= 3:
-        temp_text = "almost your ideal"
+        temp_text = _("almost your ideal")
     elif temp_max < ideal_temp_min:
-        temp_text = "a bit too cool for you"
+        temp_text = _("a bit too cool for you")
     else:
-        temp_text = "pretty chilly for your taste"
+        temp_text = _("pretty chilly for your taste")
 
-    rain_text = "with some rain" if precipitation > 0.1 else "with no rain"
+    rain_text = _("with some rain") if precipitation > 0.1 else _("with no rain")
 
     # Évaluation du ressenti pour demain
     score_tomorrow = 0
@@ -94,48 +87,50 @@ def generate_weather_text(user, weather_data):
     if sun_lover and cloud_cover < 25:
         score_tomorrow += 2  # Gros bonus pour soleil
     elif sun_lover and cloud_cover > 75:
-        reasons.append("it’s too cloudy for your sunny vibe")
+        reasons.append(_("it’s too cloudy for your sunny vibe"))
     if rain_lover and precipitation > 0.1:
         score_tomorrow += 1
     elif not rain_lover and precipitation > 0.1:
-        reasons.append("there’s rain you hate")
+        reasons.append(_("there’s rain you hate"))
     if wind_speed < wind_hater:
         score_tomorrow += 1
     elif wind_speed > wind_hater:
-        reasons.append("the wind’s too strong")
+        reasons.append(_("the wind’s too strong"))
     if abs(temp_max - ideal_temp_max) <= 3:
         score_tomorrow += 2  # Bonus si proche de l’idéal
     elif ideal_temp_min <= temp_max <= ideal_temp_max:
         score_tomorrow += 1
     else:
-        reasons.append("the temp’s off your sweet spot")
+        reasons.append(_("the temp’s off your sweet spot"))
 
     if score_tomorrow >= 4:
-        tomorrow_vibe = "which looks awesome for you"
+        tomorrow_vibe = _("which looks awesome for you")
     elif score_tomorrow >= 3:
-        tomorrow_vibe = "which should be pretty good"
+        tomorrow_vibe = _("which should be pretty good")
     elif score_tomorrow >= 2:
-        tomorrow_vibe = "which might be okay"
+        tomorrow_vibe = _("which might be okay")
     else:
-        tomorrow_vibe = f"and {', and '.join(reasons)} will probably annoy you"
+        tomorrow_vibe = _("and {reasons} will probably annoy you").format(reasons=', et '.join(reasons))
 
-    tomorrow_text = f"Tomorrow will be {cloud_text} with a temperature {temp_text} and {rain_text}, {tomorrow_vibe}."
+    tomorrow_text = _("Tomorrow will be {cloud_text} with a temperature {temp_text} and {rain_text}, {tomorrow_vibe}.").format(
+        cloud_text=cloud_text, temp_text=temp_text, rain_text=rain_text, tomorrow_vibe=tomorrow_vibe
+    )
 
     # Les 3 prochains jours (jours 2-4)
     next_three = weather_data[2:5]
     if not next_three:
-        return tomorrow_text + " No forecast for the next few days."
+        return tomorrow_text + " " + _("No forecast for the next few days.")
 
     avg_cloud = sum(day['cloud_cover'] for day in next_three) / len(next_three)
     avg_precip = sum(day['precipitation_total'] for day in next_three) / len(next_three)
     avg_wind = sum(day['wind_speed'] for day in next_three) / len(next_three)
 
     if avg_cloud > 75:
-        next_cloud = "mostly cloudy"
+        next_cloud = _("mostly cloudy")
     elif avg_cloud < 25:
-        next_cloud = "mostly sunny"
+        next_cloud = _("mostly sunny")
     else:
-        next_cloud = "a mix of sun and clouds"
+        next_cloud = _("a mix of sun and clouds")
 
     score_next = 0
     if sun_lover and avg_cloud < 25:
@@ -150,15 +145,17 @@ def generate_weather_text(user, weather_data):
         score_next += 1
 
     if score_next >= 4:
-        next_vibe = "pretty awesome"
+        next_vibe = _("pretty awesome")
     elif score_next >= 3:
-        next_vibe = "pretty good"
+        next_vibe = _("pretty good")
     elif score_next >= 2:
-        next_vibe = "okay"
+        next_vibe = _("okay")
     else:
-        next_vibe = "not great"
+        next_vibe = _("not great")
 
-    next_text = f"The next 3 days will be {next_cloud}, so based on your preferences, it’s {next_vibe} for you."
+    next_text = _("The next 3 days will be {next_cloud}, so based on your preferences, it’s {next_vibe} for you.").format(
+        next_cloud=next_cloud, next_vibe=next_vibe
+    )
 
     return f"{tomorrow_text} {next_text}"
 

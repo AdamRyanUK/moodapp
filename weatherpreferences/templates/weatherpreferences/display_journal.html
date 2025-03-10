@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .timeline-container {
+        max-height: 600px; /* Hauteur fixe pour la zone défilante */
+        overflow-y: auto; /* Active le défilement vertical */
+        position: relative;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 10px;
+    }
+    .timeline {
+        position: relative;
+    }
+    .timeline::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        background-color: #333;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        margin-left: -3px;
+    }
+    .entry {
+        padding: 10px 40px;
+        position: relative;
+        width: 50%;
+        box-sizing: border-box;
+    }
+    .entry.left {
+        left: 0;
+    }
+    .entry.right {
+        left: 50%;
+    }
+    .entry .thumbnail {
+        padding: 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        background-color: #f8f8f8;
+    }
+    .entry .thumbnail:hover {
+        background-color: #e0e0e0;
+    }
+    .entry .full-content {
+        display: none;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+    .entry::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: #333;
+        border-radius: 50%;
+        z-index: 1;
+        top: 20px;
+    }
+    .entry.left::before {
+        right: -10px;
+    }
+    .entry.right::before {
+        left: -10px;
+    }
+    /* Styles pour les bordures selon le rating */
+    .rating-1 { border: 8px solid #ff4d4d; } /* Very Bad - Rouge */
+    .rating-2 { border: 8px solid #ff9900; } /* Bad - Orange */
+    .rating-3 { border: 8px solid #43cdff; } /* Neutral - Bleu clair */
+    .rating-4 { border: 8px solid #ffd700; } /* Good - Jaune */
+    .rating-5 { border: 8px solid #00cc00; } /* Very Good - Vert */
+    .no-rating { border: 8px solid #ccc; }   /* Pas de rating - Gris */
+    /* Style pour le filtre */
+    .filter-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    select, button {
+        padding: 8px;
+        font-size: 16px;
+        margin: 5px;
+    }
+</style>
+
+<h1>{{user.first_name}}'s Journal</h1>
+<div class="filter-section">
+    <form method="GET" action="{% url 'display_journal' %}">
+        <select name="rating" onchange="this.form.submit()">
+            <option value="" {% if not current_rating %}selected{% endif %}>All Ratings</option>
+            <option value="1" {% if current_rating == '1' %}selected{% endif %}>Very Bad (1)</option>
+            <option value="2" {% if current_rating == '2' %}selected{% endif %}>Bad (2)</option>
+            <option value="3" {% if current_rating == '3' %}selected{% endif %}>Neutral (3)</option>
+            <option value="4" {% if current_rating == '4' %}selected{% endif %}>Good (4)</option>
+            <option value="5" {% if current_rating == '5' %}selected{% endif %}>Very Good (5)</option>
+        </select>
+        {% if current_rating %}
+            <button type="submit" onclick="this.form.rating.value=''">Clear the filter</button>
+        {% endif %}
+    </form>
+</div>
+<div class="timeline-container">
+    <div class="timeline">
+        {% for entry in journal_entries %}
+            <div class="entry {% if forloop.counter0|divisibleby:2 %}left{% else %}right{% endif %}">
+                <div class="thumbnail {% if entry.rating == 1 %}rating-1{% elif entry.rating == 2 %}rating-2{% elif entry.rating == 3 %}rating-3{% elif entry.rating == 4 %}rating-4{% elif entry.rating == 5 %}rating-5{% else %}no-rating{% endif %}" onclick="toggleEntry(this)">
+                    <h3>{{ entry.date }}</h3>
+                    <p>{{ entry.journal_entry|truncatewords:10 }}</p>
+                </div>
+                <div class="full-content">
+                    <h3>{{ entry.date }}</h3>
+                    <p>{{ entry.journal_entry }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Aucune entrée dans votre journal pour le moment{% if current_rating %}, ou aucune entrée avec ce rating{% endif %}.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleEntry(thumbnail) {
+        const fullContent = thumbnail.nextElementSibling;
+        if (fullContent.style.display === "block") {
+            fullContent.style.display = "none";
+        } else {
+            fullContent.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

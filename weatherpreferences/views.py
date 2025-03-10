@@ -277,3 +277,34 @@ def feedback_chart_data(request):
         'ratings': [feedback.rating for feedback in feedbacks],
     }
     return JsonResponse(data)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import JournalEntry, WeatherFeedback
+
+@login_required
+def display_journal(request):
+    # Récupérer le filtre rating depuis la requête GET (s'il existe)
+    rating_filter = request.GET.get('rating', None)
+    
+    # Récupérer les entrées du journal
+    journal_entries = JournalEntry.objects.filter(user=request.user).order_by('-date')
+    
+    # Récupérer les feedbacks météo pour associer les ratings
+    feedbacks = WeatherFeedback.objects.filter(user=request.user).values('date', 'rating')
+    feedback_dict = {f['date']: f['rating'] for f in feedbacks}
+    
+    # Ajouter le rating à chaque entrée et filtrer si nécessaire
+    filtered_entries = []
+    for entry in journal_entries:
+        entry.rating = feedback_dict.get(entry.date, None)
+        if rating_filter:  # Si un filtre est appliqué
+            if entry.rating == int(rating_filter):  # Filtrer par rating
+                filtered_entries.append(entry)
+        else:
+            filtered_entries.append(entry)  # Pas de filtre, tout inclure
+    
+    return render(request, 'weatherpreferences/display_journal.html', {
+        'journal_entries': filtered_entries,
+        'current_rating': rating_filter  # Pour garder la sélection dans le dropdown
+    })

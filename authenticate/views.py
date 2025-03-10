@@ -3,6 +3,8 @@ from venv import logger
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 import requests
+from django.utils.translation import activate
+
 from .models import Profile, Location
 from .forms import ChangeProfileForm
 from django.utils import timezone
@@ -11,7 +13,9 @@ from core.utils import get_current_location
 from weatherapi.services import get_nearest_place
 
 def landing_page(request): 
-	return render(request, 'authenticate/landing_page.html')
+    activate('fr')  # Bien aligné avec 4 espaces
+    return render(request, 'authenticate/landing_page.html')  # Cette ligne aussi
+
 
 @login_required
 def edit_hometown(request):

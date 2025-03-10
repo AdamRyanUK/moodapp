@@ -22,7 +22,7 @@ from .utils import get_current_location  # Import from utils.py
 from django.shortcuts import render, get_object_or_404
 from weatherpreferences.models import WeatherPreferences
 from weatherapi.weather_utils import calculate_consecutive_days, generate_weather_text
-
+from django.utils.translation import activate
 
 def serialize_weather_data(weather_data):
     """Convert datetime and timedelta objects in weather_data to strings."""
@@ -35,6 +35,7 @@ def serialize_weather_data(weather_data):
     return weather_data
 
 def home(request):
+    
     # 🚨 Vérification de l'authentification en premier
     if not request.user.is_authenticated:
         return render(request, 'authenticate/landing_page.html')
@@ -362,3 +363,15 @@ def weather_profile(request):
         'weather_preferences': weather_preferences,
     }
     return render(request, 'weather_profile.html', context)
+
+from django.utils.translation import activate
+from django.shortcuts import redirect
+
+def custom_set_language(request):
+    language = request.POST.get('language', 'en')  # Default to English if not set
+    activate(language)
+    request.session['django_language'] = language
+    response = redirect(request.META.get('HTTP_REFERER', '/'))  # Redirect back to the previous page
+    response.set_cookie('django_language', language)  # Force the cookie update
+    print(f"Language switched to: {language}")  # Debugging information in the console
+    return response

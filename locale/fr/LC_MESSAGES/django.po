@@ -1,0 +1,1182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-06 13:04+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\authenticate\templates\authenticate\landing_page.html:57
+msgid "Take Control of how the Weather Impacts your Mood"
+msgstr "Prenez le contrôle de l'impact de la météo sur votre humeur"
+
+#: .\authenticate\templates\authenticate\landing_page.html:58
+msgid "Join us for free today"
+msgstr "Rejoignez-nous gratuitement aujourd'hui"
+
+#: .\authenticate\templates\authenticate\landing_page.html:60
+msgid "Start Tracking"
+msgstr "Commencer à suivre"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:87
+msgid "What Should we Call you and Where are you From?"
+msgstr "Comment devrions-nous vous appeler et d'où venez-vous ?"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:88
+msgid ""
+"This is so we can do some fancy calculations to link the weather to your mood"
+msgstr ""
+"C'est pour que nous puissions effectuer des calculs sophistiqués afin de "
+"relier la météo à votre humeur"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:93
+msgid "What should we call you?"
+msgstr "Comment devrions-nous vous appeler ?"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:95
+msgid "Where is home?"
+msgstr "Où est votre maison ?"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:98
+msgid "Save"
+msgstr "Enregistrer"
+
+#: .\authenticate\templates\authenticate\register_hometown.html:105
+#: .\authenticate\templates\authenticate\register_hometown.html:204
+#: .\authenticate\templates\authenticate\register_hometown.html:217
+msgid "Use Current Location"
+msgstr "Utiliser l'emplacement actuel"
+
+#: .\core\templates\account\account_inactive.html:5
+#: .\core\templates\account\account_inactive.html:9
+msgid "Account Inactive"
+msgstr ""
+
+#: .\core\templates\account\account_inactive.html:12
+msgid "This account is inactive."
+msgstr ""
+
+#: .\core\templates\account\base_reauthenticate.html:5
+#: .\core\templates\account\base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr ""
+
+#: .\core\templates\account\base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr ""
+
+#: .\core\templates\account\base_reauthenticate.html:19
+msgid "Alternative options"
+msgstr ""
+
+#: .\core\templates\account\confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr ""
+
+#: .\core\templates\account\confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr ""
+
+#: .\core\templates\account\confirm_email_verification_code.html:15
+#: .\core\templates\account\confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr ""
+
+#: .\core\templates\account\confirm_email_verification_code.html:27
+#: .\core\templates\account\email_confirm.html:24
+#: .\core\templates\account\reauthenticate.html:18
+msgid "Confirm"
+msgstr ""
+
+#: .\core\templates\account\confirm_email_verification_code.html:31
+#: .\core\templates\account\confirm_email_verification_code.html:35
+#: .\core\templates\account\confirm_login_code.html:32
+msgid "Cancel"
+msgstr ""
+
+#: .\core\templates\account\confirm_login_code.html:5
+#: .\core\templates\account\confirm_login_code.html:27
+#: .\core\templates\account\login.html:10
+#: .\core\templates\account\login.html:29
+#: .\core\templates\account\request_login_code.html:5
+#: .\core\templates\allauth\layouts\base.html:68
+#: .\core\templates\socialaccount\login.html:5
+#: .\core\templates\socialaccount\login_redirect.html:5
+msgid "Sign In"
+msgstr ""
+
+#: .\core\templates\account\confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr ""
+
+#: .\core\templates\account\email.html:4
+#: .\core\templates\account\email.html:29
+msgid "Email Addresses"
+msgstr ""
+
+#: .\core\templates\account\email.html:33
+msgid "The following email addresses are associated with your account:"
+msgstr ""
+
+#: .\core\templates\account\email.html:46
+msgid "Verified"
+msgstr ""
+
+#: .\core\templates\account\email.html:50
+msgid "Unverified"
+msgstr ""
+
+#: .\core\templates\account\email.html:55
+msgid "Primary"
+msgstr ""
+
+#: .\core\templates\account\email.html:66
+msgid "Make Primary"
+msgstr ""
+
+#: .\core\templates\account\email.html:69
+#: .\core\templates\account\email_change.html:37
+msgid "Re-send Verification"
+msgstr ""
+
+#: .\core\templates\account\email.html:72
+#: .\core\templates\socialaccount\connections.html:40
+msgid "Remove"
+msgstr ""
+
+#: .\core\templates\account\email.html:83
+msgid "Add Email Address"
+msgstr ""
+
+#: .\core\templates\account\email.html:94
+msgid "Add Email"
+msgstr ""
+
+#: .\core\templates\account\email.html:103
+msgid "Do you really want to remove the selected email address?"
+msgstr ""
+
+#: .\core\templates\account\email\account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for "
+"an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you "
+"have\n"
+"forgotten about this, please use the password forgotten procedure to "
+"recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+
+#: .\core\templates\account\email\account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr ""
+
+#: .\core\templates\account\email\base_message.txt:4
+#, python-format
+msgid ""
+"\n"
+"    Hello from %(site_name)s!\n"
+msgstr ""
+
+#: .\core\templates\account\email\base_message.txt:12
+#, python-format
+msgid ""
+"\n"
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s\n"
+msgstr ""
+
+#: .\core\templates\account\email\base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr ""
+
+#: .\core\templates\account\email\base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security "
+"precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+
+#: .\core\templates\account\email\email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr ""
+
+#: .\core\templates\account\email\email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr ""
+
+#: .\core\templates\account\email\email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr ""
+
+#: .\core\templates\account\email\email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr ""
+
+#: .\core\templates\account\email\email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+
+#: .\core\templates\account\email\email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr ""
+
+#: .\core\templates\account\email\email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+
+#: .\core\templates\account\email\email_confirmation_subject.txt:3
+msgid " Please Confirm Your Email Address"
+msgstr ""
+
+#: .\core\templates\account\email\email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr ""
+
+#: .\core\templates\account\email\email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr ""
+
+#: .\core\templates\account\email\login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr ""
+
+#: .\core\templates\account\email\login_code_message.txt:9
+#: .\core\templates\account\email\unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr ""
+
+#: .\core\templates\account\email\login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr ""
+
+#: .\core\templates\account\email\password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr ""
+
+#: .\core\templates\account\email\password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr ""
+
+#: .\core\templates\account\email\password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a "
+"password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+
+#: .\core\templates\account\email\password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: .\core\templates\account\email\password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr ""
+
+#: .\core\templates\account\email\password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr ""
+
+#: .\core\templates\account\email\password_reset_subject.txt:3
+#: .\core\templates\account\password_reset.html:4
+#: .\core\templates\account\password_reset.html:8
+#: .\core\templates\account\password_reset_done.html:6
+#: .\core\templates\account\password_reset_done.html:10
+msgid "Password Reset"
+msgstr ""
+
+#: .\core\templates\account\email\password_set_message.txt:4
+msgid "Your password has been set."
+msgstr ""
+
+#: .\core\templates\account\email\password_set_subject.txt:3
+msgid "Password Set"
+msgstr ""
+
+#: .\core\templates\account\email\unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+
+#: .\core\templates\account\email\unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr ""
+
+#: .\core\templates\account\email\unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:5
+#: .\core\templates\account\email_change.html:9
+msgid "Email Address"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:21
+#: .\core\templates\account\email_change.html:29
+msgid "Current email"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:31
+msgid "Changing to"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr ""
+
+#: .\core\templates\account\email_change.html:41
+msgid "Cancel Change"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:49
+msgid "Change to"
+msgstr ""
+
+#: .\core\templates\account\email_change.html:55
+#: .\core\templates\allauth\layouts\base.html:31
+msgid "Change Email"
+msgstr ""
+
+#: .\core\templates\account\email_confirm.html:6
+#: .\core\templates\account\email_confirm.html:10
+msgid "Confirm Email Address"
+msgstr ""
+
+#: .\core\templates\account\email_confirm.html:16
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email "
+"address for user %(user_display)s."
+msgstr ""
+
+#: .\core\templates\account\email_confirm.html:30
+#: .\core\templates\account\messages\email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+
+#: .\core\templates\account\email_confirm.html:36
+#, python-format
+msgid ""
+"This email confirmation link expired or is invalid. Please <a "
+"href=\"%(email_url)s\">issue a new email confirmation request</a>."
+msgstr ""
+
+#: .\core\templates\account\login.html:15
+#, python-format
+msgid ""
+"If you have not created an\n"
+"                              account yet, then please %(link)ssign "
+"up%(end_link)s\n"
+"                              first."
+msgstr ""
+
+#: .\core\templates\account\login.html:39
+msgid "Sign in with a passkey"
+msgstr ""
+
+#: .\core\templates\account\login.html:44
+#: .\core\templates\account\request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr ""
+
+#: .\core\templates\account\logout.html:10
+#: .\core\templates\account\logout.html:23
+#: .\core\templates\allauth\layouts\base.html:61
+msgid "Sign Out"
+msgstr ""
+
+#: .\core\templates\account\logout.html:13
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: .\core\templates\account\messages\cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr ""
+
+#: .\core\templates\account\messages\email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr ""
+
+#: .\core\templates\account\messages\email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr ""
+
+#: .\core\templates\account\messages\email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr ""
+
+#: .\core\templates\account\messages\logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr ""
+
+#: .\core\templates\account\messages\logged_out.txt:2
+msgid "You have signed out."
+msgstr ""
+
+#: .\core\templates\account\messages\login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr ""
+
+#: .\core\templates\account\messages\password_changed.txt:2
+msgid "Password successfully changed."
+msgstr ""
+
+#: .\core\templates\account\messages\password_set.txt:2
+msgid "Password successfully set."
+msgstr ""
+
+#: .\core\templates\account\messages\primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr ""
+
+#: .\core\templates\account\messages\unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr ""
+
+#: .\core\templates\account\password_change.html:4
+#: .\core\templates\account\password_change.html:8
+#: .\core\templates\account\password_change.html:20
+#: .\core\templates\account\password_reset_from_key.html:5
+#: .\core\templates\account\password_reset_from_key.html:12
+#: .\core\templates\account\password_reset_from_key.html:30
+#: .\core\templates\account\password_reset_from_key_done.html:5
+#: .\core\templates\account\password_reset_from_key_done.html:9
+#: .\core\templates\allauth\layouts\base.html:37
+#: .\core\templates\base.html:101
+msgid "Change Password"
+msgstr ""
+
+#: .\core\templates\account\password_change.html:22
+msgid "Forgot Password?"
+msgstr ""
+
+#: .\core\templates\account\password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr ""
+
+#: .\core\templates\account\password_reset.html:25
+msgid "Reset My Password"
+msgstr ""
+
+#: .\core\templates\account\password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
+#: .\core\templates\account\password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+
+#: .\core\templates\account\password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr ""
+
+#: .\core\templates\account\password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: .\core\templates\account\password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr ""
+
+#: .\core\templates\account\password_set.html:5
+#: .\core\templates\account\password_set.html:9
+#: .\core\templates\account\password_set.html:21
+msgid "Set Password"
+msgstr ""
+
+#: .\core\templates\account\reauthenticate.html:6
+msgid "Enter your password:"
+msgstr ""
+
+#: .\core\templates\account\request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free sign-"
+"in."
+msgstr ""
+
+#: .\core\templates\account\request_login_code.html:24
+msgid "Request Code"
+msgstr ""
+
+#: .\core\templates\account\request_login_code.html:30
+msgid "Other sign-in options"
+msgstr ""
+
+#: .\core\templates\account\signup.html:11
+#: .\core\templates\account\signup.html:32
+#: .\core\templates\account\signup_by_passkey.html:29
+#: .\core\templates\allauth\layouts\base.html:74
+#: .\core\templates\socialaccount\signup.html:9
+#: .\core\templates\socialaccount\signup.html:25
+msgid "Sign Up"
+msgstr ""
+
+#: .\core\templates\account\signup.html:19
+#: .\core\templates\account\signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr ""
+
+#: .\core\templates\account\signup.html:41
+msgid "Sign up using a passkey"
+msgstr ""
+
+#: .\core\templates\account\signup_by_passkey.html:4
+#: .\core\templates\socialaccount\signup.html:5
+msgid "Signup"
+msgstr ""
+
+#: .\core\templates\account\signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr ""
+
+#: .\core\templates\account\signup_by_passkey.html:36
+msgid "Other options"
+msgstr ""
+
+#: .\core\templates\account\signup_closed.html:5
+#: .\core\templates\account\signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr ""
+
+#: .\core\templates\account\signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr ""
+
+#: .\core\templates\account\snippets\already_logged_in.html:7
+msgid "Note"
+msgstr ""
+
+#: .\core\templates\account\snippets\already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr ""
+
+#: .\core\templates\account\snippets\warn_no_email.html:3
+msgid "Warning:"
+msgstr ""
+
+#: .\core\templates\account\snippets\warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
+msgstr ""
+
+#: .\core\templates\account\verification_sent.html:5
+#: .\core\templates\account\verification_sent.html:11
+#: .\core\templates\account\verified_email_required.html:5
+#: .\core\templates\account\verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr ""
+
+#: .\core\templates\account\verification_sent.html:14
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+
+#: .\core\templates\account\verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+
+#: .\core\templates\account\verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see "
+"the verification email in your main inbox, check your spam folder. "
+"Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: .\core\templates\account\verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+
+msgid "Messages:"
+msgstr "Messages :"
+
+msgid "Menu:"
+msgstr "Menu :"
+
+msgid "Account Connections"
+msgstr "Connexions de compte"
+
+msgid "Two-Factor Authentication"
+msgstr "Authentification à deux facteurs"
+
+msgid "Sessions"
+msgstr "Sessions"
+
+msgid "ClearSky App"
+msgstr "Application ClearSky"
+
+msgid "ClearSky"
+msgstr "ClearSky"
+
+msgid "Get forecast for somewhere else"
+msgstr "Obtenir des prévisions pour un autre endroit"
+
+msgid "English"
+msgstr "Anglais"
+
+msgid "French"
+msgstr "Français"
+
+msgid "Blog"
+msgstr "Blog"
+
+msgid "Login"
+msgstr "Connexion"
+
+msgid "Edit Profile"
+msgstr "Modifier le profil"
+
+msgid "Change Hometown"
+msgstr "Changer la ville natale"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Hello %(name)s!"
+msgstr "Bonjour %(name)s !"
+
+msgid "How would you rate the weather in %(location)s today?"
+msgstr "Comment évalueriez-vous la météo à %(location)s aujourd'hui ?"
+
+msgid "I'm not in %(hometown)s I'm on vacation"
+msgstr "Je ne suis pas à %(hometown)s, je suis en vacances"
+
+msgid "Skip"
+msgstr "Passer"
+
+msgid "Submit"
+msgstr "Soumettre"
+
+msgid "Feedback"
+msgstr "Retour d'information"
+
+msgid "Insights"
+msgstr "Perspectives"
+
+msgid "Charts"
+msgstr "Graphiques"
+
+msgid "My Weather Profile"
+msgstr "Mon profil météo"
+
+msgid "Mood History"
+msgstr "Historique"
+
+msgid "Community"
+msgstr "Communauté"
+
+msgid "Forum"
+msgstr "Forum"
+
+msgid "Challenges"
+msgstr "Défis"
+
+msgid "SAD Support"
+msgstr "Soutien pour TAS"
+
+msgid "Arthritis Support"
+msgstr "Soutien pour l'arthrite"
+
+msgid "Mood Journal"
+msgstr "Journal"
+
+msgid "My Locations"
+msgstr "Mes emplacements"
+
+msgid "Hourly Forecast"
+msgstr "Prévisions horaires"
+
+#: .\core\templates\home.html:168
+msgid "Home"
+msgstr "Maison"
+
+#: .\core\templates\home.html:194
+msgid "a.m."
+msgstr "matin"
+
+#: .\core\templates\home.html:203
+msgid "p.m."
+msgstr "après-midi"
+
+#: .\core\templates\home.html:216
+msgid "Forecast for"
+msgstr "Prévisions pour"
+
+#: .\core\templates\home.html:217
+msgid "View Mood Graph"
+msgstr "Voir le graphique de l'humeur"
+
+#: .\core\templates\home.html:229
+msgid "Day"
+msgstr "Jour"
+
+#: .\core\templates\home.html:230
+msgid "Mood Score"
+msgstr "Score d'humeur"
+
+#: .\core\templates\home.html:231
+msgid "Icon"
+msgstr "Icône"
+
+#: .\core\templates\home.html:232
+#, fuzzy
+#| msgid "Max Temperature"
+msgid "Max Temp"
+msgstr "Température max"
+
+#: .\core\templates\home.html:233
+msgid "Precipitation"
+msgstr "Précipitations"
+
+#: .\core\templates\home.html:234
+msgid "Wind Speed"
+msgstr "Vitesse du vent"
+
+#: .\core\templates\home.html:259
+msgid "Weather Analysis"
+msgstr "Analyse météo"
+
+#: .\core\templates\home.html:264
+msgid "Condition"
+msgstr "Condition"
+
+#: .\core\templates\home.html:272
+msgid "Overcast"
+msgstr "Couvert"
+
+#: .\core\templates\home.html:292
+msgid "Sunny"
+msgstr "Ensoleillé"
+
+#: .\core\templates\home.html:312
+msgid "Rainy"
+msgstr "Pluvieux"
+
+#: .\core\templates\home.html:337
+msgid "No weather forecast available for the upcoming days."
+msgstr "Aucune prévision météo disponible pour les prochains jours."
+
+#: .\core\templates\socialaccount\authentication_error.html:5
+#: .\core\templates\socialaccount\authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr ""
+
+#: .\core\templates\socialaccount\authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr ""
+
+#: .\core\templates\socialaccount\connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr ""
+
+#: .\core\templates\socialaccount\connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr ""
+
+#: .\core\templates\socialaccount\connections.html:50
+msgid "Add a Third-Party Account"
+msgstr ""
+
+#: .\core\templates\socialaccount\email\account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr ""
+
+#: .\core\templates\socialaccount\email\account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr ""
+
+#: .\core\templates\socialaccount\email\account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr ""
+
+#: .\core\templates\socialaccount\email\account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr ""
+
+#: .\core\templates\socialaccount\login.html:10
+#, python-format
+msgid "Connect %(provider)s"
+msgstr ""
+
+#: .\core\templates\socialaccount\login.html:13
+#, python-format
+msgid "You are about to connect a new third-party account from %(provider)s."
+msgstr ""
+
+#: .\core\templates\socialaccount\login.html:17
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr ""
+
+#: .\core\templates\socialaccount\login.html:20
+#, python-format
+msgid "You are about to sign in using a third-party account from %(provider)s."
+msgstr ""
+
+#: .\core\templates\socialaccount\login.html:27
+#: .\core\templates\socialaccount\login_redirect.html:10
+msgid "Continue"
+msgstr ""
+
+#: .\core\templates\socialaccount\login_cancelled.html:5
+#: .\core\templates\socialaccount\login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr ""
+
+#: .\core\templates\socialaccount\login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: .\core\templates\socialaccount\messages\account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr ""
+
+#: .\core\templates\socialaccount\messages\account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr ""
+
+#: .\core\templates\socialaccount\messages\account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr ""
+
+#: .\core\templates\socialaccount\signup.html:12
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+
+#: .\core\templates\socialaccount\snippets\login.html:10
+msgid "Or use a third-party"
+msgstr ""
+
+#: .\marketing\templates\subscribe.html:6
+msgid "One last thing..."
+msgstr "Une dernière chose..."
+
+#: .\marketing\templates\subscribe.html:7
+msgid "Subscribe to a personalised weekly newsletter"
+msgstr "Abonnez-vous à une newsletter hebdomadaire personnalisée"
+
+#: .\marketing\templates\subscribe.html:8
+msgid ""
+"Enter your email address to subscribe to our mailing list and enjoy these "
+"benefits:"
+msgstr ""
+"Entrez votre adresse e-mail pour vous abonner à notre liste de diffusion et "
+"profiter de ces avantages :"
+
+#: .\marketing\templates\subscribe.html:10
+msgid ""
+"Get updates giving you an insight into how the weather of the last week "
+"affected you and what is likely to happen next week."
+msgstr ""
+"Recevez des mises à jour vous donnant un aperçu de la manière dont la météo "
+"de la semaine dernière vous a affecté et de ce qui risque de se passer la "
+"semaine prochaine."
+
+#: .\marketing\templates\subscribe.html:11
+msgid "Find out how normal the weather is for the time of year."
+msgstr ""
+"Découvrez à quel point la météo est normale pour cette période de l'année."
+
+#: .\marketing\templates\subscribe.html:12
+msgid "Insights into best ways to combat the weather blues."
+msgstr ""
+"Des conseils sur les meilleures façons de combattre le blues lié à la météo."
+
+#: .\marketing\templates\subscribe.html:18
+msgid "Don’t miss out - Subscribe Now!"
+msgstr "Ne manquez pas cette occasion - Abonnez-vous maintenant !"
+
+#: .\marketing\templates\subscribe.html:19
+msgid "No Thanks"
+msgstr "Non, merci"
+
+#: .\marketing\templates\subscribe.html:23
+msgid "Unsubscribe form"
+msgstr "Formulaire de désabonnement"
+
+#: .\weatherapi\weather_utils.py:38
+msgid "No weather preferences set yet."
+msgstr "Aucune préférence météo n'a encore été définie."
+
+#: .\weatherapi\weather_utils.py:41
+msgid "Not enough forecast data for tomorrow."
+msgstr "Pas assez de données de prévision pour demain."
+
+#: .\weatherapi\weather_utils.py:64
+msgid "cloudy"
+msgstr "nuageux"
+
+#: .\weatherapi\weather_utils.py:66
+#, fuzzy
+#| msgid "Sunny"
+msgid "sunny"
+msgstr "ensoleillé"
+
+#: .\weatherapi\weather_utils.py:68
+msgid "partly cloudy"
+msgstr "partiellement nuageux"
+
+#: .\weatherapi\weather_utils.py:72
+msgid "warmer than you like"
+msgstr "plus chaud que ce que vous aimez"
+
+#: .\weatherapi\weather_utils.py:74
+msgid "colder than you enjoy"
+msgstr "plus froid que ce que vous appréciez"
+
+#: .\weatherapi\weather_utils.py:76
+msgid "almost your ideal"
+msgstr "presque votre idéal"
+
+#: .\weatherapi\weather_utils.py:78
+msgid "a bit too cool for you"
+msgstr "un peu trop frais pour vous"
+
+#: .\weatherapi\weather_utils.py:80
+msgid "pretty chilly for your taste"
+msgstr "assez froid pour vos goûts"
+
+#: .\weatherapi\weather_utils.py:82
+msgid "with some rain"
+msgstr "avec un peu de pluie"
+
+#: .\weatherapi\weather_utils.py:82
+msgid "with no rain"
+msgstr "sans pluie"
+
+#: .\weatherapi\weather_utils.py:90
+msgid "it’s too cloudy for your sunny vibe"
+msgstr "c’est trop nuageux pour votre goût du soleil"
+
+#: .\weatherapi\weather_utils.py:94
+msgid "there’s rain you hate"
+msgstr "il y a de la pluie que vous détestez"
+
+#: .\weatherapi\weather_utils.py:98
+msgid "the wind’s too strong"
+msgstr "le vent est trop fort"
+
+#: .\weatherapi\weather_utils.py:104
+msgid "the temp’s off your sweet spot"
+msgstr "la température n’est pas dans votre zone idéale"
+
+#: .\weatherapi\weather_utils.py:107
+msgid "which looks awesome for you"
+msgstr "ce qui semble génial pour vous"
+
+#: .\weatherapi\weather_utils.py:109
+msgid "which should be pretty good"
+msgstr "ce qui devrait être assez bien"
+
+#: .\weatherapi\weather_utils.py:111
+msgid "which might be okay"
+msgstr "ce qui pourrait être correct"
+
+#: .\weatherapi\weather_utils.py:113
+#, python-brace-format
+msgid "and {reasons} will probably annoy you"
+msgstr "et {reasons} vont probablement vous agacer"
+
+#: .\weatherapi\weather_utils.py:115
+#, python-brace-format
+msgid ""
+"Tomorrow will be {cloud_text} with a temperature {temp_text} and "
+"{rain_text}, {tomorrow_vibe}."
+msgstr ""
+"Demain sera {cloud_text} avec une température {temp_text} et {rain_text}, "
+"{tomorrow_vibe}."
+
+#: .\weatherapi\weather_utils.py:122
+#, fuzzy
+#| msgid "No weather forecast available for the upcoming days."
+msgid "No forecast for the next few days."
+msgstr "Aucune prévision pour les prochains jours."
+
+#: .\weatherapi\weather_utils.py:129
+msgid "mostly cloudy"
+msgstr "principalement nuageux"
+
+#: .\weatherapi\weather_utils.py:131
+msgid "mostly sunny"
+msgstr "principalement ensoleillé"
+
+#: .\weatherapi\weather_utils.py:133
+msgid "a mix of sun and clouds"
+msgstr "un mélange de soleil et de nuages"
+
+#: .\weatherapi\weather_utils.py:148
+msgid "pretty awesome"
+msgstr "vraiment génial"
+
+#: .\weatherapi\weather_utils.py:150
+msgid "pretty good"
+msgstr "assez bien"
+
+#: .\weatherapi\weather_utils.py:152
+msgid "okay"
+msgstr "correct"
+
+#: .\weatherapi\weather_utils.py:154
+msgid "not great"
+msgstr "pas terrible"
+
+#: .\weatherapi\weather_utils.py:156
+#, python-brace-format
+msgid ""
+"The next 3 days will be {next_cloud}, so based on your preferences, it’s "
+"{next_vibe} for you."
+msgstr ""
+"Les 3 prochains jours seront {next_cloud}, donc selon vos préférences, c’est "
+"{next_vibe} pour vous."
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:21
+msgid "Register Your Weather Preferences"
+msgstr "Enregistrez vos préférences météorologiques"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:31
+msgid "Min Temperature"
+msgstr "Température minimale"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:32
+msgid "Max Temperature"
+msgstr "Température maximale"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:41
+msgid "Do you love rainy days?"
+msgstr "Aimez-vous les jours de pluie ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:42
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:48
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:54
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:71
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:84
+msgid "Yes"
+msgstr "Oui"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:43
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:49
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:55
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:75
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:88
+msgid "No"
+msgstr "Non"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:47
+msgid "Do you love snowy days?"
+msgstr "Aimez-vous les jours de neige ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:53
+msgid "Are you a sun worshipper?"
+msgstr "Êtes-vous un adorateur du soleil ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:61
+msgid "Do you love or hate the wind?"
+msgstr "Aimez-vous ou détestez-vous le vent ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:62
+msgid "Love"
+msgstr "Aimer"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:63
+msgid "Hate"
+msgstr "Détester"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:67
+msgid "Do you have Seasonal Affective Disorder (SAD)?"
+msgstr "Souffrez-vous de trouble affectif saisonnier (TAS) ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:80
+msgid "Do you suffer from Joint Pain &/or Arthritis?"
+msgstr "Souffrez-vous de douleurs articulaires et/ou d'arthrite ?"
+
+#: .\weatherpreferences\templates\weatherpreferences\base_weather_questions.html:94
+msgid "Register"
+msgstr "Enregistrer"

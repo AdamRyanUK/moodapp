@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n static %}
 {% block container_class %}{% endblock %}
 {% block content %}
 <style>
@@ -53,10 +54,10 @@
 </style>
 <div class="container-fluid">
     <div id="text-container">
-        <h1 id="main-title">Take Control of how the Weather Impacts your Mood</h1>
-        <h3 id="secondary-title">Join us for free today</h3>
+        <h1 id="main-title">{% trans "Take Control of how the Weather Impacts your Mood" %}
+            <h3 id="secondary-title">{% trans "Join us for free today" %}</h3>
         <br>
-        <a href="{% url 'account_signup' %}" class="btn btn-primary" id="start-tracking-btn">Start Tracking</a>
+        <a href="{% url 'account_signup' %}" class="btn btn-primary" id="start-tracking-btn">{% trans "Start Tracking" %}</a>
     </div>
     <div id="image-container">
         <img src="{% static 'images/general_images/mock_mobile.png' %}" alt="Landing Page Image">

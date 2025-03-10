@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
+{% load i18n %} <!-- Ajout pour activer les balises de traduction -->
+
 {% block content %}
     <div class="container mt-5">
-        <h1>One last thing...</h1>
-        <h2>Subscribe to a personalised weekly newsletter</h2>
-        <p>Enter your email address to subscribe to our mailing list and enjoy these benefits:</p>
+        <h1>{% trans "One last thing..." %}</h1>
+        <h2>{% trans "Subscribe to a personalised weekly newsletter" %}</h2>
+        <p>{% trans "Enter your email address to subscribe to our mailing list and enjoy these benefits:" %}</p>
         <ul>
-            <li><strong>Get updates giving you an insight into how the weather of the last week affected you and what is likely to happen next week.</strong></li>
-            <li><strong>Find out how normal the weather is for the time of year.</strong></li>
-            <li><strong>Insights into best ways to combat the weather blues.</strong></li>
+            <li><strong>{% trans "Get updates giving you an insight into how the weather of the last week affected you and what is likely to happen next week." %}</strong></li>
+            <li><strong>{% trans "Find out how normal the weather is for the time of year." %}</strong></li>
+            <li><strong>{% trans "Insights into best ways to combat the weather blues." %}</strong></li>
         </ul>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="btn-group" role="group" style="gap: 5px;">
-                <button type="submit" class="btn btn-primary">Don’t miss out - Subscribe Now!</button>
-                <a href="{% url 'home' %}" class="btn btn-danger">No Thanks</a>
+                <button type="submit" class="btn btn-primary">{% trans "Don’t miss out - Subscribe Now!" %}</button>
+                <a href="{% url 'home' %}" class="btn btn-danger">{% trans "No Thanks" %}</a>
             </div>
         </form>
 
-        <p class="mt-2"><a href="{% url 'unsubscribe' %}">Unsubscribe form</a></p>
+        <p class="mt-2"><a href="{% url 'unsubscribe' %}">{% trans "Unsubscribe form" %}</a></p>
     </div>
 {% endblock %}

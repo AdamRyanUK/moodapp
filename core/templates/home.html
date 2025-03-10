@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load i18n %} <!-- Ajout pour activer les balises de traduction -->
 
 {% block content %}
 <style>
@@ -164,7 +165,7 @@ p { font-size: 1rem; margin: 0 5px; }
              data-city="{{ request.user.userprofile.hometown }}" 
              data-latitude="{{ request.user.userprofile.lat }}" 
              data-longitude="{{ request.user.userprofile.lon }}">
-            Home
+            {% trans "Home" %}
             <button class="remove-btn">×</button>
         </div>
         {% for city_search in most_selected_cities %}
@@ -190,7 +191,7 @@ p { font-size: 1rem; margin: 0 5px; }
             </svg>
             <p class="time-format">
                 <span class="time-only">{{ first_day_sunrise|date:"H:i" }}</span>
-                <span class="ampm">a.m.</span>
+                <span class="ampm">{% trans "a.m." %}</span>
             </p>            
         </div>
         <div class="card-content">
@@ -199,7 +200,7 @@ p { font-size: 1rem; margin: 0 5px; }
             </svg>
             <p class="time-format">
                 <span class="time-only">{{ first_day_sunset|date:"H:i" }}</span>
-                <span class="ampm">p.m.</span>
+                <span class="ampm">{% trans "p.m." %}</span>
             </p>        
         </div>
         <div class="card-content card-content-last">
@@ -212,8 +213,8 @@ p { font-size: 1rem; margin: 0 5px; }
 <!-- Forecast Table -->
 {% if weather_data %}
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="mb-0">Forecast for {{ city }}</h2>
-    <a href="{% url 'mood-forecast-graph' %}" class="btn btn-primary btn-sm">View Mood Graph</a>
+    <h2 class="mb-0">{% trans "Forecast for" %} {{ city }}</h2>
+    <a href="{% url 'mood-forecast-graph' %}" class="btn btn-primary btn-sm">{% trans "View Mood Graph" %}</a>
 </div>
 
 <!-- Texte personnalisé -->
@@ -225,12 +226,12 @@ p { font-size: 1rem; margin: 0 5px; }
     <table class="table table-hover">
         <thead>
             <tr>
-                <th class="freeze-col" scope="col">Day</th>
-                <th scope="col">Mood Score</th>
-                <th scope="col">Icon</th>
-                <th scope="col">Max Temp</th>
-                <th scope="col">Precipitation</th>
-                <th scope="col">Wind Speed</th>
+                <th class="freeze-col" scope="col">{% trans "Day" %}</th>
+                <th scope="col">{% trans "Mood Score" %}</th>
+                <th scope="col">{% trans "Icon" %}</th>
+                <th scope="col">{% trans "Max Temp" %}</th>
+                <th scope="col">{% trans "Precipitation" %}</th>
+                <th scope="col">{% trans "Wind Speed" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -255,12 +256,12 @@ p { font-size: 1rem; margin: 0 5px; }
 
 <!-- Tableau des jours consécutifs ajusté -->
 <div class="forecast-analysis mt-3">
-    <h3>Weather Analysis</h3>
+    <h3>{% trans "Weather Analysis" %}</h3>
     <div class="table-responsive">
         <table class="table table-bordered analysis-table">
             <thead>
                 <tr>
-                    <th scope="col">Condition</th>
+                    <th scope="col">{% trans "Condition" %}</th>
                     {% for data in weather_data %}
                         <th scope="col">{{ data.day }}</th>
                     {% endfor %}
@@ -268,7 +269,7 @@ p { font-size: 1rem; margin: 0 5px; }
             </thead>
             <tbody>
                 <tr>
-                    <td>Overcast</td>
+                    <td>{% trans "Overcast" %}</td>
                     {% for data in weather_data %}
                         <td>
                             {% if data.consecutive_cloudy_days > 0 %}
@@ -288,7 +289,7 @@ p { font-size: 1rem; margin: 0 5px; }
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td>Sunny</td>
+                    <td>{% trans "Sunny" %}</td>
                     {% for data in weather_data %}
                         <td>
                             {% if data.consecutive_sunny_days > 0 %}
@@ -308,7 +309,7 @@ p { font-size: 1rem; margin: 0 5px; }
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td>Rainy</td>
+                    <td>{% trans "Rainy" %}</td>
                     {% for data in weather_data %}
                         <td>
                             {% if data.consecutive_rainy_days > 0 %}
@@ -333,7 +334,7 @@ p { font-size: 1rem; margin: 0 5px; }
 </div>
 
 {% else %}
-    <p>No weather forecast available for the upcoming days.</p>
+    <p>{% trans "No weather forecast available for the upcoming days." %}</p>
 {% endif %}
 
 {% endblock %}

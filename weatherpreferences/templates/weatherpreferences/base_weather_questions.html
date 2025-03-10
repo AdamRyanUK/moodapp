@@ -1,155 +1,147 @@
 {% extends 'base.html' %}
+{% load i18n %} <!-- Add this at the top to load translation tags -->
 
 {% block extra_head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<style>
-    .noUi-connect { background: linear-gradient(to right, blue, red); }
-
-    .option { display: inline-block; padding: 10px 20px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
-    .option:hover { background-color: #f0f0f0; }
-    .option.selected { background-color: #007bff; color: #fff; border-color: #007bff; }
-    .centered-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
-</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .noUi-connect { background: linear-gradient(to right, blue, red); }
+        .option { display: inline-block; padding: 10px 20px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .option:hover { background-color: #f0f0f0; }
+        .option.selected { background-color: #007bff; color: #fff; border-color: #007bff; }
+        .centered-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="container centered-container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <h1 class="text-center mb-5">Register Your Weather Preferences</h1> <!-- Increased margin bottom -->
-            <form id="register-weather-form" method="post">
-                {% csrf_token %}
-                
-                <div class="row justify-content-center mb-4">
-                    <div class="slider-container col-md-9">
-                        <div id="temp-slider" class="mx-auto"></div>
-                    </div>
-                </div>
-                
-                <div class="row justify-content-center mb-4">
-                    <div class="temperature-display">
-                        Min Temperature: <span id="min_temp_value">15</span>°C - Max Temperature: <span id="max_temp_value">25</span>°C
-                    </div>
-                </div>
-                <input type="hidden" name="ideal_temp_min" id="id_ideal_temp_min" value="15">
-                <input type="hidden" name="ideal_temp_max" id="id_ideal_temp_max" value="25">
-                <br>
-                
-                <div class="row">
-                    <div class="col-md-5 d-flex flex-column">
-                        <div>
-                            <p>Do you love rainy days?</p>
-                            <span class="option" data-value="true" data-target="rain_lover">Yes</span>
-                            <span class="option" data-value="false" data-target="rain_lover">No</span>
-                            <input type="hidden" name="rain_lover" id="rain_lover">
-                        </div>
-
-                        <div>
-                            <p>Do you love snowy days?</p>
-                            <span class="option" data-value="true" data-target="snow_lover">Yes</span>
-                            <span class="option" data-value="false" data-target="snow_lover">No</span>
-                            <input type="hidden" name="snow_lover" id="snow_lover">
-                        </div>
-
-                        <div>
-                            <p>Are you a sun worshipper?</p>
-                            <span class="option" data-value="true" data-target="sun_lover">Yes</span>
-                            <span class="option" data-value="false" data-target="sun_lover">No</span>
-                            <input type="hidden" name="sun_lover" id="sun_lover">
+    <div class="container centered-container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <h1 class="text-center mb-5">{% trans "Register Your Weather Preferences" %}</h1>
+                <form id="register-weather-form" method="post">
+                    {% csrf_token %}
+                    <div class="row justify-content-center mb-4">
+                        <div class="slider-container col-md-9">
+                            <div id="temp-slider" class="mx-auto"></div>
                         </div>
                     </div>
-                    <div class="col-md-5 d-flex flex-column">
-                        <div>
-                            <p>Do you love or hate the wind?</p>
-                            <span class="option" data-value="false" data-target="wind_hater">Love</span>
-                            <span class="option" data-value="true" data-target="wind_hater">Hate</span>
-                            <input type="hidden" name="wind_hater" id="wind_hater">
+                    <div class="row justify-content-center mb-4">
+                        <div class="temperature-display">
+                            {% trans "Min Temperature" %}: <span id="min_temp_value">15</span>°C - 
+                            {% trans "Max Temperature" %}: <span id="max_temp_value">25</span>°C
                         </div>
-                        
-                        <div>
-                            <p>Do you have Seasonal Affective Disorder (SAD)?</p>
+                    </div>
+                    <input type="hidden" name="ideal_temp_min" id="id_ideal_temp_min" value="15">
+                    <input type="hidden" name="ideal_temp_max" id="id_ideal_temp_max" value="25">
+                    <br>
+                    <div class="row">
+                        <div class="col-md-5 d-flex flex-column">
                             <div>
-                                <label>
-                                    <input type="radio" name="sad" value="true" {% if health_conditions_form.sad.value == 'true' %}checked{% endif %}> Yes
-                                </label>
-                                <label>
-                                    <input type="radio" name="sad" value="false" {% if health_conditions_form.sad.value == 'false' %}checked{% endif %}> No
-                                </label>
+                                <p>{% trans "Do you love rainy days?" %}</p>
+                                <span class="option" data-value="true" data-target="rain_lover">{% trans "Yes" %}</span>
+                                <span class="option" data-value="false" data-target="rain_lover">{% trans "No" %}</span>
+                                <input type="hidden" name="rain_lover" id="rain_lover">
+                            </div>
+                            <div>
+                                <p>{% trans "Do you love snowy days?" %}</p>
+                                <span class="option" data-value="true" data-target="snow_lover">{% trans "Yes" %}</span>
+                                <span class="option" data-value="false" data-target="snow_lover">{% trans "No" %}</span>
+                                <input type="hidden" name="snow_lover" id="snow_lover">
+                            </div>
+                            <div>
+                                <p>{% trans "Are you a sun worshipper?" %}</p>
+                                <span class="option" data-value="true" data-target="sun_lover">{% trans "Yes" %}</span>
+                                <span class="option" data-value="false" data-target="sun_lover">{% trans "No" %}</span>
+                                <input type="hidden" name="sun_lover" id="sun_lover">
                             </div>
                         </div>
-                        
-                        <div>
-                            <p>Do you suffer from Joint Pain &/or Arthritis?</p>
+                        <div class="col-md-5 d-flex flex-column">
                             <div>
-                                <label>
-                                    <input type="radio" name="joint_pain_arthritis" value="true" {% if health_conditions_form.joint_pain_arthritis.value == 'true' %}checked{% endif %}> Yes
-                                </label>
-                                <label>
-                                    <input type="radio" name="joint_pain_arthritis" value="false" {% if health_conditions_form.joint_pain_arthritis.value == 'false' %}checked{% endif %}> No
-                                </label>
+                                <p>{% trans "Do you love or hate the wind?" %}</p>
+                                <span class="option" data-value="false" data-target="wind_hater">{% trans "Love" %}</span>
+                                <span class="option" data-value="true" data-target="wind_hater">{% trans "Hate" %}</span>
+                                <input type="hidden" name="wind_hater" id="wind_hater">
+                            </div>
+                            <div>
+                                <p>{% trans "Do you have Seasonal Affective Disorder (SAD)?" %}</p>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="sad" value="true" {% if health_conditions_form.sad.value == 'true' %}checked{% endif %}>
+                                        {% trans "Yes" %}
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="sad" value="false" {% if health_conditions_form.sad.value == 'false' %}checked{% endif %}>
+                                        {% trans "No" %}
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <p>{% trans "Do you suffer from Joint Pain &/or Arthritis?" %}</p>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="joint_pain_arthritis" value="true" {% if health_conditions_form.joint_pain_arthritis.value == 'true' %}checked{% endif %}>
+                                        {% trans "Yes" %}
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="joint_pain_arthritis" value="false" {% if health_conditions_form.joint_pain_arthritis.value == 'false' %}checked{% endif %}>
+                                        {% trans "No" %}
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                        <div class="col-md-2 d-flex flex-column row justify-content-center mt-4">
+                            <input type="submit" value="{% trans 'Register' %}" class="btn btn-lg form-item" style="background-color:#5e63ff; border-color:#5e63ff;">
+                        </div>
                     </div>
-               
-                <div class="col-md-2 d-flex flex-column row justify-content-center mt-4"> <!-- Center the button row -->
-                    <input type="submit" value="Register" class="btn btn-lg form-item" style="background-color:#5e63ff; border-color:#5e63ff;">
-                </div>
+                </form>
             </div>
-            </form>
         </div>
     </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Existing noUiSlider functionality
-        var slider = document.getElementById('temp-slider');
-        var minTempValue = document.getElementById('min_temp_value');
-        var maxTempValue = document.getElementById('max_temp_value');
-        var idealTempMinInput = document.getElementById('id_ideal_temp_min');
-        var idealTempMaxInput = document.getElementById('id_ideal_temp_max');
 
-        noUiSlider.create(slider, {
-            start: [15, 25],
-            connect: true,
-            range: {
-                'min': -30,
-                'max': 45
-            },
-            tooltips: [true, true],
-            format: {
-                to: function (value) {
-                    return Math.round(value);
-                },
-                from: function (value) {
-                    return Number(value);
+    <!-- JavaScript remains unchanged -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var slider = document.getElementById('temp-slider');
+            var minTempValue = document.getElementById('min_temp_value');
+            var maxTempValue = document.getElementById('max_temp_value');
+            var idealTempMinInput = document.getElementById('id_ideal_temp_min');
+            var idealTempMaxInput = document.getElementById('id_ideal_temp_max');
+
+            noUiSlider.create(slider, {
+                start: [15, 25],
+                connect: true,
+                range: { 'min': -30, 'max': 45 },
+                tooltips: [true, true],
+                format: {
+                    to: function (value) { return Math.round(value); },
+                    from: function (value) { return Number(value); }
                 }
-            }
-        });
+            });
 
-        slider.noUiSlider.on('update', function (values, handle) {
-            var value = values[handle];
-            if (handle === 0) {
-                minTempValue.textContent = value;
-                idealTempMinInput.value = value;
-            } else {
-                maxTempValue.textContent = value;
-                idealTempMaxInput.value = value;
-            }
-        });
+            slider.noUiSlider.on('update', function (values, handle) {
+                var value = values[handle];
+                if (handle === 0) {
+                    minTempValue.textContent = value;
+                    idealTempMinInput.value = value;
+                } else {
+                    maxTempValue.textContent = value;
+                    idealTempMaxInput.value = value;
+                }
+            });
 
-        // Weather preference options functionality
-        var options = document.querySelectorAll('.option');
-        options.forEach(function (option) {
-            option.addEventListener('click', function () {
-                var target = option.getAttribute('data-target');
-                var inputs = document.querySelectorAll('[data-target="' + target + '"]');
-                inputs.forEach(function (input) { input.classList.remove('selected'); });
-                option.classList.add('selected');
-                document.getElementById(target).value = option.getAttribute('data-value');
+            var options = document.querySelectorAll('.option');
+            options.forEach(function (option) {
+                option.addEventListener('click', function () {
+                    var target = option.getAttribute('data-target');
+                    var inputs = document.querySelectorAll('[data-target="' + target + '"]');
+                    inputs.forEach(function (input) {
+                        input.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                    document.getElementById(target).value = option.getAttribute('data-value');
+                });
             });
         });
-    });
-</script>
+    </script>
 {% endblock %}

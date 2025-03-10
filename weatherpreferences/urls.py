@@ -10,4 +10,5 @@ urlpatterns = [
     path('journal', views.mood_journal, name="journal"),
     path('action-questions', views.action_questions, name="action_questions"),
     path('feedback-chart-data', views.feedback_chart_data, name='feedback_chart_data'),
+    path('display-journal/', views.display_journal, name='display_journal'),
     ]
