@@ -22,23 +22,38 @@ class BlogIndexPage(Page):
         context['blogposts'] = blogposts
         return context
 
-from django.db import models
+from wagtail.blocks import StructBlock, RichTextBlock, RawHTMLBlock, URLBlock
+from wagtail.fields import StreamField
 from wagtail.models import Page
-from wagtail.fields import RichTextField
-from wagtail.admin.panels import FieldPanel  # ✅ C'est bien ici que FieldPanel doit être importé
-from wagtail.images.models import Image  # ✅ On importe Image correctement
+from wagtail.admin.panels import FieldPanel
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.models import Image
 from wagtail.search import index
+
+from wagtail.blocks import StructBlock, CharBlock
+
+class ScriptBlock(StructBlock):
+    script_url = CharBlock(help_text="Provide the relative path to your JavaScript file (e.g., 'js/quiz.js')")
+
+    class Meta:
+        icon = "code"
+        label = "Custom Script Block"
+
 
 class BlogPage(Page):
     date = models.DateField("Date de publication", auto_now_add=True)
-    intro = models.CharField(max_length=500, help_text="Résumé de l'article")  
-    body = RichTextField(features=['bold', 'italic', 'link', 'image', 'h2', 'h3', 'ol', 'ul'], help_text="Contenu détaillé de l'article")  
+    intro = models.CharField(max_length=500, help_text="Résumé de l'article")
+    body = StreamField([
+        ('rich_text', RichTextBlock(features=['bold', 'italic', 'link', 'image', 'h2', 'h3', 'ol', 'ul'])),
+        ('html', RawHTMLBlock()),
+        ('script', ScriptBlock()),  # Add a block for embedding custom scripts
+    ], use_json_field=True)
 
     header_image = models.ForeignKey(
-        Image, 
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name="+",
         help_text="Image principale de l'article"
     )
@@ -48,8 +63,8 @@ class BlogPage(Page):
         index.SearchField('body'),
     ]
 
-    content_panels = [
-        FieldPanel("header_image"),  # ✅ Ici c'est enfin correct !
+    content_panels = Page.content_panels + [
+        FieldPanel("header_image"),
         FieldPanel("intro"),
         FieldPanel("body"),
     ]

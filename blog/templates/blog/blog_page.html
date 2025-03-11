@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
 {% load wagtailcore_tags wagtailimages_tags %}  {# ✅ Ajout pour gérer les images et le texte Wagtail #}
 
 {% block content %}
@@ -47,7 +49,16 @@
         {% endif %}
 
         <div class="blog-content">
-            {{ page.body|richtext }}  {# ✅ Le texte est bien formaté avec Wagtail #}
+            {% for block in page.body %}
+                {% if block.block_type == "rich_text" %}
+                    <div class="rich-text">{{ block.value|richtext }}</div>
+                {% elif block.block_type == "html" %}
+                    <div class="custom-html">{{ block.value|safe }}</div>
+                {% elif block.block_type == "script" %}
+                <script src="/static/{{ block.value.script_url }}"></script>
+                
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

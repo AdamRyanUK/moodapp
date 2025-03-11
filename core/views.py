@@ -176,21 +176,25 @@ def remove_city(request, city_id):
 def insights(request):
     return render(request, 'insights.html')
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def mood_forecast_graph(request):
     if request.user.is_authenticated:
-        # Retrieve the weather data from the session
         weather_data = request.session.get('weather_data')
-
         if not weather_data:
-            # Handle the case where there is no weather data (perhaps redirect to home or show an error)
             return redirect('home')
-
+        
+        weather_metric = request.GET.get('weather_metric', None)
+        print(weather_data)  # Ajoute ceci pour vérifier les données dans la console
         return render(request, 'mood_forecast_graph.html', {
-            'weather_data': weather_data,  # Use the weather data here
+            'weather_data': weather_data,
+            'weather_metric': weather_metric
         })
     else:
         return render(request, 'authenticate/landing_page.html')
-
+    
 @login_required
 def calendar_view(request):
     today_date = datetime_date.today()

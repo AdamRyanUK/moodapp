@@ -37,6 +37,10 @@ heroku run bash -a clearsky-staging-app
 *to push data created *
 python manage.py loaddata *name*.json
 
+#problemas con wagtail: 
+python manage.py fixtree --full
+
+
 
 
 

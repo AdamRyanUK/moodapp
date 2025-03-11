@@ -7,125 +7,204 @@
     <a href="{% url 'home' %}" class="btn btn-primary btn-sm">Home</a>
 </div>
 
-<!-- Container for the graph to allow scrolling on smaller screens -->
+<!-- Filter section -->
+<div class="filter-section mb-3">
+    <form method="GET" action="{% url 'mood-forecast-graph' %}">
+        <select name="weather_metric" onchange="this.form.submit()">
+            <option value="" {% if not weather_metric %}selected{% endif %}>Don't display weather data</option>
+            <option value="temperature_max" {% if weather_metric == 'temperature_max' %}selected{% endif %}>Max Temp</option>
+            <option value="precipitation_total" {% if weather_metric == 'precipitation_total' %}selected{% endif %}>Precipitation total</option>
+            <option value="wind_speed" {% if weather_metric == 'wind_speed' %}selected{% endif %}>Wind Speed</option>
+            <option value="cloud_cover" {% if weather_metric == 'cloud_cover' %}selected{% endif %}>Cloud Cover</option>
+        </select>
+        {% if weather_metric %}
+            <button type="submit" onclick="this.form.weather_metric.value=''">Clear the filter</button>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Container for the graph -->
 <div class="graph-container">
     <canvas id="moodGraph" width="800" height="400"></canvas>
 </div>
 
+{% if no_data_message %}
+    <p>{{ no_data_message }}</p>
+{% endif %}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const weatherData = {{ weather_data|safe }};
-    
-    // Filter out undefined values from labels and moodScores
-    const labels = weatherData.map(item => item.day).filter(day => day !== undefined);
-    const moodScores = weatherData.map(item => item.mood_score).filter(score => score !== undefined);
+    console.log("weatherData:", weatherData);
 
-    function getMoodColor(score) {
-        if (score <= 3) return 'rgba(255, 99, 132, 1)';  // Red
-        if (score <= 6) return 'rgba(255, 206, 86, 1)';  // Yellow
-        return 'rgba(75, 192, 192, 1)';  // Green
-    }
+    if (!weatherData || weatherData.length === 0) {
+        console.log("Aucune donnée disponible pour le graphique.");
+    } else {
+        // Préparer les données de base
+        const labels = weatherData.map(item => item.day).filter(day => day !== undefined);
+        const moodScores = weatherData.map(item => item.mood_score).filter(score => score !== undefined);
+        console.log("labels:", labels, "moodScores:", moodScores);
 
-    const pointColors = moodScores.map(score => getMoodColor(score));
-
-    const drawTextPlugin = {
-        id: 'drawTextPlugin',
-        afterDatasetsDraw: (chart) => {
-            const ctx = chart.ctx;
-            chart.data.datasets[0].data.forEach((value, index) => {
-                const meta = chart.getDatasetMeta(0);
-                const point = meta.data[index];
-                
-                if (point) {
-                    ctx.save();
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 14px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(value, point.x, point.y);
-                    ctx.restore();
-                }
-            });
+        function getMoodColor(score) {
+            if (score <= 3) return 'rgba(255, 99, 132, 1)';
+            if (score <= 6) return 'rgba(255, 206, 86, 1)';
+            return 'rgba(75, 192, 192, 1)';
         }
-    };
 
-    const ctx = document.getElementById('moodGraph').getContext('2d');
-    const moodGraph = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: moodScores,
-                borderColor: 'rgba(0, 0, 0, 0.1)',
-                pointBackgroundColor: pointColors,
-                pointBorderColor: pointColors,
-                pointRadius: 12,
-                pointHoverRadius: 14,
-                tension: 0.1,
-                fill: false
-            }]
-        },
-        options: {
-            legend: {
-                display: false  // This hides the legend
+        const pointColors = moodScores.map(score => getMoodColor(score));
+
+        // Plugin pour afficher les valeurs sur les points du mood
+        const drawTextPlugin = {
+            id: 'drawTextPlugin',
+            afterDatasetsDraw: (chart) => {
+                const ctx = chart.ctx;
+                chart.data.datasets[0].data.forEach((value, index) => {
+                    const meta = chart.getDatasetMeta(0);
+                    const point = meta.data[index];
+                    if (point) {
+                        ctx.save();
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 14px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(value, point.x, point.y);
+                        ctx.restore();
+                    }
+                });
+            }
+        };
+
+        // Configuration de base des datasets
+        const datasets = [{
+            label: 'Mood Score',
+            data: moodScores,
+            borderColor: 'rgba(0, 0, 0, 0.1)',
+            pointBackgroundColor: pointColors,
+            pointBorderColor: pointColors,
+            pointRadius: 12,
+            pointHoverRadius: 14,
+            tension: 0.1,
+            fill: false,
+            yAxisID: 'y-mood'
+        }];
+
+        // Configuration de base des échelles
+        const scales = {
+            x: {
+                ticks: {
+                    font: { size: 14 },
+                    color: 'black',
+                    maxRotation: 0,
+                    minRotation: 0,
+                },
+                grid: { display: false }
             },
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                                x: {
-                    ticks: {
-                        font: { size: 14 },
-                        color: 'black',
-                        maxRotation: 0,  // Prevent label rotation
-                        minRotation: 0,  // Force horizontal labels
-                    },
-                    grid: {
-                        display: false
+            'y-mood': {
+                position: 'left',
+                min: -1,
+                max: 11,
+                ticks: {
+                    font: { size: 16 },
+                    color: 'black',
+                    callback: function(value) {
+                        if (value === -1 || value === 11) return '';
+                        return value;
                     }
                 },
-                y: {
-                    min: -1,
-                    max: 11,
+                grid: { display: false },
+                title: { display: true, text: 'Mood Score' }
+            }
+        };
+
+        // Ajouter la métrique météo si sélectionnée
+        const weatherMetric = '{{ weather_metric|default:"" }}';
+        if (weatherMetric) {
+            const weatherValues = weatherData.map(item => {
+                const value = item[weatherMetric];
+                return (value !== undefined && value !== null) ? Number(value) : null;
+            }).filter(value => value !== null);
+            console.log("weatherMetric:", weatherMetric, "weatherValues:", weatherValues);
+
+            if (weatherValues.length > 0) {
+                let weatherLabel = '';
+                switch(weatherMetric) {
+                    case 'temperature_max': weatherLabel = 'Température Max (°C)'; break;
+                    case 'precipitation_total': weatherLabel = 'Précipitations (mm)'; break;
+                    case 'wind_speed': weatherLabel = 'Vitesse du Vent (m/s)'; break;
+                    case 'cloud_cover': weatherLabel = 'Couverture Nuageuse (%)'; break;
+                }
+                datasets.push({
+                    label: weatherLabel,
+                    data: weatherValues,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointBackgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    pointBorderColor: 'rgba(54, 162, 235, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    tension: 0.1,
+                    fill: false,
+                    yAxisID: 'y-weather'
+                });
+                scales['y-weather'] = {
+                    position: 'right',
+                    min: Math.min(...weatherValues) * 0.9,
+                    max: Math.max(...weatherValues) * 1.1,
                     ticks: {
                         font: { size: 16 },
-                        color: 'black',
-                        callback: function(value) {
-                            if (value === -1 || value === 11) {
-                                return '';  // Hide -1 and 11 on the axis
-                            }
-                            return value;
-                        }
+                        color: 'black'
                     },
-                    grid: {
-                        display: false  // Remove gridlines on the Y-axis
-                    }
+                    grid: { display: false },
+                    title: { display: true, text: weatherLabel }
+                };
+            } else {
+                console.log("Aucune donnée valide pour la métrique sélectionnée.");
+            }
+        }
+
+        // Initialisation du graphique
+        const ctx = document.getElementById('moodGraph').getContext('2d');
+        const moodGraph = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: scales,
+                plugins: {
+                    legend: { display: true },
+                    tooltip: { enabled: true }
                 }
             },
-            plugins: {
-                tooltip: { enabled: false }
-            }
-        },
-        plugins: [drawTextPlugin]
-    });
+            plugins: [drawTextPlugin]
+        });
+    }
 </script>
 
 <style>
-    /* Make the X-axis scrollable on smaller screens and set a minimum width */
     .graph-container {
         overflow-x: auto;
         width: 100%;
     }
-
     #moodGraph {
-        min-width: 800px; /* Set a minimum width */
-        height: 400px; /* Set a fixed height */
+        min-width: 800px;
+        height: 400px;
     }
-
     @media (max-width: 800px) {
         .graph-container canvas {
-            width: 100%;  /* Allow the canvas to be 100% wide until it hits 800px */
+            width: 100%;
             height: 400px;
         }
+    }
+    .filter-section {
+        text-align: center;
+    }
+    select, button {
+        padding: 8px;
+        font-size: 16px;
+        margin: 5px;
     }
 </style>
 
