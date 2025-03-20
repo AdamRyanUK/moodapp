@@ -28,7 +28,16 @@
         <!-- Additional custom styles or scripts specific to a page can go here -->
         {% block extra_head %}{% endblock %}
         <script src="{% static 'js/togglebutton.js' %}"></script>
-        <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/afb5451325af135f545e62896/c50684447eeff8ae447d0805c.js");</script>  
+        <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/afb5451325af135f545e62896/c50684447eeff8ae447d0805c.js");</script> 
+        
+        <!-- balises open graph pour des pages du fb -->
+        <meta property="og:title" content="{{ page.title }}" />
+        <meta property="og:description" content="{{ page.excerpt }}" />
+        <meta property="og:image" content="{{ page.header_image.url }}" />
+        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+        <meta property="og:type" content="article" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:site_name" content="ClearSky Blog" />
     </head>
     
 <body>
