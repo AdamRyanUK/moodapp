@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'modelcluster',
     'taggit',
     'blog',
+    'storages',
 ]
 
 MIDDLEWARE = [
